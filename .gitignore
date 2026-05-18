@@ -1,1 +1,4 @@
 **/.ipynb_checkpoints
+
+# Claude Code
+.claude/settings.local.json
