@@ -1,1 +1,4 @@
 **/.ipynb_checkpoints
+
+# Large ConsDB exports (exceed GitHub's 100 MB file limit; keep local only)
+consdb_*.csv
