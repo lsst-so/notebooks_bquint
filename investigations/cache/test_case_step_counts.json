@@ -1,0 +1,3402 @@
+{
+  "BLOCK-T2": {
+    "key": "BLOCK-T2",
+    "name": "Soak Tests with different Vel/Acc/Jerk for the Rotator",
+    "n_steps": 2
+  },
+  "BLOCK-T8": {
+    "key": "BLOCK-T8",
+    "name": "Top-End Assembly Vibration Investigation using BLOCK-197",
+    "n_steps": 2
+  },
+  "BLOCK-T11": {
+    "key": "BLOCK-T11",
+    "name": "BLOCK-252 - Laser Tracker M2/Camera Rotator Measurements with Yellow Cross",
+    "n_steps": 1
+  },
+  "BLOCK-T10": {
+    "key": "BLOCK-T10",
+    "name": "TMA Tracking jitter on sky using the Fast Camera",
+    "n_steps": 1
+  },
+  "BLOCK-T1": {
+    "key": "BLOCK-T1",
+    "name": "Rotator investigation with combination of different jerk, acceleration, and velocities",
+    "n_steps": 3
+  },
+  "BLOCK-T9": {
+    "key": "BLOCK-T9",
+    "name": "BLOCK-259 - Generation of Coordinate Transformation Matrix between Laser Tracker and Hexapod Coord Systems",
+    "n_steps": 8
+  },
+  "BLOCK-T7": {
+    "key": "BLOCK-T7",
+    "name": "TMA Soak Tests",
+    "n_steps": 2
+  },
+  "BLOCK-T6": {
+    "key": "BLOCK-T6",
+    "name": "TMA Offset pointing, slew and settle on sky",
+    "n_steps": 4
+  },
+  "BLOCK-T20": {
+    "key": "BLOCK-T20",
+    "name": "AuxTel Daytime Venting",
+    "n_steps": 2
+  },
+  "BLOCK-T16": {
+    "key": "BLOCK-T16",
+    "name": "Study of bright star persistence",
+    "n_steps": 1
+  },
+  "BLOCK-T12": {
+    "key": "BLOCK-T12",
+    "name": "Elevation Sweep Laser Tracker Measurements of M2 and Camera with the Yellow Cross",
+    "n_steps": 1
+  },
+  "BLOCK-T13": {
+    "key": "BLOCK-T13",
+    "name": "BLOCK-201 - Move hexapods and take image with ComCam",
+    "n_steps": 1
+  },
+  "BLOCK-T15": {
+    "key": "BLOCK-T15",
+    "name": "BLOCK-262 - Measure residual forces on M2 to verify Look-Up Table",
+    "n_steps": 6
+  },
+  "BLOCK-T17": {
+    "key": "BLOCK-T17",
+    "name": "AuxTel Daytime Checkouts",
+    "n_steps": 6
+  },
+  "BLOCK-T22": {
+    "key": "BLOCK-T22",
+    "name": "AuxTel Filter Scans - Closed Dome",
+    "n_steps": 4
+  },
+  "BLOCK-T21": {
+    "key": "BLOCK-T21",
+    "name": "Test Zephyr Scale interface with Python",
+    "n_steps": 4
+  },
+  "BLOCK-T5": {
+    "key": "BLOCK-T5",
+    "name": "TMA Tracking drift on sky",
+    "n_steps": 4
+  },
+  "BLOCK-T26": {
+    "key": "BLOCK-T26",
+    "name": "ComCam Daytime Calibrations for Ops Rehearsals",
+    "n_steps": 3
+  },
+  "BLOCK-T14": {
+    "key": "BLOCK-T14",
+    "name": "BLOCK-202 - AOS Single Loop using Hexapods and Comcam",
+    "n_steps": 1
+  },
+  "BLOCK-T27": {
+    "key": "BLOCK-T27",
+    "name": "Dummy test case",
+    "n_steps": 1
+  },
+  "BLOCK-T29": {
+    "key": "BLOCK-T29",
+    "name": "AOS-OR4 Sweep Camera dX",
+    "n_steps": 1
+  },
+  "BLOCK-T30": {
+    "key": "BLOCK-T30",
+    "name": "AOS-OR4 Sweep Camera dY",
+    "n_steps": 1
+  },
+  "BLOCK-T31": {
+    "key": "BLOCK-T31",
+    "name": "AOS-OR4 Sensitivity Camera dZ",
+    "n_steps": 1
+  },
+  "BLOCK-T32": {
+    "key": "BLOCK-T32",
+    "name": "AOS-OR4 Sensitivity Camera dX",
+    "n_steps": 1
+  },
+  "BLOCK-T35": {
+    "key": "BLOCK-T35",
+    "name": "AOS-OR4 Sensitivity Camera rX",
+    "n_steps": 1
+  },
+  "BLOCK-T28": {
+    "key": "BLOCK-T28",
+    "name": "AOS-OR4 Focus Sweep Camera dZ v1",
+    "n_steps": 1
+  },
+  "BLOCK-T36": {
+    "key": "BLOCK-T36",
+    "name": "AOS-OR4 Sensitivity Camera rY",
+    "n_steps": 1
+  },
+  "BLOCK-T38": {
+    "key": "BLOCK-T38",
+    "name": "Elevation sweeps",
+    "n_steps": 4
+  },
+  "BLOCK-T37": {
+    "key": "BLOCK-T37",
+    "name": "Interleaved MOSS and on-sky elevation sweeps",
+    "n_steps": 8
+  },
+  "BLOCK-T39": {
+    "key": "BLOCK-T39",
+    "name": "MOSS Observing",
+    "n_steps": 9
+  },
+  "BLOCK-T41": {
+    "key": "BLOCK-T41",
+    "name": "Single Target Observations to Test 1st to 2nd order ratio",
+    "n_steps": 7
+  },
+  "BLOCK-T42": {
+    "key": "BLOCK-T42",
+    "name": "AOS-OR4 Sensitivity M2 rX",
+    "n_steps": 1
+  },
+  "BLOCK-T33": {
+    "key": "BLOCK-T33",
+    "name": "AOS-OR4 Sweep Camera RX",
+    "n_steps": 1
+  },
+  "BLOCK-T34": {
+    "key": "BLOCK-T34",
+    "name": "AOS-OR4 Sweep Camera RY",
+    "n_steps": 1
+  },
+  "BLOCK-T43": {
+    "key": "BLOCK-T43",
+    "name": "AOS-OR4 Sensitivity M2 rY",
+    "n_steps": 1
+  },
+  "BLOCK-T45": {
+    "key": "BLOCK-T45",
+    "name": "AOS-OR4 Sensitivity M1M3 B4",
+    "n_steps": 1
+  },
+  "BLOCK-T44": {
+    "key": "BLOCK-T44",
+    "name": "AOS-OR4 Sensitivity M1M3 B1",
+    "n_steps": 1
+  },
+  "BLOCK-T47": {
+    "key": "BLOCK-T47",
+    "name": "AOS-OR4 Focus Sweep Camera dZ v3",
+    "n_steps": 1
+  },
+  "BLOCK-T48": {
+    "key": "BLOCK-T48",
+    "name": "AOS-OR4 Sensitivity Camera dY",
+    "n_steps": 1
+  },
+  "BLOCK-T46": {
+    "key": "BLOCK-T46",
+    "name": "AOS-OR4 Focus Sweep Camera dZ v2",
+    "n_steps": 1
+  },
+  "BLOCK-T49": {
+    "key": "BLOCK-T49",
+    "name": "AOS-OR4 Sweep M2 RX",
+    "n_steps": 1
+  },
+  "BLOCK-T50": {
+    "key": "BLOCK-T50",
+    "name": "AOS-OR4 Sweep M2 RY",
+    "n_steps": 1
+  },
+  "BLOCK-T52": {
+    "key": "BLOCK-T52",
+    "name": "OR4 Night 1",
+    "n_steps": 1
+  },
+  "BLOCK-T55": {
+    "key": "BLOCK-T55",
+    "name": "Turning off systems",
+    "n_steps": 6
+  },
+  "BLOCK-T57": {
+    "key": "BLOCK-T57",
+    "name": "OR4 Night 3",
+    "n_steps": 1
+  },
+  "BLOCK-T56": {
+    "key": "BLOCK-T56",
+    "name": "OR4 Night 2",
+    "n_steps": 1
+  },
+  "BLOCK-T58": {
+    "key": "BLOCK-T58",
+    "name": "AuxTel Calibrations Shutdown",
+    "n_steps": 2
+  },
+  "BLOCK-T59": {
+    "key": "BLOCK-T59",
+    "name": "AuxTel Calibrations Setup",
+    "n_steps": 3
+  },
+  "BLOCK-T18": {
+    "key": "BLOCK-T18",
+    "name": "AuxTel Weekend Calibrations",
+    "n_steps": 2
+  },
+  "BLOCK-T24": {
+    "key": "BLOCK-T24",
+    "name": "AuxTel Linearity Scan - 2/3",
+    "n_steps": 4
+  },
+  "BLOCK-T25": {
+    "key": "BLOCK-T25",
+    "name": "AuxTel Linearity Scan - 3/3",
+    "n_steps": 4
+  },
+  "BLOCK-T23": {
+    "key": "BLOCK-T23",
+    "name": "AuxTel Linearity Scan - 1/3",
+    "n_steps": 5
+  },
+  "BLOCK-T60": {
+    "key": "BLOCK-T60",
+    "name": "ASCT-001 Manual Alignment",
+    "n_steps": 5
+  },
+  "BLOCK-T63": {
+    "key": "BLOCK-T63",
+    "name": "TMA Fine Balance",
+    "n_steps": 3
+  },
+  "BLOCK-T67": {
+    "key": "BLOCK-T67",
+    "name": "L3 Streaked and Stuttered Images on ComCam",
+    "n_steps": 2
+  },
+  "BLOCK-T71": {
+    "key": "BLOCK-T71",
+    "name": "Power up TMA and enable MTMount",
+    "n_steps": 4
+  },
+  "BLOCK-T72": {
+    "key": "BLOCK-T72",
+    "name": "Test TMA parking/unparking commands (with Tiago online)",
+    "n_steps": 1
+  },
+  "BLOCK-T68": {
+    "key": "BLOCK-T68",
+    "name": "ComCam Calibration on L3",
+    "n_steps": 7
+  },
+  "BLOCK-T74": {
+    "key": "BLOCK-T74",
+    "name": "LUTT-004 Azimuth Look-Up Table",
+    "n_steps": 3
+  },
+  "BLOCK-T75": {
+    "key": "BLOCK-T75",
+    "name": "WET-005 Giant Donut",
+    "n_steps": 3
+  },
+  "BLOCK-T81": {
+    "key": "BLOCK-T81",
+    "name": "WET-010 Reference Wavefront Generation",
+    "n_steps": 2
+  },
+  "BLOCK-T86": {
+    "key": "BLOCK-T86",
+    "name": "LUTT-003 Elevation Look-Up Table",
+    "n_steps": 3
+  },
+  "BLOCK-T89": {
+    "key": "BLOCK-T89",
+    "name": "LUTT-001 - Measurement of Laser Tracker Targets",
+    "n_steps": 1
+  },
+  "BLOCK-T91": {
+    "key": "BLOCK-T91",
+    "name": "LUTT-005 Camera Rotator Look-Up Table",
+    "n_steps": 3
+  },
+  "BLOCK-T93": {
+    "key": "BLOCK-T93",
+    "name": "ASCT-002 Focus Sweep and Alignment M2 Hexapod",
+    "n_steps": 11
+  },
+  "BLOCK-T92": {
+    "key": "BLOCK-T92",
+    "name": "ASCT-002 Focus Sweep and Alignment Camera Hexapod",
+    "n_steps": 11
+  },
+  "BLOCK-T95": {
+    "key": "BLOCK-T95",
+    "name": "LSSTCam - EOTest step01/bias10",
+    "n_steps": 4
+  },
+  "BLOCK-T87": {
+    "key": "BLOCK-T87",
+    "name": "Workout Camera Hexapod",
+    "n_steps": 7
+  },
+  "BLOCK-T54": {
+    "key": "BLOCK-T54",
+    "name": "Turning on systems ready",
+    "n_steps": 9
+  },
+  "BLOCK-T94": {
+    "key": "BLOCK-T94",
+    "name": "WET-001 Optical State Hexapods",
+    "n_steps": 13
+  },
+  "BLOCK-T82": {
+    "key": "BLOCK-T82",
+    "name": "Dome Walkaround with IR camera",
+    "n_steps": 6
+  },
+  "BLOCK-T53": {
+    "key": "BLOCK-T53",
+    "name": "OR4 pre-rehearsal",
+    "n_steps": 2
+  },
+  "BLOCK-T96": {
+    "key": "BLOCK-T96",
+    "name": "LSSTCam - EOTest step01/dark",
+    "n_steps": 4
+  },
+  "BLOCK-T97": {
+    "key": "BLOCK-T97",
+    "name": "LSSTCam - EOTest step01/dark15sx100.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T98": {
+    "key": "BLOCK-T98",
+    "name": "LSSTCam - EOTest step01/dark16sx100.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T99": {
+    "key": "BLOCK-T99",
+    "name": "LSSTCam - EOTest step01/dark1mx100.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T100": {
+    "key": "BLOCK-T100",
+    "name": "LSSTCam - EOTest step01/dark1mx5.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T102": {
+    "key": "BLOCK-T102",
+    "name": "LSSTCam - EOTest step01/flats_ordered",
+    "n_steps": 4
+  },
+  "BLOCK-T101": {
+    "key": "BLOCK-T101",
+    "name": "LSSTCam - EOTest step01/dark900.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T103": {
+    "key": "BLOCK-T103",
+    "name": "LSSTCam - EOTest step01/flats_randomized",
+    "n_steps": 4
+  },
+  "BLOCK-T111": {
+    "key": "BLOCK-T111",
+    "name": "LSSTCam - EOTest step02/test_flat",
+    "n_steps": 4
+  },
+  "BLOCK-T112": {
+    "key": "BLOCK-T112",
+    "name": "LSSTCam - EOTest step02/B_protocol",
+    "n_steps": 4
+  },
+  "BLOCK-T115": {
+    "key": "BLOCK-T115",
+    "name": "LSSTCam - EOTest step02/D_protocol",
+    "n_steps": 4
+  },
+  "BLOCK-T113": {
+    "key": "BLOCK-T113",
+    "name": "LSSTCam - EOTest step02/B_protocol_excl_light",
+    "n_steps": 4
+  },
+  "BLOCK-T114": {
+    "key": "BLOCK-T114",
+    "name": "LSSTCam - EOTest step02/C_protocol",
+    "n_steps": 4
+  },
+  "BLOCK-T116": {
+    "key": "BLOCK-T116",
+    "name": "LSSTCam - EOTest step08/sflat",
+    "n_steps": 4
+  },
+  "BLOCK-T117": {
+    "key": "BLOCK-T117",
+    "name": "LSSTCam - EOTest step08/test_flat",
+    "n_steps": 4
+  },
+  "BLOCK-T118": {
+    "key": "BLOCK-T118",
+    "name": "LSSTCam - EOTest step08/B_protocol",
+    "n_steps": 4
+  },
+  "BLOCK-T119": {
+    "key": "BLOCK-T119",
+    "name": "LSSTCam - EOTest step08/B_protocol_excl_light",
+    "n_steps": 4
+  },
+  "BLOCK-T110": {
+    "key": "BLOCK-T110",
+    "name": "LSSTCam - EOTest step02/sflat",
+    "n_steps": 4
+  },
+  "BLOCK-T120": {
+    "key": "BLOCK-T120",
+    "name": "LSSTCam - EOTest step08/C_protocol",
+    "n_steps": 4
+  },
+  "BLOCK-T121": {
+    "key": "BLOCK-T121",
+    "name": "LSSTCam - EOTest step08/D_protocol",
+    "n_steps": 4
+  },
+  "BLOCK-T122": {
+    "key": "BLOCK-T122",
+    "name": "LSSTCam - EOTest step07/stabilityFlats_1h_750",
+    "n_steps": 4
+  },
+  "BLOCK-T125": {
+    "key": "BLOCK-T125",
+    "name": "LSSTCam - EOTest step11/B_protocol_PTC",
+    "n_steps": 4
+  },
+  "BLOCK-T124": {
+    "key": "BLOCK-T124",
+    "name": "LSSTCam - EOTest step07/stabilityFlats_1h_blue",
+    "n_steps": 4
+  },
+  "BLOCK-T126": {
+    "key": "BLOCK-T126",
+    "name": "LSSTCam - EOTest step11/Dense_Linear_PTC",
+    "n_steps": 4
+  },
+  "BLOCK-T128": {
+    "key": "BLOCK-T128",
+    "name": "LSSTCam - EOTest step11/Dense_PTC_blue",
+    "n_steps": 4
+  },
+  "BLOCK-T127": {
+    "key": "BLOCK-T127",
+    "name": "LSSTCam - EOTest step11/Dense_Log_PTC",
+    "n_steps": 4
+  },
+  "BLOCK-T129": {
+    "key": "BLOCK-T129",
+    "name": "LSSTCam - EOTest step11/Dense_PTC_nm750",
+    "n_steps": 4
+  },
+  "BLOCK-T130": {
+    "key": "BLOCK-T130",
+    "name": "LSSTCam - EOTest step11/Dense_PTC_nm850",
+    "n_steps": 4
+  },
+  "BLOCK-T131": {
+    "key": "BLOCK-T131",
+    "name": "LSSTCam - EOTest step11/Dense_PTC_nm960",
+    "n_steps": 4
+  },
+  "BLOCK-T132": {
+    "key": "BLOCK-T132",
+    "name": "LSSTCam - EOTest step11/Dense_PTC_red",
+    "n_steps": 4
+  },
+  "BLOCK-T133": {
+    "key": "BLOCK-T133",
+    "name": "LSSTCam - EOTest step11/Dense_PTC_uv",
+    "n_steps": 4
+  },
+  "BLOCK-T135": {
+    "key": "BLOCK-T135",
+    "name": "LSSTCam - EOTest step12/stabilityFlats_12h",
+    "n_steps": 4
+  },
+  "BLOCK-T134": {
+    "key": "BLOCK-T134",
+    "name": "LSSTCam - EOTest step11/Super_Dense_PTC",
+    "n_steps": 4
+  },
+  "BLOCK-T137": {
+    "key": "BLOCK-T137",
+    "name": "LSSTCam - EOTest step12/stabilityFlats_6h_10k",
+    "n_steps": 4
+  },
+  "BLOCK-T136": {
+    "key": "BLOCK-T136",
+    "name": "LSSTCam - EOTest step12/stabilityFlats_24h",
+    "n_steps": 4
+  },
+  "BLOCK-T138": {
+    "key": "BLOCK-T138",
+    "name": "LSSTCam - EOTest step12/stabilityFlats_6h_50k",
+    "n_steps": 4
+  },
+  "BLOCK-T139": {
+    "key": "BLOCK-T139",
+    "name": "Simonyi Hexapod Shutdown",
+    "n_steps": 9
+  },
+  "BLOCK-T140": {
+    "key": "BLOCK-T140",
+    "name": "LSSTCam - EOTest step05/Persistence_large",
+    "n_steps": 4
+  },
+  "BLOCK-T141": {
+    "key": "BLOCK-T141",
+    "name": "LSSTCam - EOTest step05/Persistence_medium",
+    "n_steps": 4
+  },
+  "BLOCK-T142": {
+    "key": "BLOCK-T142",
+    "name": "LSSTCam - EOTest step05/Persistence_small",
+    "n_steps": 4
+  },
+  "BLOCK-T143": {
+    "key": "BLOCK-T143",
+    "name": "Test MTAOS closed loop with Simulated images",
+    "n_steps": 3
+  },
+  "BLOCK-T145": {
+    "key": "BLOCK-T145",
+    "name": "M1M3 Hardpoints Breakaway Test",
+    "n_steps": 4
+  },
+  "BLOCK-T144": {
+    "key": "BLOCK-T144",
+    "name": "M1M3 Bump Test",
+    "n_steps": 6
+  },
+  "BLOCK-T147": {
+    "key": "BLOCK-T147",
+    "name": "LSSTCam - EOTest step05/Persistence_short_noDarkInterrupt",
+    "n_steps": 4
+  },
+  "BLOCK-T146": {
+    "key": "BLOCK-T146",
+    "name": "LSSTCam - EOTest step05/Persistence_large_noDarkInterrupt",
+    "n_steps": 4
+  },
+  "BLOCK-T148": {
+    "key": "BLOCK-T148",
+    "name": "ASCT-009 Dome Slit Coordinate System",
+    "n_steps": 13
+  },
+  "BLOCK-T149": {
+    "key": "BLOCK-T149",
+    "name": "ASCT-010 Mirror Cover Coordinate System",
+    "n_steps": 10
+  },
+  "BLOCK-T151": {
+    "key": "BLOCK-T151",
+    "name": "Simonyi Hexapods Startup",
+    "n_steps": 4
+  },
+  "BLOCK-T150": {
+    "key": "BLOCK-T150",
+    "name": "WET-013 Exposure Time",
+    "n_steps": 6
+  },
+  "BLOCK-T154": {
+    "key": "BLOCK-T154",
+    "name": "LSSTCam - EOtest step04/EnablingLSSTCamera",
+    "n_steps": 3
+  },
+  "BLOCK-T155": {
+    "key": "BLOCK-T155",
+    "name": "Simonyi ComCam Feature Based Scheduler Flexible Science Verification Survey",
+    "n_steps": 7
+  },
+  "BLOCK-T159": {
+    "key": "BLOCK-T159",
+    "name": "LSSTCam - EOTest step04/TakeImageLSSTCam",
+    "n_steps": 2
+  },
+  "BLOCK-T158": {
+    "key": "BLOCK-T158",
+    "name": "CLT-002 Gain Tuning Closed Loop",
+    "n_steps": 6
+  },
+  "BLOCK-T153": {
+    "key": "BLOCK-T153",
+    "name": "Simonyi - Opening M1M3 Mirror Covers",
+    "n_steps": 2
+  },
+  "BLOCK-T152": {
+    "key": "BLOCK-T152",
+    "name": "Simonyi - Closing M1M3 Mirror Covers",
+    "n_steps": 3
+  },
+  "BLOCK-T160": {
+    "key": "BLOCK-T160",
+    "name": "WET-008 Chromaticity",
+    "n_steps": 3
+  },
+  "BLOCK-T162": {
+    "key": "BLOCK-T162",
+    "name": "Simonyi Rotator Shutdown",
+    "n_steps": 6
+  },
+  "BLOCK-T161": {
+    "key": "BLOCK-T161",
+    "name": "Simonyi Rotator Startup",
+    "n_steps": 4
+  },
+  "BLOCK-T163": {
+    "key": "BLOCK-T163",
+    "name": "Apply Bending Mode to M1M3/M2",
+    "n_steps": 1
+  },
+  "BLOCK-T164": {
+    "key": "BLOCK-T164",
+    "name": "Minimum Functionality Test Following Long Rotator Shutdown",
+    "n_steps": 5
+  },
+  "BLOCK-T165": {
+    "key": "BLOCK-T165",
+    "name": "AuxTel New LUT Test",
+    "n_steps": 8
+  },
+  "BLOCK-T167": {
+    "key": "BLOCK-T167",
+    "name": "Enable LSST Camera",
+    "n_steps": 3
+  },
+  "BLOCK-T166": {
+    "key": "BLOCK-T166",
+    "name": "LSSTCam - EOTest step09/TakeImageLSSTCam",
+    "n_steps": 1
+  },
+  "BLOCK-T168": {
+    "key": "BLOCK-T168",
+    "name": "LSSTCam - EOtest step09/EnablingLSSTCamera",
+    "n_steps": 3
+  },
+  "BLOCK-T169": {
+    "key": "BLOCK-T169",
+    "name": "LSSTCam - EOTest step04/OpSim30MinuteOCS",
+    "n_steps": 3
+  },
+  "BLOCK-T170": {
+    "key": "BLOCK-T170",
+    "name": "Soak Test w/ Rotator and mtmount-ccw-only",
+    "n_steps": 5
+  },
+  "BLOCK-T171": {
+    "key": "BLOCK-T171",
+    "name": "CLT-006 Control Loop Single and Double Exposure Test",
+    "n_steps": 1
+  },
+  "BLOCK-T173": {
+    "key": "BLOCK-T173",
+    "name": "LSSTCam - EOTest step14/dark_shutterClosed",
+    "n_steps": 4
+  },
+  "BLOCK-T172": {
+    "key": "BLOCK-T172",
+    "name": "Dome Cooling Study with Air Handlers Units (AHU/UMA) 1 and 2 only",
+    "n_steps": 4
+  },
+  "BLOCK-T174": {
+    "key": "BLOCK-T174",
+    "name": "LSSTCam - EOTest step14/dark_shutterOpen",
+    "n_steps": 4
+  },
+  "BLOCK-T175": {
+    "key": "BLOCK-T175",
+    "name": "Soak Test w/ Rotator/M2/Hexapods and mtmount-ccw-only",
+    "n_steps": 7
+  },
+  "BLOCK-T177": {
+    "key": "BLOCK-T177",
+    "name": "Level 3 Thermal Flushing Test",
+    "n_steps": 4
+  },
+  "BLOCK-T176": {
+    "key": "BLOCK-T176",
+    "name": "MTDome Thermal Flushing Test",
+    "n_steps": 4
+  },
+  "BLOCK-T178": {
+    "key": "BLOCK-T178",
+    "name": "AuxTel - Taking Images for Simonyi Ceremony Event",
+    "n_steps": 8
+  },
+  "BLOCK-T179": {
+    "key": "BLOCK-T179",
+    "name": "AuxTel Optical Alignment Check",
+    "n_steps": 8
+  },
+  "BLOCK-T182": {
+    "key": "BLOCK-T182",
+    "name": "WET-001 Optical State Characteristic Modes",
+    "n_steps": 9
+  },
+  "BLOCK-T180": {
+    "key": "BLOCK-T180",
+    "name": "WET-001 Optical State M2 Bending",
+    "n_steps": 11
+  },
+  "BLOCK-T184": {
+    "key": "BLOCK-T184",
+    "name": "Soak Test w/ Hexapods with drives DISABLED between simulated targets",
+    "n_steps": 4
+  },
+  "BLOCK-T183": {
+    "key": "BLOCK-T183",
+    "name": "WET-001 Optical State M1M3 Bending",
+    "n_steps": 11
+  },
+  "BLOCK-T186": {
+    "key": "BLOCK-T186",
+    "name": "LUTT-004 Azimuth Look-Up Table with Closed-Loop",
+    "n_steps": 3
+  },
+  "BLOCK-T185": {
+    "key": "BLOCK-T185",
+    "name": "Soak Test w/ Hexapods drives ENABLED",
+    "n_steps": 4
+  },
+  "BLOCK-T189": {
+    "key": "BLOCK-T189",
+    "name": "LSSTCam EOTest step09/OpSimFullNight",
+    "n_steps": 1
+  },
+  "BLOCK-T192": {
+    "key": "BLOCK-T192",
+    "name": "Top end thermal tests: Soak Test w/ Camera Hexapod with DISABLED state between targets",
+    "n_steps": 4
+  },
+  "BLOCK-T195": {
+    "key": "BLOCK-T195",
+    "name": "LSSTCam - EOTest step05/Persistence_onlyGuider",
+    "n_steps": 4
+  },
+  "BLOCK-T198": {
+    "key": "BLOCK-T198",
+    "name": "LSSTCam - EOTest step03/B_protocol_with_guider",
+    "n_steps": 4
+  },
+  "BLOCK-T194": {
+    "key": "BLOCK-T194",
+    "name": "Top end thermal tests: Soak Test w/ Camera Hexapod with ENABLED state between targets",
+    "n_steps": 4
+  },
+  "BLOCK-T199": {
+    "key": "BLOCK-T199",
+    "name": "LSSTCam - EOTest step03/D_protocol_with_guider",
+    "n_steps": 4
+  },
+  "BLOCK-T62": {
+    "key": "BLOCK-T62",
+    "name": "TMA Coarse Balance",
+    "n_steps": 13
+  },
+  "BLOCK-T201": {
+    "key": "BLOCK-T201",
+    "name": "Intentionally Fault the MTM1M3 and recover",
+    "n_steps": 6
+  },
+  "BLOCK-T202": {
+    "key": "BLOCK-T202",
+    "name": "LUTT-001 - Measurement of M2 and Camera targets",
+    "n_steps": 1
+  },
+  "BLOCK-T203": {
+    "key": "BLOCK-T203",
+    "name": "Top end thermal tests: Soak Test w/ Rotator and mtmount-ccw-only",
+    "n_steps": 5
+  },
+  "BLOCK-T204": {
+    "key": "BLOCK-T204",
+    "name": "Top end thermal tests: Soak Test w/ M2 Hexapod with DISABLED state between targets",
+    "n_steps": 4
+  },
+  "BLOCK-T191": {
+    "key": "BLOCK-T191",
+    "name": "Morning Twilight Flats LATISS",
+    "n_steps": 5
+  },
+  "BLOCK-T205": {
+    "key": "BLOCK-T205",
+    "name": "Top end thermal tests: Soak Test w/ M2 Hexapod with ENABLED state between targets",
+    "n_steps": 4
+  },
+  "BLOCK-T206": {
+    "key": "BLOCK-T206",
+    "name": "TMA Tracking Range in Azimuth",
+    "n_steps": 1
+  },
+  "BLOCK-T207": {
+    "key": "BLOCK-T207",
+    "name": "LSSTCam - EOTest step12/flats_1h_5k",
+    "n_steps": 4
+  },
+  "BLOCK-T190": {
+    "key": "BLOCK-T190",
+    "name": "Evening Twilight Flats LATISS",
+    "n_steps": 8
+  },
+  "BLOCK-T209": {
+    "key": "BLOCK-T209",
+    "name": "LSSTCam - EOTest step05/Persistence_allLEDs",
+    "n_steps": 4
+  },
+  "BLOCK-T208": {
+    "key": "BLOCK-T208",
+    "name": "Initial pointing verification with ComCam on sky.",
+    "n_steps": 4
+  },
+  "BLOCK-T210": {
+    "key": "BLOCK-T210",
+    "name": "TMA Braking Tests",
+    "n_steps": 1
+  },
+  "BLOCK-T212": {
+    "key": "BLOCK-T212",
+    "name": "LSSTCam - EOTest step03/guider_uvLED_integration",
+    "n_steps": 4
+  },
+  "BLOCK-T211": {
+    "key": "BLOCK-T211",
+    "name": "LSSTCam - EOTest step03/guider_uvLED_size",
+    "n_steps": 4
+  },
+  "BLOCK-T213": {
+    "key": "BLOCK-T213",
+    "name": "LSSTCam - EOTest step03/guider_uvLED_location",
+    "n_steps": 4
+  },
+  "BLOCK-T216": {
+    "key": "BLOCK-T216",
+    "name": "Morning Twilight Flats with ComCam",
+    "n_steps": 2
+  },
+  "BLOCK-T214": {
+    "key": "BLOCK-T214",
+    "name": "LSSTCam - EOTest step03/guider_uvLED_segmentCross",
+    "n_steps": 4
+  },
+  "BLOCK-T217": {
+    "key": "BLOCK-T217",
+    "name": "LUTT-001 - Check M2 coordinate system with laser tracker",
+    "n_steps": 4
+  },
+  "BLOCK-T219": {
+    "key": "BLOCK-T219",
+    "name": "ComCam First Target",
+    "n_steps": 2
+  },
+  "BLOCK-T221": {
+    "key": "BLOCK-T221",
+    "name": "LSSTCam - EOTest step05/Persistence_projector_120s",
+    "n_steps": 4
+  },
+  "BLOCK-T220": {
+    "key": "BLOCK-T220",
+    "name": "ComCam Daytime Daily Calibrations",
+    "n_steps": 3
+  },
+  "BLOCK-T222": {
+    "key": "BLOCK-T222",
+    "name": "LUTT-003 Elevation Look-Up Table in Closed Dome",
+    "n_steps": 1
+  },
+  "BLOCK-T223": {
+    "key": "BLOCK-T223",
+    "name": "Soak tests using mtdome (closed), mtmount and comcam darks",
+    "n_steps": 12
+  },
+  "BLOCK-T224": {
+    "key": "BLOCK-T224",
+    "name": "LUTT-001 - Check Camera hexapod coordinate system with laser tracker ",
+    "n_steps": 4
+  },
+  "BLOCK-T225": {
+    "key": "BLOCK-T225",
+    "name": "LSSTCam - EOTest step05/Persistence_projector_fineTest",
+    "n_steps": 4
+  },
+  "BLOCK-T218": {
+    "key": "BLOCK-T218",
+    "name": "LSSTCam - EOTest step05/Persistence_projector_60s",
+    "n_steps": 4
+  },
+  "BLOCK-T229": {
+    "key": "BLOCK-T229",
+    "name": "LSSTCam - EOTest step05/Persistence_projector_100s",
+    "n_steps": 4
+  },
+  "BLOCK-T226": {
+    "key": "BLOCK-T226",
+    "name": "Soak tests using mtdome (closed), mtmount and comcam imaging with pinhole filter",
+    "n_steps": 12
+  },
+  "BLOCK-T228": {
+    "key": "BLOCK-T228",
+    "name": "LSSTCam - EOTest step04/OpSim30MinuteOCSNoShutter",
+    "n_steps": 3
+  },
+  "BLOCK-T230": {
+    "key": "BLOCK-T230",
+    "name": "LSSTCam - EOTest step05/Persistence_projector_40_60s",
+    "n_steps": 4
+  },
+  "BLOCK-T232": {
+    "key": "BLOCK-T232",
+    "name": "Exposure Time Scans",
+    "n_steps": 1
+  },
+  "BLOCK-T233": {
+    "key": "BLOCK-T233",
+    "name": "LSSTCam EOTest step09/OpSimFullNightNoShutter",
+    "n_steps": 5
+  },
+  "BLOCK-T234": {
+    "key": "BLOCK-T234",
+    "name": "Park Simonyi Telescope (with Tiago online support)",
+    "n_steps": 2
+  },
+  "BLOCK-T235": {
+    "key": "BLOCK-T235",
+    "name": "WET-014 Take a triplet and verify Rapid Analysis processing",
+    "n_steps": 2
+  },
+  "BLOCK-T236": {
+    "key": "BLOCK-T236",
+    "name": "LSSTCam - EOTest step12/opSimDark",
+    "n_steps": 4
+  },
+  "BLOCK-T237": {
+    "key": "BLOCK-T237",
+    "name": "LUTT-004 Azimuth Look-Up Table in Closed Dome",
+    "n_steps": 3
+  },
+  "BLOCK-T238": {
+    "key": "BLOCK-T238",
+    "name": "LUTT-005 Camera Rotator Look-Up Table in Closed Dome",
+    "n_steps": 3
+  },
+  "BLOCK-T239": {
+    "key": "BLOCK-T239",
+    "name": "Prepare for Dome Opening - HVAC systems (Automatic control - turn off manually in case it doesn't work)",
+    "n_steps": 5
+  },
+  "BLOCK-T242": {
+    "key": "BLOCK-T242",
+    "name": "Shutdown after Dome Closure - HVAC systems (automatically on;  if not, turn them on manually)",
+    "n_steps": 7
+  },
+  "BLOCK-T243": {
+    "key": "BLOCK-T243",
+    "name": "LSSTCam - EOTest step11/Overlap_Check_blue",
+    "n_steps": 4
+  },
+  "BLOCK-T246": {
+    "key": "BLOCK-T246",
+    "name": "ComCam USDF Checkout",
+    "n_steps": 3
+  },
+  "BLOCK-T247": {
+    "key": "BLOCK-T247",
+    "name": "Focus Sweeps in Elevation",
+    "n_steps": 1
+  },
+  "BLOCK-T248": {
+    "key": "BLOCK-T248",
+    "name": "Simonyi ComCam In-Situ Science Visits",
+    "n_steps": 7
+  },
+  "BLOCK-T255": {
+    "key": "BLOCK-T255",
+    "name": "LSSTCam - EOTest step12/stabilityFlats_6h_2k",
+    "n_steps": 4
+  },
+  "BLOCK-T257": {
+    "key": "BLOCK-T257",
+    "name": "LSSTCam - EOTest step05/Fluorescence_1k",
+    "n_steps": 4
+  },
+  "BLOCK-T258": {
+    "key": "BLOCK-T258",
+    "name": "LSSTCam - EOTest step05/Fluorescence_10k_20",
+    "n_steps": 4
+  },
+  "BLOCK-T256": {
+    "key": "BLOCK-T256",
+    "name": "Start of Shift Re-assess HVAC set point",
+    "n_steps": 2
+  },
+  "BLOCK-T252": {
+    "key": "BLOCK-T252",
+    "name": "WET-001 Optical State M1M3 Bending Modes one by one",
+    "n_steps": 49
+  },
+  "BLOCK-T253": {
+    "key": "BLOCK-T253",
+    "name": "WET-001 Optical State M2 Bending Modes one by one",
+    "n_steps": 49
+  },
+  "BLOCK-T259": {
+    "key": "BLOCK-T259",
+    "name": "LSSTCam - EOTest step05/Fluorescence_10k_1",
+    "n_steps": 4
+  },
+  "BLOCK-T260": {
+    "key": "BLOCK-T260",
+    "name": "LSSTCam - EOTest step05/Fluorescence_10k_10",
+    "n_steps": 4
+  },
+  "BLOCK-T261": {
+    "key": "BLOCK-T261",
+    "name": "LSSTCam - EOTest step11/Super_Dense_PTC_Randomized",
+    "n_steps": 4
+  },
+  "BLOCK-T265": {
+    "key": "BLOCK-T265",
+    "name": "LSSTCam - EOTest step12/darkWithDelay",
+    "n_steps": 4
+  },
+  "BLOCK-T262": {
+    "key": "BLOCK-T262",
+    "name": "LSSTCam EOTest step09/OpSimFlatFullNight",
+    "n_steps": 5
+  },
+  "BLOCK-T266": {
+    "key": "BLOCK-T266",
+    "name": "Turn on/off M1M3 FCUs ",
+    "n_steps": 4
+  },
+  "BLOCK-T263": {
+    "key": "BLOCK-T263",
+    "name": "LSSTCam - EOTest step15/OCSCalibration",
+    "n_steps": 4
+  },
+  "BLOCK-T267": {
+    "key": "BLOCK-T267",
+    "name": "LSSTCam - EOTest step05/darkProjector",
+    "n_steps": 4
+  },
+  "BLOCK-T268": {
+    "key": "BLOCK-T268",
+    "name": "LSSTCam - EOTest step05/flat_RectangleAmplifier_60s.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T270": {
+    "key": "BLOCK-T270",
+    "name": "AOS Closed-Loop M2 Sign Verification",
+    "n_steps": 85
+  },
+  "BLOCK-T271": {
+    "key": "BLOCK-T271",
+    "name": "LSSTCam - EOTest step12/darkBias",
+    "n_steps": 4
+  },
+  "BLOCK-T272": {
+    "key": "BLOCK-T272",
+    "name": "ComCam Boresight definition",
+    "n_steps": 1
+  },
+  "BLOCK-T275": {
+    "key": "BLOCK-T275",
+    "name": "LSSTCam - EOTest step09/shutterActuation_30min",
+    "n_steps": 4
+  },
+  "BLOCK-T274": {
+    "key": "BLOCK-T274",
+    "name": "AOS Closed-Loop Rotator Verification",
+    "n_steps": 12
+  },
+  "BLOCK-T277": {
+    "key": "BLOCK-T277",
+    "name": "Simple linear dither",
+    "n_steps": 1
+  },
+  "BLOCK-T279": {
+    "key": "BLOCK-T279",
+    "name": "ASCT-002 Alignment Sweep Camera Hexapod (parameter march)",
+    "n_steps": 2
+  },
+  "BLOCK-T280": {
+    "key": "BLOCK-T280",
+    "name": "Boresight Test with no rotator",
+    "n_steps": 2
+  },
+  "BLOCK-T281": {
+    "key": "BLOCK-T281",
+    "name": "CBP Calibration on L5",
+    "n_steps": 2
+  },
+  "BLOCK-T273": {
+    "key": "BLOCK-T273",
+    "name": "AOS Closed-Loop M1M3 Sign Verification",
+    "n_steps": 85
+  },
+  "BLOCK-T284": {
+    "key": "BLOCK-T284",
+    "name": "M2 inclinometer reading source - switch test",
+    "n_steps": 3
+  },
+  "BLOCK-T282": {
+    "key": "BLOCK-T282",
+    "name": "M2 Bump Tests",
+    "n_steps": 2
+  },
+  "BLOCK-T283": {
+    "key": "BLOCK-T283",
+    "name": "WET-013 - 15s Exposures Wavefront Check",
+    "n_steps": 1
+  },
+  "BLOCK-T215": {
+    "key": "BLOCK-T215",
+    "name": "Evening Twilight Flats with ComCam",
+    "n_steps": 1
+  },
+  "BLOCK-T285": {
+    "key": "BLOCK-T285",
+    "name": "CLT-007 - Danish Wavefront Estimation Test",
+    "n_steps": 3
+  },
+  "BLOCK-T289": {
+    "key": "BLOCK-T289",
+    "name": "Tekniker Testing",
+    "n_steps": 1
+  },
+  "BLOCK-T276": {
+    "key": "BLOCK-T276",
+    "name": "ComCam 15s Exposure Investigation",
+    "n_steps": 3
+  },
+  "BLOCK-T287": {
+    "key": "BLOCK-T287",
+    "name": "Linear dither sequence with ComCam",
+    "n_steps": 10
+  },
+  "BLOCK-T295": {
+    "key": "BLOCK-T295",
+    "name": "Closed-dome Light Leak Checks - Nighttime",
+    "n_steps": 4
+  },
+  "BLOCK-T296": {
+    "key": "BLOCK-T296",
+    "name": "Closed-dome Light Leak Checks - Daytime",
+    "n_steps": 1
+  },
+  "BLOCK-T291": {
+    "key": "BLOCK-T291",
+    "name": "AOS Closed-Loop w/ increasing Zernikes and corresponding DOF",
+    "n_steps": 6
+  },
+  "BLOCK-T292": {
+    "key": "BLOCK-T292",
+    "name": "CLT-005 - Closed Loop Exposure Time",
+    "n_steps": 7
+  },
+  "BLOCK-T298": {
+    "key": "BLOCK-T298",
+    "name": "Short-exposure donut stamps to understand scintillation effects",
+    "n_steps": 2
+  },
+  "BLOCK-T299": {
+    "key": "BLOCK-T299",
+    "name": "Observe the Eutelsat 117 W GPS WAAS satellite for timing test.",
+    "n_steps": 1
+  },
+  "BLOCK-T301": {
+    "key": "BLOCK-T301",
+    "name": "Z4 gradient investigation - rotator angle",
+    "n_steps": 1
+  },
+  "BLOCK-T300": {
+    "key": "BLOCK-T300",
+    "name": "Z4 gradient investigation - elevation",
+    "n_steps": 1
+  },
+  "BLOCK-T303": {
+    "key": "BLOCK-T303",
+    "name": "Sparse Zernike and Danish Closed Loop Test",
+    "n_steps": 2
+  },
+  "BLOCK-T302": {
+    "key": "BLOCK-T302",
+    "name": "Back-bias off Mirror Cover Flats",
+    "n_steps": 4
+  },
+  "BLOCK-T305": {
+    "key": "BLOCK-T305",
+    "name": "WET-015 - Test wavefront estimation in dense stellar fields",
+    "n_steps": 4
+  },
+  "BLOCK-T304": {
+    "key": "BLOCK-T304",
+    "name": "Bright Sky Intra-Extra Defocal Pairs",
+    "n_steps": 2
+  },
+  "BLOCK-T306": {
+    "key": "BLOCK-T306",
+    "name": "Simonyi ComCam FBS SV Survey: Fornax Dwarf Spheroidal Galaxy",
+    "n_steps": 3
+  },
+  "BLOCK-T307": {
+    "key": "BLOCK-T307",
+    "name": "Simonyi ComCam FBS SV Survey: Ecliptic Field Rubin_SV_38_7",
+    "n_steps": 3
+  },
+  "BLOCK-T308": {
+    "key": "BLOCK-T308",
+    "name": "Simonyi ComCam FBS SV Survey: 47 Tuc Globular Cluster",
+    "n_steps": 3
+  },
+  "BLOCK-T309": {
+    "key": "BLOCK-T309",
+    "name": "Simonyi ComCam FBS SV Survey: Extended Chandra Deep Field South (ECDFS) LSST Deep Drilling Field",
+    "n_steps": 3
+  },
+  "BLOCK-T311": {
+    "key": "BLOCK-T311",
+    "name": "Simonyi ComCam FBS SV Survey: Low Galactic Latitude Field Rubin_SV_095_-25",
+    "n_steps": 3
+  },
+  "BLOCK-T310": {
+    "key": "BLOCK-T310",
+    "name": "Simonyi ComCam FBS SV Survey: Euclid Deep Field South (EDFS) LSST Deep Drilling Field",
+    "n_steps": 3
+  },
+  "BLOCK-T313": {
+    "key": "BLOCK-T313",
+    "name": "Simonyi ComCam FBS SV Survey Check Field Visibility",
+    "n_steps": 1
+  },
+  "BLOCK-T312": {
+    "key": "BLOCK-T312",
+    "name": "Simonyi ComCam FBS SV Survey: Seagull Nebula",
+    "n_steps": 3
+  },
+  "BLOCK-T314": {
+    "key": "BLOCK-T314",
+    "name": "Parameter March for Camera Tilts",
+    "n_steps": 2
+  },
+  "BLOCK-T315": {
+    "key": "BLOCK-T315",
+    "name": "Add tilt and capture triplets at different rotator angles",
+    "n_steps": 8
+  },
+  "BLOCK-T286": {
+    "key": "BLOCK-T286",
+    "name": "LUTT-003 Elevation Look-Up Table with Hexapod and Mirror Bending Modes Closed-Loop",
+    "n_steps": 4
+  },
+  "BLOCK-T316": {
+    "key": "BLOCK-T316",
+    "name": "Test different degree of freedom weights in OFC",
+    "n_steps": 6
+  },
+  "BLOCK-T317": {
+    "key": "BLOCK-T317",
+    "name": "glitch test, mirror raised, 50 deg elevation - 10% Settings GGRR",
+    "n_steps": 6
+  },
+  "BLOCK-T66": {
+    "key": "BLOCK-T66",
+    "name": "ASCT-004 Sensitivity M1M3 Bending V2",
+    "n_steps": 4
+  },
+  "BLOCK-T61": {
+    "key": "BLOCK-T61",
+    "name": "ASCT-004 Sensitivity Camera Hexapod V2",
+    "n_steps": 2
+  },
+  "BLOCK-T65": {
+    "key": "BLOCK-T65",
+    "name": "ASCT-004 Sensitivity M2 Bending V2",
+    "n_steps": 3
+  },
+  "BLOCK-T320": {
+    "key": "BLOCK-T320",
+    "name": "Spider Shadow Investigation",
+    "n_steps": 12
+  },
+  "BLOCK-T319": {
+    "key": "BLOCK-T319",
+    "name": "ASCT-004 - Spherical March",
+    "n_steps": 2
+  },
+  "BLOCK-T294": {
+    "key": "BLOCK-T294",
+    "name": "Dynamic Tests at El = 82\u00ba - short and long slews - 20% Settings GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T290": {
+    "key": "BLOCK-T290",
+    "name": "Closed Loop Truncation Test - coma modes",
+    "n_steps": 12
+  },
+  "BLOCK-T322": {
+    "key": "BLOCK-T322",
+    "name": "LSSTCam - EOTest step02/persistence_filterMismatch_blue.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T157": {
+    "key": "BLOCK-T157",
+    "name": "CLT-001 Closed Loop Converge - Kick z11",
+    "n_steps": 3
+  },
+  "BLOCK-T323": {
+    "key": "BLOCK-T323",
+    "name": "LSSTCam - EOTest step02/persistence_filterMismatch_nm960.cfg",
+    "n_steps": 4
+  },
+  "BLOCK-T64": {
+    "key": "BLOCK-T64",
+    "name": "ASCT-004 Sensitivity M2 Hexapod V2",
+    "n_steps": 2
+  },
+  "BLOCK-T324": {
+    "key": "BLOCK-T324",
+    "name": "LSSTCam - EOTest step02/pinholeBleed",
+    "n_steps": 4
+  },
+  "BLOCK-T327": {
+    "key": "BLOCK-T327",
+    "name": "Guider Test using ComCam",
+    "n_steps": 5
+  },
+  "BLOCK-T325": {
+    "key": "BLOCK-T325",
+    "name": "LSSTCam - EOTest step06/sequencerOptimization",
+    "n_steps": 4
+  },
+  "BLOCK-T326": {
+    "key": "BLOCK-T326",
+    "name": "LSSTCam - EOTest step05/sequencerStuart",
+    "n_steps": 4
+  },
+  "BLOCK-T321": {
+    "key": "BLOCK-T321",
+    "name": "Wavefront estimation filter stability",
+    "n_steps": 1
+  },
+  "BLOCK-T328": {
+    "key": "BLOCK-T328",
+    "name": "Stuttered Images with ComCam",
+    "n_steps": 5
+  },
+  "BLOCK-T329": {
+    "key": "BLOCK-T329",
+    "name": "CBP Functional Test",
+    "n_steps": 17
+  },
+  "BLOCK-T331": {
+    "key": "BLOCK-T331",
+    "name": "CBP Mask Rotation Test",
+    "n_steps": 1
+  },
+  "BLOCK-T318": {
+    "key": "BLOCK-T318",
+    "name": "Bright star scans with ComCam.",
+    "n_steps": 7
+  },
+  "BLOCK-T332": {
+    "key": "BLOCK-T332",
+    "name": "\"Sidereal drive off tests\" with and without sidereal tracking",
+    "n_steps": 1
+  },
+  "BLOCK-T187": {
+    "key": "BLOCK-T187",
+    "name": "LUTT-003 Elevation Look-Up Table Verification",
+    "n_steps": 3
+  },
+  "BLOCK-T188": {
+    "key": "BLOCK-T188",
+    "name": "LUTT-005 Camera Rotator Look-Up Table with Closed-Loop v3",
+    "n_steps": 3
+  },
+  "BLOCK-T334": {
+    "key": "BLOCK-T334",
+    "name": "Update M2 LUT ",
+    "n_steps": 1
+  },
+  "BLOCK-T335": {
+    "key": "BLOCK-T335",
+    "name": "Elevation LUT validation with triplets",
+    "n_steps": 1
+  },
+  "BLOCK-T336": {
+    "key": "BLOCK-T336",
+    "name": "CBP Co-Pointing Dance",
+    "n_steps": 1
+  },
+  "BLOCK-T337": {
+    "key": "BLOCK-T337",
+    "name": "CBP Mask Tests",
+    "n_steps": 1
+  },
+  "BLOCK-T338": {
+    "key": "BLOCK-T338",
+    "name": "CBP Small Motion Test",
+    "n_steps": 3
+  },
+  "BLOCK-T342": {
+    "key": "BLOCK-T342",
+    "name": "Rotator LUT validation with triplets",
+    "n_steps": 1
+  },
+  "BLOCK-T341": {
+    "key": "BLOCK-T341",
+    "name": "Investigate z22 by taking triplets with dz offset balanced between camera and M2",
+    "n_steps": 6
+  },
+  "BLOCK-T340": {
+    "key": "BLOCK-T340",
+    "name": "Z22 investigation through azimuthally-symmetric characteristic modes",
+    "n_steps": 3
+  },
+  "BLOCK-T343": {
+    "key": "BLOCK-T343",
+    "name": "Investigate z22 by running closed loop with settings from Nov 12, 2024",
+    "n_steps": 7
+  },
+  "BLOCK-T345": {
+    "key": "BLOCK-T345",
+    "name": "AOS survey-mode soak test",
+    "n_steps": 3
+  },
+  "BLOCK-T347": {
+    "key": "BLOCK-T347",
+    "name": "ASCT-006 - CBP AOS spot dance",
+    "n_steps": 6
+  },
+  "BLOCK-T249": {
+    "key": "BLOCK-T249",
+    "name": "ASCT-003 Initial Alignment with MTAOS",
+    "n_steps": 5
+  },
+  "BLOCK-T349": {
+    "key": "BLOCK-T349",
+    "name": "ASCT-006 - CBP AOS Spot Dance M2 Hexapod ",
+    "n_steps": 1
+  },
+  "BLOCK-T344": {
+    "key": "BLOCK-T344",
+    "name": "Normalization weights investigation",
+    "n_steps": 41
+  },
+  "BLOCK-T351": {
+    "key": "BLOCK-T351",
+    "name": "ASCT-006 - CBP AOS Spot Dance M1M3 Bending Modes",
+    "n_steps": 1
+  },
+  "BLOCK-T350": {
+    "key": "BLOCK-T350",
+    "name": "ASCT-006 - CBP AOS Spot Dance Camera Hexapod",
+    "n_steps": 1
+  },
+  "BLOCK-T352": {
+    "key": "BLOCK-T352",
+    "name": "ASCT-006 - CBP AOS Spot Dance M2 Bending Modes",
+    "n_steps": 1
+  },
+  "BLOCK-T227": {
+    "key": "BLOCK-T227",
+    "name": "Dynamic Tests at El = 34\u00ba - GGGG - Vel 40% Acc 40% Jerk 40%",
+    "n_steps": 3
+  },
+  "BLOCK-T293": {
+    "key": "BLOCK-T293",
+    "name": "Dynamic Tests at El = 70\u00ba - GGGG - Vel 40% Acc 40% Jerk 40%",
+    "n_steps": 3
+  },
+  "BLOCK-T346": {
+    "key": "BLOCK-T346",
+    "name": "Stuttered imaging scan",
+    "n_steps": 6
+  },
+  "BLOCK-T354": {
+    "key": "BLOCK-T354",
+    "name": "M2 Hexapod strut 4 disabled test",
+    "n_steps": 6
+  },
+  "BLOCK-T353": {
+    "key": "BLOCK-T353",
+    "name": "AuxTel Initial Pointing Correction. ",
+    "n_steps": 8
+  },
+  "BLOCK-T358": {
+    "key": "BLOCK-T358",
+    "name": "Rotator+CamHex Soak Test",
+    "n_steps": 2
+  },
+  "BLOCK-T359": {
+    "key": "BLOCK-T359",
+    "name": "AuxTel White Dwarf Spectra",
+    "n_steps": 3
+  },
+  "BLOCK-T360": {
+    "key": "BLOCK-T360",
+    "name": "Monochromatic Source Test",
+    "n_steps": 4
+  },
+  "BLOCK-T19": {
+    "key": "BLOCK-T19",
+    "name": "AuxTel On-Sky Scheduler-Driven Survey",
+    "n_steps": 7
+  },
+  "BLOCK-T361": {
+    "key": "BLOCK-T361",
+    "name": "Rotator Only Soak Test",
+    "n_steps": 2
+  },
+  "BLOCK-T362": {
+    "key": "BLOCK-T362",
+    "name": "Rotator Exercise",
+    "n_steps": 4
+  },
+  "BLOCK-T73": {
+    "key": "BLOCK-T73",
+    "name": "TunableLaser Functional Test",
+    "n_steps": 12
+  },
+  "BLOCK-T363": {
+    "key": "BLOCK-T363",
+    "name": "AuxTel Spectra Focus Sweep",
+    "n_steps": 3
+  },
+  "BLOCK-T40": {
+    "key": "BLOCK-T40",
+    "name": "Offset Stars to generate spectra-flats",
+    "n_steps": 4
+  },
+  "BLOCK-T364": {
+    "key": "BLOCK-T364",
+    "name": "Simonyi LSSTCam FBS Field Survey: Carina Nebula",
+    "n_steps": 3
+  },
+  "BLOCK-T366": {
+    "key": "BLOCK-T366",
+    "name": "Simonyi LSSTCam FBS Field Survey: IC 2944 (Running Chicken)",
+    "n_steps": 1
+  },
+  "BLOCK-T367": {
+    "key": "BLOCK-T367",
+    "name": "Simonyi LSSTCam FBS Field Survey: M49 (Galaxy in Virgo Galaxy Cluster)",
+    "n_steps": 3
+  },
+  "BLOCK-T368": {
+    "key": "BLOCK-T368",
+    "name": "Simonyi LSSTCam FBS Field Survey: Prawn Nebula, NGC 6231, Dark Tower",
+    "n_steps": 3
+  },
+  "BLOCK-T365": {
+    "key": "BLOCK-T365",
+    "name": "Simonyi LSSTCam FBS Field Survey: M20-M8 Complex (Trifid Nebula, Lagoon Nebula)",
+    "n_steps": 3
+  },
+  "BLOCK-T369": {
+    "key": "BLOCK-T369",
+    "name": "Simonyi LSSTCam FBS Field Survey: Scutum Star Cloud",
+    "n_steps": 1
+  },
+  "BLOCK-T370": {
+    "key": "BLOCK-T370",
+    "name": "Filter Elevation Scan under CCS control",
+    "n_steps": 6
+  },
+  "BLOCK-T371": {
+    "key": "BLOCK-T371",
+    "name": "Camera verification: HV regulation internal to rebpower subsystem",
+    "n_steps": 7
+  },
+  "BLOCK-T372": {
+    "key": "BLOCK-T372",
+    "name": "Filter Elevation Scan under OCS Control",
+    "n_steps": 1
+  },
+  "BLOCK-T373": {
+    "key": "BLOCK-T373",
+    "name": "Simonyi LSSTCam FBS Field Survey: Low Ecliptic Latitude Field at Opposition (Rubin_SV_216_-17)",
+    "n_steps": 3
+  },
+  "BLOCK-T374": {
+    "key": "BLOCK-T374",
+    "name": "Refrigeration Operations at different elevation and rotation angles",
+    "n_steps": 2
+  },
+  "BLOCK-T377": {
+    "key": "BLOCK-T377",
+    "name": "ASCT-004 Sensitivity Camera Hexapod",
+    "n_steps": 3
+  },
+  "BLOCK-T376": {
+    "key": "BLOCK-T376",
+    "name": "Camera Control System Messages & Telemetry Verification",
+    "n_steps": 11
+  },
+  "BLOCK-T375": {
+    "key": "BLOCK-T375",
+    "name": "Camera Verification: Dark Exposure Testing Stage 1",
+    "n_steps": 5
+  },
+  "BLOCK-T380": {
+    "key": "BLOCK-T380",
+    "name": "ASCT-004 Sensitivity M2 Hexapod",
+    "n_steps": 3
+  },
+  "BLOCK-T382": {
+    "key": "BLOCK-T382",
+    "name": "LSSTCam Super bias, 30s delay",
+    "n_steps": 1
+  },
+  "BLOCK-T383": {
+    "key": "BLOCK-T383",
+    "name": "WET-015 Bright Star Ghosts",
+    "n_steps": 2
+  },
+  "BLOCK-T385": {
+    "key": "BLOCK-T385",
+    "name": "ASCT-002 Focus Sweep and Alignment M2 Hexapod",
+    "n_steps": 11
+  },
+  "BLOCK-T386": {
+    "key": "BLOCK-T386",
+    "name": "CLT-006 Control Loop Single and Double Exposure Test",
+    "n_steps": 8
+  },
+  "BLOCK-T388": {
+    "key": "BLOCK-T388",
+    "name": "Investigate High Elevation Ellipticity Deterioration",
+    "n_steps": 5
+  },
+  "BLOCK-T387": {
+    "key": "BLOCK-T387",
+    "name": "MTDome Mini-Cadence Test",
+    "n_steps": 9
+  },
+  "BLOCK-T390": {
+    "key": "BLOCK-T390",
+    "name": "WET-008 Wavefront Chromaticity Test",
+    "n_steps": 3
+  },
+  "BLOCK-T389": {
+    "key": "BLOCK-T389",
+    "name": "WET-005 Giant Donut Characterization Test",
+    "n_steps": 6
+  },
+  "BLOCK-T384": {
+    "key": "BLOCK-T384",
+    "name": "ASCT-002 Focus Sweep and Alignment Camera Hexapod",
+    "n_steps": 11
+  },
+  "BLOCK-T391": {
+    "key": "BLOCK-T391",
+    "name": "Bright Star (V_mag=2 ) Illumination in R01[1.2] & R02[0.1]",
+    "n_steps": 16
+  },
+  "BLOCK-T392": {
+    "key": "BLOCK-T392",
+    "name": "Test SAL Scripts with MTDome",
+    "n_steps": 9
+  },
+  "BLOCK-T394": {
+    "key": "BLOCK-T394",
+    "name": "LUTT-004 Azimuth Look-Up Table",
+    "n_steps": 3
+  },
+  "BLOCK-T396": {
+    "key": "BLOCK-T396",
+    "name": "LUTT-011 Full Azimuth-Elevation-Rotator Look-Up Table",
+    "n_steps": 4
+  },
+  "BLOCK-T398": {
+    "key": "BLOCK-T398",
+    "name": "Create test case for guider testing",
+    "n_steps": 1
+  },
+  "BLOCK-T397": {
+    "key": "BLOCK-T397",
+    "name": "Verification of Filter Exchange System (FES) Communication and Software Lock with TMA",
+    "n_steps": 6
+  },
+  "BLOCK-T400": {
+    "key": "BLOCK-T400",
+    "name": "Camera Verification: test new idle flush replacement",
+    "n_steps": 7
+  },
+  "BLOCK-T403": {
+    "key": "BLOCK-T403",
+    "name": "Laser Tracker Measurements of Slewing and Tracking",
+    "n_steps": 4
+  },
+  "BLOCK-T405": {
+    "key": "BLOCK-T405",
+    "name": "Camera Verification: Dark Exposure Testing Stage 3",
+    "n_steps": 5
+  },
+  "BLOCK-T406": {
+    "key": "BLOCK-T406",
+    "name": "Camera Verification: Dark Exposure Testing Stage 4",
+    "n_steps": 5
+  },
+  "BLOCK-T408": {
+    "key": "BLOCK-T408",
+    "name": "Simple script test case for guider mode testing.",
+    "n_steps": 1
+  },
+  "BLOCK-T402": {
+    "key": "BLOCK-T402",
+    "name": "Streaked and Stuttered Image Scans with LSSTCam",
+    "n_steps": 10
+  },
+  "BLOCK-T409": {
+    "key": "BLOCK-T409",
+    "name": "Test case for combined bias.",
+    "n_steps": 1
+  },
+  "BLOCK-T410": {
+    "key": "BLOCK-T410",
+    "name": "Test case for combined darks.",
+    "n_steps": 1
+  },
+  "BLOCK-T411": {
+    "key": "BLOCK-T411",
+    "name": "WET-013 Exposure Time",
+    "n_steps": 2
+  },
+  "BLOCK-T413": {
+    "key": "BLOCK-T413",
+    "name": "WET-001 Optical State Camera Hexapod",
+    "n_steps": 2
+  },
+  "BLOCK-T414": {
+    "key": "BLOCK-T414",
+    "name": "WET-001 Optical State M2 Hexapod",
+    "n_steps": 2
+  },
+  "BLOCK-T415": {
+    "key": "BLOCK-T415",
+    "name": "WET-001 Optical State M1M3 Bending",
+    "n_steps": 5
+  },
+  "BLOCK-T418": {
+    "key": "BLOCK-T418",
+    "name": "Filter Exchange System Power down/Reset",
+    "n_steps": 1
+  },
+  "BLOCK-T420": {
+    "key": "BLOCK-T420",
+    "name": "WET-009 Full-Array Mode M1M3 Bending",
+    "n_steps": 5
+  },
+  "BLOCK-T419": {
+    "key": "BLOCK-T419",
+    "name": "WET-009 Full-Array Mode M2 Bending",
+    "n_steps": 5
+  },
+  "BLOCK-T416": {
+    "key": "BLOCK-T416",
+    "name": "WET-001 Optical State M2 Bending",
+    "n_steps": 5
+  },
+  "BLOCK-T421": {
+    "key": "BLOCK-T421",
+    "name": "WET-009 Full-Array Mode M2 Hexapod",
+    "n_steps": 2
+  },
+  "BLOCK-T422": {
+    "key": "BLOCK-T422",
+    "name": "WET-009 Full-Array Mode Camera Hexapod",
+    "n_steps": 2
+  },
+  "BLOCK-T423": {
+    "key": "BLOCK-T423",
+    "name": "Closed-dome Rotator Tracking Test",
+    "n_steps": 4
+  },
+  "BLOCK-T424": {
+    "key": "BLOCK-T424",
+    "name": "AuxTel Pachon Laser Collision Test",
+    "n_steps": 5
+  },
+  "BLOCK-T427": {
+    "key": "BLOCK-T427",
+    "name": "LSSTCam USDF Checkout",
+    "n_steps": 3
+  },
+  "BLOCK-T426": {
+    "key": "BLOCK-T426",
+    "name": "LSSTCam stray light from M2 baffle",
+    "n_steps": 8
+  },
+  "BLOCK-T425": {
+    "key": "BLOCK-T425",
+    "name": "LSSTCam OFF-field stray light within a filter",
+    "n_steps": 10
+  },
+  "BLOCK-T428": {
+    "key": "BLOCK-T428",
+    "name": "LSSTCam IN-field stray light within a filter",
+    "n_steps": 9
+  },
+  "BLOCK-T432": {
+    "key": "BLOCK-T432",
+    "name": "LSSTCam IN-field stray light occulted star with different filters",
+    "n_steps": 4
+  },
+  "BLOCK-T193": {
+    "key": "BLOCK-T193",
+    "name": "Soak tests using mtdome and mtmount-sim - Full Perfomance",
+    "n_steps": 13
+  },
+  "BLOCK-T433": {
+    "key": "BLOCK-T433",
+    "name": "ASCT-009 Telescope Offsets",
+    "n_steps": 16
+  },
+  "BLOCK-T431": {
+    "key": "BLOCK-T431",
+    "name": "LSSTCam IN&OFF field stray light using CBP",
+    "n_steps": 14
+  },
+  "BLOCK-T430": {
+    "key": "BLOCK-T430",
+    "name": "LSSTCam OFF-field stray light NO filter",
+    "n_steps": 5
+  },
+  "BLOCK-T435": {
+    "key": "BLOCK-T435",
+    "name": "Open and close dome shutter in degraded mode",
+    "n_steps": 5
+  },
+  "BLOCK-T434": {
+    "key": "BLOCK-T434",
+    "name": "LSSTCam First Photon",
+    "n_steps": 2
+  },
+  "BLOCK-T437": {
+    "key": "BLOCK-T437",
+    "name": "TMA Soak test (mtdome closed) - Without LSSTCam",
+    "n_steps": 6
+  },
+  "BLOCK-T438": {
+    "key": "BLOCK-T438",
+    "name": "Generic TMA Dynamic Test ",
+    "n_steps": 1
+  },
+  "BLOCK-T439": {
+    "key": "BLOCK-T439",
+    "name": "TMA Dynamic Test at El = 70 - Vel 5% Acc 5% Jerk 5% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T196": {
+    "key": "BLOCK-T196",
+    "name": "End of night mount and dome closing procedure",
+    "n_steps": 14
+  },
+  "BLOCK-T440": {
+    "key": "BLOCK-T440",
+    "name": "TMA Dynamic Test at El = 70 - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T441": {
+    "key": "BLOCK-T441",
+    "name": "TMA Dynamic Test at El = 70 - Vel 20% Acc 20% Jerk 20% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T442": {
+    "key": "BLOCK-T442",
+    "name": "Initial pointing verification with LSSTCam on sky.",
+    "n_steps": 3
+  },
+  "BLOCK-T443": {
+    "key": "BLOCK-T443",
+    "name": "CBP Small Motion Test",
+    "n_steps": 3
+  },
+  "BLOCK-T333": {
+    "key": "BLOCK-T333",
+    "name": "CBP Pointing Test",
+    "n_steps": 22
+  },
+  "BLOCK-T444": {
+    "key": "BLOCK-T444",
+    "name": "TMA Soak test (mtdome closed) - With LSSTCam",
+    "n_steps": 6
+  },
+  "BLOCK-T446": {
+    "key": "BLOCK-T446",
+    "name": "LSSTCam all-day biases every 30s",
+    "n_steps": 3
+  },
+  "BLOCK-T450": {
+    "key": "BLOCK-T450",
+    "name": "LSSTCam all-day \"FLATS\" 30s exptime",
+    "n_steps": 3
+  },
+  "BLOCK-T447": {
+    "key": "BLOCK-T447",
+    "name": "TMA Soak test (mtdome closed) - With LSSTCam and shutter operation",
+    "n_steps": 6
+  },
+  "BLOCK-T449": {
+    "key": "BLOCK-T449",
+    "name": "LSSTCam all-day biases and darks with 30s spacing",
+    "n_steps": 3
+  },
+  "BLOCK-T448": {
+    "key": "BLOCK-T448",
+    "name": "Simonyi - After recovery checklist",
+    "n_steps": 9
+  },
+  "BLOCK-T451": {
+    "key": "BLOCK-T451",
+    "name": "ASCT-001 Initial Alignment",
+    "n_steps": 3
+  },
+  "BLOCK-T452": {
+    "key": "BLOCK-T452",
+    "name": "Bright Star (V_mag=1 ) Illumination in R01[1.2] & R02[0.1] ",
+    "n_steps": 16
+  },
+  "BLOCK-T445": {
+    "key": "BLOCK-T445",
+    "name": "LSSTCam stray light from M2 baffle using CBP",
+    "n_steps": 20
+  },
+  "BLOCK-T453": {
+    "key": "BLOCK-T453",
+    "name": "Bright Star (V_mag=0 ) Illumination in R01[1.2] & R02[0.1] ",
+    "n_steps": 16
+  },
+  "BLOCK-T455": {
+    "key": "BLOCK-T455",
+    "name": "Daytime Stuttered Image Testing with LSSTCam",
+    "n_steps": 4
+  },
+  "BLOCK-T457": {
+    "key": "BLOCK-T457",
+    "name": "Measurement of aligned telescope with Laser Tracker",
+    "n_steps": 4
+  },
+  "BLOCK-T458": {
+    "key": "BLOCK-T458",
+    "name": "Testing Survey-mode Closed-Loop",
+    "n_steps": 5
+  },
+  "BLOCK-T454": {
+    "key": "BLOCK-T454",
+    "name": "LSSTCam all-day CCD clearing",
+    "n_steps": 5
+  },
+  "BLOCK-T459": {
+    "key": "BLOCK-T459",
+    "name": "Full-Array Mode Debugging",
+    "n_steps": 1
+  },
+  "BLOCK-T460": {
+    "key": "BLOCK-T460",
+    "name": "Simonyi LSSTCam FBS Field Survey: Moderate Stellar Density Field (Rubin_SV_225_-40)",
+    "n_steps": 3
+  },
+  "BLOCK-T461": {
+    "key": "BLOCK-T461",
+    "name": "Simonyi LSSTCam FBS Field Survey: COSMOS",
+    "n_steps": 3
+  },
+  "BLOCK-T462": {
+    "key": "BLOCK-T462",
+    "name": "LUTT-001 - Alignment using laser tracker",
+    "n_steps": 9
+  },
+  "BLOCK-T244": {
+    "key": "BLOCK-T244",
+    "name": "Simonyi Weekend Walkaround",
+    "n_steps": 18
+  },
+  "BLOCK-T468": {
+    "key": "BLOCK-T468",
+    "name": "TMA and dome demonstration",
+    "n_steps": 11
+  },
+  "BLOCK-T412": {
+    "key": "BLOCK-T412",
+    "name": "Acquire Darks",
+    "n_steps": 2
+  },
+  "BLOCK-T466": {
+    "key": "BLOCK-T466",
+    "name": "Camera read noise dependence on radios",
+    "n_steps": 17
+  },
+  "BLOCK-T472": {
+    "key": "BLOCK-T472",
+    "name": "Coma convergence investigation with bending modes",
+    "n_steps": 2
+  },
+  "BLOCK-T467": {
+    "key": "BLOCK-T467",
+    "name": "LSSTCam IN-field ghost, raft-by-raft",
+    "n_steps": 5
+  },
+  "BLOCK-T476": {
+    "key": "BLOCK-T476",
+    "name": "Focus Sweep in presence of focal plane gradient",
+    "n_steps": 1
+  },
+  "BLOCK-T473": {
+    "key": "BLOCK-T473",
+    "name": "Coma convergence investigation with Full-Array Mode",
+    "n_steps": 3
+  },
+  "BLOCK-T477": {
+    "key": "BLOCK-T477",
+    "name": "Simonyi LSSTCam FBS Field Survey: Low Ecliptic Latitude Field at Opposition (Rubin_SV_212_-7)",
+    "n_steps": 3
+  },
+  "BLOCK-T251": {
+    "key": "BLOCK-T251",
+    "name": "Pinhole Images for Scattered Light Characterization (ON-SKY)",
+    "n_steps": 3
+  },
+  "BLOCK-T254": {
+    "key": "BLOCK-T254",
+    "name": "Pinhole Images for Scattered Light Characterization (CLOSED DOME)",
+    "n_steps": 1
+  },
+  "BLOCK-T478": {
+    "key": "BLOCK-T478",
+    "name": "LSSTCam stray light from L3 chamfer - crowded field",
+    "n_steps": 7
+  },
+  "BLOCK-T484": {
+    "key": "BLOCK-T484",
+    "name": "LSSTCam Super Dark, 30s",
+    "n_steps": 1
+  },
+  "BLOCK-T483": {
+    "key": "BLOCK-T483",
+    "name": "LSSTCam: change filters",
+    "n_steps": 1
+  },
+  "BLOCK-T481": {
+    "key": "BLOCK-T481",
+    "name": "LSSTCam stray light from L3 chamfer - bright star",
+    "n_steps": 10
+  },
+  "BLOCK-T485": {
+    "key": "BLOCK-T485",
+    "name": "LSSTCam Super Dark, 38s",
+    "n_steps": 1
+  },
+  "BLOCK-T487": {
+    "key": "BLOCK-T487",
+    "name": "CLT-002 Gain Tuning Closed Loop with Differential and Integral Gains",
+    "n_steps": 9
+  },
+  "BLOCK-T486": {
+    "key": "BLOCK-T486",
+    "name": "Filter Placement Repeatability Test",
+    "n_steps": 28
+  },
+  "BLOCK-T482": {
+    "key": "BLOCK-T482",
+    "name": "LSSTCam stray light from L3 chamfer - CBP",
+    "n_steps": 3
+  },
+  "BLOCK-T488": {
+    "key": "BLOCK-T488",
+    "name": "LSSTCam Pinhole twilight flats",
+    "n_steps": 4
+  },
+  "BLOCK-T490": {
+    "key": "BLOCK-T490",
+    "name": "LSSTCam Filter Exercise",
+    "n_steps": 4
+  },
+  "BLOCK-T489": {
+    "key": "BLOCK-T489",
+    "name": "Filter Sag Test with Pinhole at Twilight",
+    "n_steps": 1
+  },
+  "BLOCK-T479": {
+    "key": "BLOCK-T479",
+    "name": "LSSTCam WhiteLight Flats",
+    "n_steps": 10
+  },
+  "BLOCK-T491": {
+    "key": "BLOCK-T491",
+    "name": "Pinhole Image of Moon",
+    "n_steps": 4
+  },
+  "BLOCK-T492": {
+    "key": "BLOCK-T492",
+    "name": "Full Array Mode closed-loop",
+    "n_steps": 2
+  },
+  "BLOCK-T493": {
+    "key": "BLOCK-T493",
+    "name": "Daytime Pinhole Image with LSSTCam",
+    "n_steps": 3
+  },
+  "BLOCK-T494": {
+    "key": "BLOCK-T494",
+    "name": "Characterize M1M3 Thermal System Mixing Valve",
+    "n_steps": 6
+  },
+  "BLOCK-T496": {
+    "key": "BLOCK-T496",
+    "name": "TMA Dynamic Test at El = 40 - Vel 10% Acc 10% Jerk 10% - GGRG",
+    "n_steps": 3
+  },
+  "BLOCK-T497": {
+    "key": "BLOCK-T497",
+    "name": "TMA Dynamic Test Az only at Low El - Vel 10% Acc 10% Jerk 10% - GGRG",
+    "n_steps": 6
+  },
+  "BLOCK-T330": {
+    "key": "BLOCK-T330",
+    "name": "CBP Focus Test",
+    "n_steps": 2
+  },
+  "BLOCK-T498": {
+    "key": "BLOCK-T498",
+    "name": "Glycol Setpoint Effect on Image Quality",
+    "n_steps": 4
+  },
+  "BLOCK-T499": {
+    "key": "BLOCK-T499",
+    "name": "M1M3 FCU Baseline Test at different elevations",
+    "n_steps": 2
+  },
+  "BLOCK-T504": {
+    "key": "BLOCK-T504",
+    "name": "Change Individual FCU speeds",
+    "n_steps": 4
+  },
+  "BLOCK-T501": {
+    "key": "BLOCK-T501",
+    "name": "Test automatic re-focus WEP functionality",
+    "n_steps": 3
+  },
+  "BLOCK-T505": {
+    "key": "BLOCK-T505",
+    "name": "Turn off portions of M1M3 FCUs",
+    "n_steps": 8
+  },
+  "BLOCK-T506": {
+    "key": "BLOCK-T506",
+    "name": "LSSTCam stray light from direct path through M3",
+    "n_steps": 4
+  },
+  "BLOCK-T514": {
+    "key": "BLOCK-T514",
+    "name": "LSSTCam stray light -scratched tape- repeatability",
+    "n_steps": 10
+  },
+  "BLOCK-T518": {
+    "key": "BLOCK-T518",
+    "name": "Truncation Index Testing",
+    "n_steps": 2
+  },
+  "BLOCK-T516": {
+    "key": "BLOCK-T516",
+    "name": "LSSTCam stray light from L3 chamfer - bright star rotation scan ",
+    "n_steps": 7
+  },
+  "BLOCK-T517": {
+    "key": "BLOCK-T517",
+    "name": "LSSTCam \"Sidereal drive off tests\" with and without sidereal tracking",
+    "n_steps": 10
+  },
+  "BLOCK-T520": {
+    "key": "BLOCK-T520",
+    "name": "Test Normalization Weights derived from GQ Points in MTAOS",
+    "n_steps": 3
+  },
+  "BLOCK-T503": {
+    "key": "BLOCK-T503",
+    "name": "V-modes Sensitivity Matrix",
+    "n_steps": 13
+  },
+  "BLOCK-T519": {
+    "key": "BLOCK-T519",
+    "name": "LSSTCam Local Meridian Observations",
+    "n_steps": 19
+  },
+  "BLOCK-T528": {
+    "key": "BLOCK-T528",
+    "name": "Morning report from previous night",
+    "n_steps": 1
+  },
+  "BLOCK-T525": {
+    "key": "BLOCK-T525",
+    "name": "LSSTCam Super bias, 45s delay between exposures",
+    "n_steps": 1
+  },
+  "BLOCK-T527": {
+    "key": "BLOCK-T527",
+    "name": "TMA AXES EtherCAT daytime testing",
+    "n_steps": 1
+  },
+  "BLOCK-T524": {
+    "key": "BLOCK-T524",
+    "name": "LSSTCam RTD/Read noise test",
+    "n_steps": 13
+  },
+  "BLOCK-T530": {
+    "key": "BLOCK-T530",
+    "name": "Closed loop with modified sensitivity (coma contributions to dz removed)",
+    "n_steps": 12
+  },
+  "BLOCK-T531": {
+    "key": "BLOCK-T531",
+    "name": "Simonyi LSSTCam FBS Field Survey: New Horizons",
+    "n_steps": 3
+  },
+  "BLOCK-T404": {
+    "key": "BLOCK-T404",
+    "name": "Assess dome ambient light conditions",
+    "n_steps": 4
+  },
+  "BLOCK-T532": {
+    "key": "BLOCK-T532",
+    "name": "Vary telescope angle relative to wind",
+    "n_steps": 5
+  },
+  "BLOCK-T534": {
+    "key": "BLOCK-T534",
+    "name": "Checkout the run branch for Summit (production environment)",
+    "n_steps": 5
+  },
+  "BLOCK-T536": {
+    "key": "BLOCK-T536",
+    "name": "LSSTCam OFF-field stray light within a filter 2.5deg to 3deg",
+    "n_steps": 8
+  },
+  "BLOCK-T535": {
+    "key": "BLOCK-T535",
+    "name": "Simonyi LSSTCam FBS Field Survey: Hexgrid Survey (Rubin_SV_320_-15)",
+    "n_steps": 3
+  },
+  "BLOCK-T533": {
+    "key": "BLOCK-T533",
+    "name": "Downdraft system test",
+    "n_steps": 6
+  },
+  "BLOCK-T537": {
+    "key": "BLOCK-T537",
+    "name": "TMA Dynamic Test at El = 70 - Vel 10% Acc 10% Jerk 10% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T542": {
+    "key": "BLOCK-T542",
+    "name": "Target-of-opportunity mock alert response",
+    "n_steps": 10
+  },
+  "BLOCK-T538": {
+    "key": "BLOCK-T538",
+    "name": "TMA Dynamic Test at El = 40 - Vel 10% Acc 10% Jerk 10% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T541": {
+    "key": "BLOCK-T541",
+    "name": "LSSTCam stray light -muddy shoe- repeatability",
+    "n_steps": 6
+  },
+  "BLOCK-T471": {
+    "key": "BLOCK-T471",
+    "name": "LSSTCam Sequencer Test",
+    "n_steps": 11
+  },
+  "BLOCK-T546": {
+    "key": "BLOCK-T546",
+    "name": "LSST Sequence B+ Protocol",
+    "n_steps": 8
+  },
+  "BLOCK-T543": {
+    "key": "BLOCK-T543",
+    "name": "M1M3 raised/lowered impact on flats: r-band",
+    "n_steps": 13
+  },
+  "BLOCK-T547": {
+    "key": "BLOCK-T547",
+    "name": "TMA Dynamic Test at El = 70 - Vel 20% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T545": {
+    "key": "BLOCK-T545",
+    "name": "Evaluate Performance with Empirical Sensitivity Matrix",
+    "n_steps": 9
+  },
+  "BLOCK-T245": {
+    "key": "BLOCK-T245",
+    "name": "Simonyi On-Sky Checklist",
+    "n_steps": 6
+  },
+  "BLOCK-T549": {
+    "key": "BLOCK-T549",
+    "name": "Shutter timing linearity study (Rotator=-80)",
+    "n_steps": 34
+  },
+  "BLOCK-T553": {
+    "key": "BLOCK-T553",
+    "name": "LSSTCam pinhole mask for scratched tape feature",
+    "n_steps": 7
+  },
+  "BLOCK-T551": {
+    "key": "BLOCK-T551",
+    "name": "LSSTCam pinholes mask at twilight ",
+    "n_steps": 8
+  },
+  "BLOCK-T548": {
+    "key": "BLOCK-T548",
+    "name": "Shutter timing linearity study (Rotator=0)",
+    "n_steps": 31
+  },
+  "BLOCK-T552": {
+    "key": "BLOCK-T552",
+    "name": "LSSTCam pinholes mask for Banana stray light features",
+    "n_steps": 8
+  },
+  "BLOCK-T550": {
+    "key": "BLOCK-T550",
+    "name": "Shutter timing linearity study (Rotator=80)",
+    "n_steps": 34
+  },
+  "BLOCK-T554": {
+    "key": "BLOCK-T554",
+    "name": "LSSTCam pinholes mask in-dome stray light imaging",
+    "n_steps": 11
+  },
+  "BLOCK-T555": {
+    "key": "BLOCK-T555",
+    "name": "LSSTCam stray light Moon approach with pinhole mask",
+    "n_steps": 5
+  },
+  "BLOCK-T556": {
+    "key": "BLOCK-T556",
+    "name": "LSSTCam Whitelight Flats (Single LEDs)",
+    "n_steps": 10
+  },
+  "BLOCK-T561": {
+    "key": "BLOCK-T561",
+    "name": "Portable DIMM seeing measurements (with FBS in parallel)",
+    "n_steps": 4
+  },
+  "BLOCK-T562": {
+    "key": "BLOCK-T562",
+    "name": "LSSTCam RFI Rejection Verification",
+    "n_steps": 9
+  },
+  "BLOCK-T560": {
+    "key": "BLOCK-T560",
+    "name": "Portable DIMM pointing model",
+    "n_steps": 4
+  },
+  "BLOCK-T563": {
+    "key": "BLOCK-T563",
+    "name": "LSSTCam PTC Curve - 750 pairs ",
+    "n_steps": 5
+  },
+  "BLOCK-T558": {
+    "key": "BLOCK-T558",
+    "name": "Test Hexapod Movement During Exposures",
+    "n_steps": 11
+  },
+  "BLOCK-T565": {
+    "key": "BLOCK-T565",
+    "name": "LSSTCam stray light - pillow - repeatability",
+    "n_steps": 6
+  },
+  "BLOCK-T574": {
+    "key": "BLOCK-T574",
+    "name": "TMA Dynamic Test at El = 60 - Vel 5% Acc 5% Jerk 5% - RRRR  ",
+    "n_steps": 5
+  },
+  "BLOCK-T348": {
+    "key": "BLOCK-T348",
+    "name": "CBP Non-Linear Crosstalk",
+    "n_steps": 22
+  },
+  "BLOCK-T571": {
+    "key": "BLOCK-T571",
+    "name": "LED Flats with Camera Tilts",
+    "n_steps": 9
+  },
+  "BLOCK-T573": {
+    "key": "BLOCK-T573",
+    "name": "TMA Dynamic Test at El = 45 - Vel 5% Acc 5% Jerk 5% - RRRR ",
+    "n_steps": 5
+  },
+  "BLOCK-T568": {
+    "key": "BLOCK-T568",
+    "name": "Simonyi LSSTCam FBS Field Survey: ELAIS-S1",
+    "n_steps": 3
+  },
+  "BLOCK-T570": {
+    "key": "BLOCK-T570",
+    "name": "LSSTCam Mono Flats Stability",
+    "n_steps": 10
+  },
+  "BLOCK-T575": {
+    "key": "BLOCK-T575",
+    "name": "TMA Dynamic Test at El = 75 - Vel 5% Acc 5% Jerk 5% - RRRR ",
+    "n_steps": 5
+  },
+  "BLOCK-T576": {
+    "key": "BLOCK-T576",
+    "name": "TMA Dynamic Test with Fix Az, long slew in El - Vel 5% Acc 5% Jerk 5% - RRRR",
+    "n_steps": 5
+  },
+  "BLOCK-T577": {
+    "key": "BLOCK-T577",
+    "name": "TMA Dynamic Test Az only at El:40 - Vel 10% Acc 10% Jerk 10% - GGRR, GGGR, GGGG",
+    "n_steps": 7
+  },
+  "BLOCK-T578": {
+    "key": "BLOCK-T578",
+    "name": "TMA Dynamic Test Az only at low El - Vel 10% Acc 10% Jerk 10% - GGRR, GGGR, GGGG",
+    "n_steps": 7
+  },
+  "BLOCK-T580": {
+    "key": "BLOCK-T580",
+    "name": "LSSTCam stray light from M2 baffle using CBP - integrated z band 16\u00b0 off-axis (no filter)",
+    "n_steps": 22
+  },
+  "BLOCK-T582": {
+    "key": "BLOCK-T582",
+    "name": "TMA Dynamic Test at El = 40 - Vel 10% Acc 10% Jerk 10% - GGRR",
+    "n_steps": 3
+  },
+  "BLOCK-T583": {
+    "key": "BLOCK-T583",
+    "name": "TMA Dynamic Test az only at El = 45 - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T586": {
+    "key": "BLOCK-T586",
+    "name": "TMA Dynamic Test Az only at Low El - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 6
+  },
+  "BLOCK-T584": {
+    "key": "BLOCK-T584",
+    "name": "TMA Dynamic Test Az only at Low El - Vel 10% Acc 10% Jerk 10% - GGGG",
+    "n_steps": 6
+  },
+  "BLOCK-T585": {
+    "key": "BLOCK-T585",
+    "name": "TMA Dynamic Test Az only at Low El - Vel 10% Acc 10% Jerk 10% - GGRR",
+    "n_steps": 6
+  },
+  "BLOCK-T587": {
+    "key": "BLOCK-T587",
+    "name": "TMA Dynamic Test at El = 40 - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T588": {
+    "key": "BLOCK-T588",
+    "name": "TMA Dynamic Test at El = 40 - Vel 10% Acc 10% Jerk 10% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T592": {
+    "key": "BLOCK-T592",
+    "name": "TMA Dynamic Test az only at El = 30, 45, 60, 75 - Vel 5% Acc 5% Jerk 5% - RRRR",
+    "n_steps": 6
+  },
+  "BLOCK-T589": {
+    "key": "BLOCK-T589",
+    "name": "TMA Dynamic Test az only at El = 30 - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T590": {
+    "key": "BLOCK-T590",
+    "name": "TMA Dynamic Test az only at El = 60 - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T591": {
+    "key": "BLOCK-T591",
+    "name": "TMA Dynamic Test az only at El = 75 - Vel 10% Acc 10% Jerk 10% - GGGR",
+    "n_steps": 3
+  },
+  "BLOCK-T526": {
+    "key": "BLOCK-T526",
+    "name": "M1M3 Thermal Test",
+    "n_steps": 5
+  },
+  "BLOCK-T513": {
+    "key": "BLOCK-T513",
+    "name": "Pointing model verification",
+    "n_steps": 3
+  },
+  "BLOCK-T495": {
+    "key": "BLOCK-T495",
+    "name": "Laser Tracker Measurement of Calibration Screen",
+    "n_steps": 4
+  },
+  "BLOCK-T399": {
+    "key": "BLOCK-T399",
+    "name": "LSSTCam Daily Calibrations",
+    "n_steps": 2
+  },
+  "BLOCK-T581": {
+    "key": "BLOCK-T581",
+    "name": "CBP Reflectance Sweep",
+    "n_steps": 18
+  },
+  "BLOCK-T593": {
+    "key": "BLOCK-T593",
+    "name": "M1M3 Thermalization Step Test Case - Zenith",
+    "n_steps": 8
+  },
+  "BLOCK-T598": {
+    "key": "BLOCK-T598",
+    "name": "Sensitivity Matrix Repeatability",
+    "n_steps": 3
+  },
+  "BLOCK-T600": {
+    "key": "BLOCK-T600",
+    "name": "Dalmatian Pattern Investigation",
+    "n_steps": 1
+  },
+  "BLOCK-T597": {
+    "key": "BLOCK-T597",
+    "name": "LSSTCam stray light from M2 baffle using CBP at 16 deg - scanning over y and I wavelengths (NO filter)",
+    "n_steps": 23
+  },
+  "BLOCK-T604": {
+    "key": "BLOCK-T604",
+    "name": "LSSTCam stray light from M2 baffle using CBP at 20deg - scanning over y, z and I wavelengths (NO filter)",
+    "n_steps": 25
+  },
+  "BLOCK-T278": {
+    "key": "BLOCK-T278",
+    "name": "Wavefront Estimation Repeatability",
+    "n_steps": 1
+  },
+  "BLOCK-T523": {
+    "key": "BLOCK-T523",
+    "name": "LSSTCam Monochromatic Flats",
+    "n_steps": 14
+  },
+  "BLOCK-T595": {
+    "key": "BLOCK-T595",
+    "name": "LSSTCam scratched tape stray light path using CBP",
+    "n_steps": 18
+  },
+  "BLOCK-T474": {
+    "key": "BLOCK-T474",
+    "name": "Best image repeatability test",
+    "n_steps": 5
+  },
+  "BLOCK-T605": {
+    "key": "BLOCK-T605",
+    "name": "CBP Crosstalk Additional Pass #1",
+    "n_steps": 24
+  },
+  "BLOCK-T607": {
+    "key": "BLOCK-T607",
+    "name": "Full-Array Mode SV survey check",
+    "n_steps": 1
+  },
+  "BLOCK-T417": {
+    "key": "BLOCK-T417",
+    "name": "CLT-001 Incremental Closed Loop w/ coma bending modes",
+    "n_steps": 1
+  },
+  "BLOCK-T599": {
+    "key": "BLOCK-T599",
+    "name": "LSSTCam stray light from LSSTCam filters shiny plate",
+    "n_steps": 24
+  },
+  "BLOCK-T608": {
+    "key": "BLOCK-T608",
+    "name": "LSSTCam HV Bias Safe Moon Separation Verification",
+    "n_steps": 1
+  },
+  "BLOCK-T544": {
+    "key": "BLOCK-T544",
+    "name": "Simonyi LSSTCam Feature Based Scheduler Science Validation Surveys",
+    "n_steps": 7
+  },
+  "BLOCK-T609": {
+    "key": "BLOCK-T609",
+    "name": "M1M3 Thermal Step On-Sky",
+    "n_steps": 11
+  },
+  "BLOCK-T611": {
+    "key": "BLOCK-T611",
+    "name": "LSSTCam stray light from autochanger using CBP",
+    "n_steps": 22
+  },
+  "BLOCK-T613": {
+    "key": "BLOCK-T613",
+    "name": "Testing of M1M3 Z-Momement - Distribution Matrices",
+    "n_steps": 9
+  },
+  "BLOCK-T610": {
+    "key": "BLOCK-T610",
+    "name": "LSSTCam stray light from M2 baffle using CBP at 12deg - scanning over y, z and I wavelengths (NO filter)",
+    "n_steps": 26
+  },
+  "BLOCK-T393": {
+    "key": "BLOCK-T393",
+    "name": "LUTT-003 Elevation Look-Up Table",
+    "n_steps": 1
+  },
+  "BLOCK-T612": {
+    "key": "BLOCK-T612",
+    "name": "LSSTCam stray light from filter holder shiny plate using CBP",
+    "n_steps": 32
+  },
+  "BLOCK-T606": {
+    "key": "BLOCK-T606",
+    "name": "Z-modes Sensitivity Matrix ",
+    "n_steps": 7
+  },
+  "BLOCK-T615": {
+    "key": "BLOCK-T615",
+    "name": "Uniformity across the FoV",
+    "n_steps": 5
+  },
+  "BLOCK-T579": {
+    "key": "BLOCK-T579",
+    "name": "LUT update test",
+    "n_steps": 5
+  },
+  "BLOCK-T197": {
+    "key": "BLOCK-T197",
+    "name": "ASCT-008 DOFs Degeneracy Test",
+    "n_steps": 10
+  },
+  "BLOCK-T616": {
+    "key": "BLOCK-T616",
+    "name": "AI Closed Loop",
+    "n_steps": 10
+  },
+  "BLOCK-T618": {
+    "key": "BLOCK-T618",
+    "name": "MTDome - Opening Dome Louvers (B1, E1, E2, H1, H2, M1)",
+    "n_steps": 5
+  },
+  "BLOCK-T625": {
+    "key": "BLOCK-T625",
+    "name": "Simonyi Prepare for On-Sky",
+    "n_steps": 4
+  },
+  "BLOCK-T620": {
+    "key": "BLOCK-T620",
+    "name": "Tilt convergence investigation",
+    "n_steps": 1
+  },
+  "BLOCK-T624": {
+    "key": "BLOCK-T624",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey",
+    "n_steps": 3
+  },
+  "BLOCK-T401": {
+    "key": "BLOCK-T401",
+    "name": "LUTT-001 Hexapod Look-Up Table w/ LaserTracker",
+    "n_steps": 7
+  },
+  "BLOCK-T617": {
+    "key": "BLOCK-T617",
+    "name": "M1M3 Z-Momement w/ different slew flags ",
+    "n_steps": 12
+  },
+  "BLOCK-T626": {
+    "key": "BLOCK-T626",
+    "name": "AOS Absolute Unit",
+    "n_steps": 20
+  },
+  "BLOCK-T627": {
+    "key": "BLOCK-T627",
+    "name": "TMA Dynamic Test at El = 70 - Vel 10% Acc 10% Jerk 10% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T628": {
+    "key": "BLOCK-T628",
+    "name": "AOS Non-Uniformity Data Taking",
+    "n_steps": 1
+  },
+  "BLOCK-T630": {
+    "key": "BLOCK-T630",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey (Poor Seeing)",
+    "n_steps": 3
+  },
+  "BLOCK-T629": {
+    "key": "BLOCK-T629",
+    "name": "M1M3 Turbo Mode Test Case",
+    "n_steps": 9
+  },
+  "BLOCK-T633": {
+    "key": "BLOCK-T633",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey - Monitoring and Completion",
+    "n_steps": 5
+  },
+  "BLOCK-T631": {
+    "key": "BLOCK-T631",
+    "name": "Test wakeFilterChanger command on MTCamera",
+    "n_steps": 2
+  },
+  "BLOCK-T634": {
+    "key": "BLOCK-T634",
+    "name": "TMA Balance check",
+    "n_steps": 6
+  },
+  "BLOCK-T637": {
+    "key": "BLOCK-T637",
+    "name": "LSSTCam Exposure Scan",
+    "n_steps": 2
+  },
+  "BLOCK-T638": {
+    "key": "BLOCK-T638",
+    "name": "Refit WCS Closed Loop Test",
+    "n_steps": 10
+  },
+  "BLOCK-T639": {
+    "key": "BLOCK-T639",
+    "name": "Test FA333 when going to horizon",
+    "n_steps": 4
+  },
+  "BLOCK-T642": {
+    "key": "BLOCK-T642",
+    "name": "Test Adding Intrinsics/Chip Heights to AOS",
+    "n_steps": 11
+  },
+  "BLOCK-T539": {
+    "key": "BLOCK-T539",
+    "name": "Initial Telescope Alignment",
+    "n_steps": 3
+  },
+  "BLOCK-T643": {
+    "key": "BLOCK-T643",
+    "name": "Dome-seeing with MOSS",
+    "n_steps": 1
+  },
+  "BLOCK-T645": {
+    "key": "BLOCK-T645",
+    "name": "Test the correct pointing script for SimonyiTel",
+    "n_steps": 1
+  },
+  "BLOCK-T640": {
+    "key": "BLOCK-T640",
+    "name": "Kick the robot",
+    "n_steps": 43
+  },
+  "BLOCK-T621": {
+    "key": "BLOCK-T621",
+    "name": "Hartmann Giant Donut Sensitivity",
+    "n_steps": 20
+  },
+  "BLOCK-T646": {
+    "key": "BLOCK-T646",
+    "name": "CBP Calibration on the TMA",
+    "n_steps": 26
+  },
+  "BLOCK-T647": {
+    "key": "BLOCK-T647",
+    "name": "Dome Walkaround with IR camera to Study Thermal Sources",
+    "n_steps": 11
+  },
+  "BLOCK-T540": {
+    "key": "BLOCK-T540",
+    "name": "LSSTCam stray light off-axis angular extent of banana features",
+    "n_steps": 6
+  },
+  "BLOCK-T51": {
+    "key": "BLOCK-T51",
+    "name": "DIMM Status Check (startup/shutdown)",
+    "n_steps": 5
+  },
+  "BLOCK-T641": {
+    "key": "BLOCK-T641",
+    "name": "Closed Loop Stability test",
+    "n_steps": 3
+  },
+  "BLOCK-T651": {
+    "key": "BLOCK-T651",
+    "name": "M1M3 Thermalization Step Test Case: Morning",
+    "n_steps": 3
+  },
+  "BLOCK-T635": {
+    "key": "BLOCK-T635",
+    "name": "Camera dz Focus Sweep",
+    "n_steps": 2
+  },
+  "BLOCK-T652": {
+    "key": "BLOCK-T652",
+    "name": "Unpark TMA",
+    "n_steps": 3
+  },
+  "BLOCK-T653": {
+    "key": "BLOCK-T653",
+    "name": "TARTS pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T654": {
+    "key": "BLOCK-T654",
+    "name": "Camera Shutter Timing Investigation",
+    "n_steps": 5
+  },
+  "BLOCK-T381": {
+    "key": "BLOCK-T381",
+    "name": "WET-010 Reference Wavefront Generation",
+    "n_steps": 2
+  },
+  "BLOCK-T622": {
+    "key": "BLOCK-T622",
+    "name": "TMA Dynamic Test at El = 70 - Vel 30% Acc 20% Jerk 20% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T596": {
+    "key": "BLOCK-T596",
+    "name": "LSSTCam stray light from LSSTCam autochanger ",
+    "n_steps": 17
+  },
+  "BLOCK-T623": {
+    "key": "BLOCK-T623",
+    "name": "TMA Dynamic Test at El = 40 - Vel 30% Acc 20% Jerk 20% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T649": {
+    "key": "BLOCK-T649",
+    "name": "LSSTCam stray light from LSSTCam autochanger - scan along motor cavity ",
+    "n_steps": 20
+  },
+  "BLOCK-T241": {
+    "key": "BLOCK-T241",
+    "name": "M2 closed-loop break-out brake test during TMA slew - 30% (velocity only) Settings GGGG",
+    "n_steps": 5
+  },
+  "BLOCK-T240": {
+    "key": "BLOCK-T240",
+    "name": "TMA Elevation Brake Distance - 30% speed Settings GGGG",
+    "n_steps": 5
+  },
+  "BLOCK-T231": {
+    "key": "BLOCK-T231",
+    "name": "TMA Azimuth Brake Distance - 30% speed Settings GGGG",
+    "n_steps": 4
+  },
+  "BLOCK-T656": {
+    "key": "BLOCK-T656",
+    "name": "Hexapod Compensation Mode Test",
+    "n_steps": 8
+  },
+  "BLOCK-T655": {
+    "key": "BLOCK-T655",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey (Constrained)",
+    "n_steps": 3
+  },
+  "BLOCK-T657": {
+    "key": "BLOCK-T657",
+    "name": "TMA Az Encoders Heads - Find bad regions",
+    "n_steps": 6
+  },
+  "BLOCK-T288": {
+    "key": "BLOCK-T288",
+    "name": "Acquire data for pointing model with Simonyi",
+    "n_steps": 2
+  },
+  "BLOCK-T659": {
+    "key": "BLOCK-T659",
+    "name": "Natural Frequency LSSTCam Biases",
+    "n_steps": 1
+  },
+  "BLOCK-T660": {
+    "key": "BLOCK-T660",
+    "name": "AOS Overall Focus Offset",
+    "n_steps": 8
+  },
+  "BLOCK-T662": {
+    "key": "BLOCK-T662",
+    "name": "Closed-Loop LUT verification",
+    "n_steps": 4
+  },
+  "BLOCK-T661": {
+    "key": "BLOCK-T661",
+    "name": "Natural Frequency Firmware Test - Flats + Biases",
+    "n_steps": 9
+  },
+  "BLOCK-T395": {
+    "key": "BLOCK-T395",
+    "name": "LUT-005 Camera Rotator Look-Up Table",
+    "n_steps": 8
+  },
+  "BLOCK-T644": {
+    "key": "BLOCK-T644",
+    "name": "Fixed Chaos Monkey",
+    "n_steps": 7
+  },
+  "BLOCK-T559": {
+    "key": "BLOCK-T559",
+    "name": "Check Filter LUT Offsets",
+    "n_steps": 13
+  },
+  "BLOCK-T648": {
+    "key": "BLOCK-T648",
+    "name": "Chaos Monkey",
+    "n_steps": 6
+  },
+  "BLOCK-T650": {
+    "key": "BLOCK-T650",
+    "name": "M1M3 Thermalization Step Test Case: End of Night (step up)",
+    "n_steps": 4
+  },
+  "BLOCK-T664": {
+    "key": "BLOCK-T664",
+    "name": "LSSTCam Minimal Daily Calibrations",
+    "n_steps": 4
+  },
+  "BLOCK-T663": {
+    "key": "BLOCK-T663",
+    "name": "Hartmann Camera Offset Test",
+    "n_steps": 8
+  },
+  "BLOCK-T667": {
+    "key": "BLOCK-T667",
+    "name": "LUT elevation/rotation closed-loop grid",
+    "n_steps": 6
+  },
+  "BLOCK-T464": {
+    "key": "BLOCK-T464",
+    "name": "Open dome shutter",
+    "n_steps": 5
+  },
+  "BLOCK-T669": {
+    "key": "BLOCK-T669",
+    "name": "AI Donut pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T665": {
+    "key": "BLOCK-T665",
+    "name": "Camera hexapod offset check with Laser Tracker",
+    "n_steps": 5
+  },
+  "BLOCK-T670": {
+    "key": "BLOCK-T670",
+    "name": "Unpaired Danish pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T671": {
+    "key": "BLOCK-T671",
+    "name": "Danish pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T672": {
+    "key": "BLOCK-T672",
+    "name": "AOS TIE pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T673": {
+    "key": "BLOCK-T673",
+    "name": "AOS Refit WCS pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T674": {
+    "key": "BLOCK-T674",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey (Closed-Loop on Filter Change)",
+    "n_steps": 4
+  },
+  "BLOCK-T675": {
+    "key": "BLOCK-T675",
+    "name": "LSSTCam stray light from M1 bananas - mid ring level baffle extension",
+    "n_steps": 5
+  },
+  "BLOCK-T678": {
+    "key": "BLOCK-T678",
+    "name": "Test additional delay from setting guider ROI",
+    "n_steps": 2
+  },
+  "BLOCK-T666": {
+    "key": "BLOCK-T666",
+    "name": "Mark of the Filter : Hartmann Giant Donuts",
+    "n_steps": 23
+  },
+  "BLOCK-T88": {
+    "key": "BLOCK-T88",
+    "name": "LUTT-001 - Alignment using default state and laser tracker",
+    "n_steps": 11
+  },
+  "BLOCK-T682": {
+    "key": "BLOCK-T682",
+    "name": "PTC/Electrometer Stability Test",
+    "n_steps": 5
+  },
+  "BLOCK-T679": {
+    "key": "BLOCK-T679",
+    "name": "Dome venting - louver configuration test",
+    "n_steps": 7
+  },
+  "BLOCK-T680": {
+    "key": "BLOCK-T680",
+    "name": "Giant donut rotator test",
+    "n_steps": 20
+  },
+  "BLOCK-T632": {
+    "key": "BLOCK-T632",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey - Setup",
+    "n_steps": 3
+  },
+  "BLOCK-T683": {
+    "key": "BLOCK-T683",
+    "name": "Weekly CBP and TunableLaser Checkout",
+    "n_steps": 6
+  },
+  "BLOCK-T684": {
+    "key": "BLOCK-T684",
+    "name": "Thermal gradient with respect to the dome position test (opening louvers only)",
+    "n_steps": 6
+  },
+  "BLOCK-T686": {
+    "key": "BLOCK-T686",
+    "name": "TMA Dynamic Test at El = 45 - Vel 5% Acc 5% Jerk 5% - GGGG",
+    "n_steps": 5
+  },
+  "BLOCK-T687": {
+    "key": "BLOCK-T687",
+    "name": "TMA Dynamic Test at El = 70 - Vel 5% Acc 5% Jerk 5% - GGGG",
+    "n_steps": 5
+  },
+  "BLOCK-T689": {
+    "key": "BLOCK-T689",
+    "name": "TMA Dynamic Test at El = 70 - Vel 20% Acc 20% Jerk 20% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T681": {
+    "key": "BLOCK-T681",
+    "name": "Thermal gradient with respect to the dome position test",
+    "n_steps": 8
+  },
+  "BLOCK-T685": {
+    "key": "BLOCK-T685",
+    "name": "Thermal gradient with respect to the dome position test (opening dome only)",
+    "n_steps": 6
+  },
+  "BLOCK-T690": {
+    "key": "BLOCK-T690",
+    "name": "TMA Dynamic Test at El = 70 - Vel 5% Acc 5% Jerk 5% - GGGG",
+    "n_steps": 3
+  },
+  "BLOCK-T688": {
+    "key": "BLOCK-T688",
+    "name": "LSSTCam: vacuum stability verification under dynamic TMA loads",
+    "n_steps": 13
+  },
+  "BLOCK-T691": {
+    "key": "BLOCK-T691",
+    "name": "Simonyi LSSTCam Feature Based Scheduler LSST Survey (Rubin First Alerts)",
+    "n_steps": 3
+  },
+  "BLOCK-T693": {
+    "key": "BLOCK-T693",
+    "name": "Exposure Timing with Guiders roi spec disabled",
+    "n_steps": 4
+  },
+  "BLOCK-T692": {
+    "key": "BLOCK-T692",
+    "name": "M1M3 dynamics moving from Az/El 145/70 to 102.96/26.3",
+    "n_steps": 4
+  },
+  "BLOCK-T694": {
+    "key": "BLOCK-T694",
+    "name": "LSSTCam stray light off-axis angular extent of brush stroke feature",
+    "n_steps": 6
+  },
+  "BLOCK-T696": {
+    "key": "BLOCK-T696",
+    "name": "Louver Testing During FBS",
+    "n_steps": 6
+  },
+  "BLOCK-T695": {
+    "key": "BLOCK-T695",
+    "name": "LSSTCam: VPC image quality test",
+    "n_steps": 5
+  },
+  "BLOCK-T407": {
+    "key": "BLOCK-T407",
+    "name": "Simonyi LSSTCam Feature Based Scheduler Science Verification Field Survey",
+    "n_steps": 8
+  },
+  "BLOCK-T698": {
+    "key": "BLOCK-T698",
+    "name": "FBS-driven closed loop stability test using MTAOS",
+    "n_steps": 6
+  },
+  "BLOCK-T699": {
+    "key": "BLOCK-T699",
+    "name": "Turn off one air handler",
+    "n_steps": 2
+  },
+  "BLOCK-T676": {
+    "key": "BLOCK-T676",
+    "name": "LSSTCam stray light from M1 direct path - mid-level baffle extension - upper quadrant",
+    "n_steps": 8
+  },
+  "BLOCK-T700": {
+    "key": "BLOCK-T700",
+    "name": "Daily check GIS overrides",
+    "n_steps": 4
+  },
+  "BLOCK-T702": {
+    "key": "BLOCK-T702",
+    "name": "FBS-driven closed loop stability test using MTAOS - AIDonut",
+    "n_steps": 4
+  },
+  "BLOCK-T703": {
+    "key": "BLOCK-T703",
+    "name": "FBS-driven closed loop stability test using MTAOS - Into and Out of Wind Pointings",
+    "n_steps": 4
+  },
+  "BLOCK-T706": {
+    "key": "BLOCK-T706",
+    "name": "FBS-driven closed loop stability test using MTAOS - Rotator Positions",
+    "n_steps": 4
+  },
+  "BLOCK-T705": {
+    "key": "BLOCK-T705",
+    "name": "AOS WCS (from boresight) Catalogs pipeline test",
+    "n_steps": 3
+  },
+  "BLOCK-T704": {
+    "key": "BLOCK-T704",
+    "name": "FBS-driven closed loop stability test using MTAOS - Elevation Pointings",
+    "n_steps": 4
+  },
+  "BLOCK-T707": {
+    "key": "BLOCK-T707",
+    "name": "LSSTCam Off-band LED Flats",
+    "n_steps": 8
+  },
+  "BLOCK-T379": {
+    "key": "BLOCK-T379",
+    "name": "ASCT-004 Sensitivity M2 Bending",
+    "n_steps": 3
+  },
+  "BLOCK-T709": {
+    "key": "BLOCK-T709",
+    "name": "FBS-driven closed loop stability test using MTAOS with M2 dz turned off",
+    "n_steps": 5
+  },
+  "BLOCK-T708": {
+    "key": "BLOCK-T708",
+    "name": "Hartmann Giant Donut VMode Sensitivity",
+    "n_steps": 7
+  },
+  "BLOCK-T711": {
+    "key": "BLOCK-T711",
+    "name": "Minimal LSSTCam Off-band LED Flats",
+    "n_steps": 8
+  },
+  "BLOCK-T713": {
+    "key": "BLOCK-T713",
+    "name": "Collect information about hexapod idle feature",
+    "n_steps": 2
+  },
+  "BLOCK-T594": {
+    "key": "BLOCK-T594",
+    "name": "LSSTCam Daily Checkout",
+    "n_steps": 6
+  },
+  "BLOCK-T712": {
+    "key": "BLOCK-T712",
+    "name": "Simonyi ALO Laser collision test",
+    "n_steps": 17
+  },
+  "BLOCK-T701": {
+    "key": "BLOCK-T701",
+    "name": "FBS-driven closed loop stability test using MTAOS - TMA Fans",
+    "n_steps": 7
+  },
+  "BLOCK-T614": {
+    "key": "BLOCK-T614",
+    "name": "AOS Stability Verification - Open Loop Full Array Mode",
+    "n_steps": 5
+  },
+  "BLOCK-T714": {
+    "key": "BLOCK-T714",
+    "name": "FBS-driven closed loop stability test - PID Gain Optimization (kp)",
+    "n_steps": 10
+  },
+  "BLOCK-T715": {
+    "key": "BLOCK-T715",
+    "name": "Camera rotation test",
+    "n_steps": 2
+  },
+  "BLOCK-T716": {
+    "key": "BLOCK-T716",
+    "name": "Laser Output and GIS Test",
+    "n_steps": 1
+  },
+  "BLOCK-T429": {
+    "key": "BLOCK-T429",
+    "name": "LSSTCam stray light from M2 baffle using 1/4 of Moon",
+    "n_steps": 14
+  },
+  "BLOCK-T250": {
+    "key": "BLOCK-T250",
+    "name": "TMA Unpark/Checkout",
+    "n_steps": 12
+  },
+  "BLOCK-T636": {
+    "key": "BLOCK-T636",
+    "name": "Z Band Flat-Offs",
+    "n_steps": 3
+  },
+  "BLOCK-T697": {
+    "key": "BLOCK-T697",
+    "name": "M1M3 Thermalization Step Test Case - Zenith",
+    "n_steps": 8
+  },
+  "BLOCK-T717": {
+    "key": "BLOCK-T717",
+    "name": "Wavefront Retrieval Independence from Donut Size: Quintuplet Camera Defocus Sequence - 2 Rotator Angles",
+    "n_steps": 6
+  },
+  "BLOCK-T719": {
+    "key": "BLOCK-T719",
+    "name": "M1M3 Z Gradient Control Off-Sky",
+    "n_steps": 6
+  },
+  "BLOCK-T720": {
+    "key": "BLOCK-T720",
+    "name": "AOS Alternating-Elevation Stability - Open Loop Full Array Mode",
+    "n_steps": 4
+  },
+  "BLOCK-T721": {
+    "key": "BLOCK-T721",
+    "name": "CBP U-band diagnostic Test",
+    "n_steps": 10
+  },
+  "BLOCK-T567": {
+    "key": "BLOCK-T567",
+    "name": "LSSTCam Initial Monochromatic Flats ",
+    "n_steps": 11
+  },
+  "BLOCK-T723": {
+    "key": "BLOCK-T723",
+    "name": "LSSTCam stray light from M2 baffle using 1/4 of Moon, off-axis scan",
+    "n_steps": 9
+  },
+  "BLOCK-T724": {
+    "key": "BLOCK-T724",
+    "name": "AOS Alternating-Rotator Stability - Open Loop Full Array Mode",
+    "n_steps": 4
+  },
+  "BLOCK-T710": {
+    "key": "BLOCK-T710",
+    "name": "All DoF LUT offsets",
+    "n_steps": 6
+  },
+  "BLOCK-T619": {
+    "key": "BLOCK-T619",
+    "name": "MTDome - Closing Dome Louvers ",
+    "n_steps": 11
+  },
+  "BLOCK-T70": {
+    "key": "BLOCK-T70",
+    "name": "Dome Handover Procedure",
+    "n_steps": 10
+  },
+  "BLOCK-T529": {
+    "key": "BLOCK-T529",
+    "name": "Daily CalSys Checkout",
+    "n_steps": 4
+  },
+  "BLOCK-T658": {
+    "key": "BLOCK-T658",
+    "name": "Venting: Louver and dome opening (with pneumatic and motorized louvers)",
+    "n_steps": 15
+  },
+  "BLOCK-T726": {
+    "key": "BLOCK-T726",
+    "name": "Reset Degrees of Freedom and Apply DoF Offsets",
+    "n_steps": 2
+  },
+  "BLOCK-T718": {
+    "key": "BLOCK-T718",
+    "name": "Turn the TMA and L8 fans on",
+    "n_steps": 3
+  },
+  "BLOCK-T727": {
+    "key": "BLOCK-T727",
+    "name": "Turn the TMA and L8 fans off",
+    "n_steps": 5
+  },
+  "BLOCK-T566": {
+    "key": "BLOCK-T566",
+    "name": "CBP No Filter Sweep",
+    "n_steps": 12
+  },
+  "BLOCK-T339": {
+    "key": "BLOCK-T339",
+    "name": "CBP Filter Sweep Test Case",
+    "n_steps": 13
+  },
+  "BLOCK-T728": {
+    "key": "BLOCK-T728",
+    "name": "Simonyi Prepare for Control System Downtime",
+    "n_steps": 4
+  },
+  "BLOCK-T436": {
+    "key": "BLOCK-T436",
+    "name": "Camera Rotator+Elevation LUT with Laser Tracker",
+    "n_steps": 26
+  },
+  "BLOCK-T729": {
+    "key": "BLOCK-T729",
+    "name": "Test AOS pipelines on BTS",
+    "n_steps": 1
+  },
+  "BLOCK-T730": {
+    "key": "BLOCK-T730",
+    "name": "Verify MTHexapod idle feature",
+    "n_steps": 6
+  },
+  "BLOCK-T378": {
+    "key": "BLOCK-T378",
+    "name": "ASCT-004 Sensitivity M1M3 Bending",
+    "n_steps": 5
+  },
+  "BLOCK-T4": {
+    "key": "BLOCK-T4",
+    "name": "Warm-up Camera Hexapod",
+    "n_steps": 2
+  },
+  "BLOCK-T3": {
+    "key": "BLOCK-T3",
+    "name": "Warm-up M2 Hexapod",
+    "n_steps": 2
+  },
+  "BLOCK-T732": {
+    "key": "BLOCK-T732",
+    "name": "CBP Multiple pointings (r-band)",
+    "n_steps": 14
+  },
+  "BLOCK-T734": {
+    "key": "BLOCK-T734",
+    "name": "TMA Long Slew Test for Oil Spill Characterization",
+    "n_steps": 8
+  },
+  "BLOCK-T603": {
+    "key": "BLOCK-T603",
+    "name": "M1M3 Fan Speed Thermalization Test Case: Single Step 2000 rpm",
+    "n_steps": 10
+  },
+  "BLOCK-T668": {
+    "key": "BLOCK-T668",
+    "name": "Closed Loop TARTS",
+    "n_steps": 4
+  },
+  "BLOCK-T733": {
+    "key": "BLOCK-T733",
+    "name": "Pneumatic Louver Air Leak Characterization",
+    "n_steps": 2
+  }
+}
