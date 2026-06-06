@@ -16,7 +16,10 @@ The simplest working combo:
   ```
   /Users/bquint/miniforge3/envs/lsst-scipipe-12.1.0/bin/python
   ```
-- **Imports:** point `PYTHONPATH` at the repo's `python/` dir.
+- **Imports:** the `ZephyrInterface` class lives in the **`ts_planning_tool`**
+  repo (not here — this folder was moved into `notebooks_bquint`). Point
+  `PYTHONPATH` at that repo's `python/` dir:
+  `/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python`.
 - **Credentials:** the three required env vars live in `~/.zapi` (sourced from
   `~/.zshrc`). Source it before running.
 
@@ -24,9 +27,12 @@ Canonical invocation from inside `investigations/`:
 
 ```zsh
 source ~/.zapi
-PYTHONPATH="$PWD/../python" \
+PYTHONPATH="/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python" \
   /Users/bquint/miniforge3/envs/lsst-scipipe-12.1.0/bin/python <script>.py
 ```
+
+Note: the older scripts' docstrings still say `PYTHONPATH=../python` from when
+this folder lived inside `ts_planning_tool`; use the absolute path above instead.
 
 Required env vars (see repo top-level `README.md`):
 `ZEPHYR_API_TOKEN`, `JIRA_API_TOKEN`, `JIRA_USERNAME`.
@@ -149,23 +155,35 @@ do). The CLI is only on PATH if the package is `pip install`-ed.
   | [BLOCK-T550](https://rubinobs.atlassian.net/projects/BLOCK?selectedItem=com.atlassian.plugins.atlassian-connect-plugin:com.kanoah.test-manager__main-project-page#!/v2/testCase/BLOCK-T550) | 34 | Shutter timing linearity study (Rotator=80) |
   | [BLOCK-T612](https://rubinobs.atlassian.net/projects/BLOCK?selectedItem=com.atlassian.plugins.atlassian-connect-plugin:com.kanoah.test-manager__main-project-page#!/v2/testCase/BLOCK-T612) | 32 | LSSTCam stray light from filter holder shiny plate using CBP |
   | [BLOCK-T548](https://rubinobs.atlassian.net/projects/BLOCK?selectedItem=com.atlassian.plugins.atlassian-connect-plugin:com.kanoah.test-manager__main-project-page#!/v2/testCase/BLOCK-T548) | 31 | Shutter timing linearity study (Rotator=0) |
-- **Test cases per campaign** (era), over each era's test cycles
-  (mean / max cases *per cycle*, and campaign total):
+- **Executed test cases per cycle** (last execution not `Not Executed`, id
+  6360081): **11,284** over 526 cycles (vs 13,886 all-memberships; 2,602
+  excluded). Per cycle: mean ~21.5, median 23, max 56. This is the basis for the
+  paper's timeline plot and per-campaign table (the article reports executed
+  cases per cycle, not raw memberships). Counted by
+  `count_executed_test_cases_per_cycle.py`.
+- **Test cases per campaign** (era), over each era's test cycles, counting
+  **executed** cases per cycle (mean / max *per cycle*, and campaign total).
+  Campaign date boundaries confirmed by the user 2026-06-05 (see ranges below):
   | Campaign | #cycles | mean | max | total |
   |----------|--------:|-----:|----:|------:|
-  | ComCam Commissioning on Sky | 65 | 31.6 | 56 | 2055 |
-  | AuxTel only (ComCam→LSSTCam swap) | 48 | 4.5 | 6 | 218 |
-  | LSSTCam Commissioning on Sky | 164 | 31.8 | 54 | 5210 |
-  | Early Operations | 228 | 26.8 | 42 | 6112 |
-  | Pre-commissioning / other | 20 | 12.7 | 24 | 253 |
-- Commissioning-era date ranges used for plot annotations:
+  | ComCam Commissioning on Sky | 49 | 32.8 | 56 | 1605 |
+  | AuxTel only (ComCam→LSSTCam swap) | 57 | 4.0 | 23 | 226 |
+  | LSSTCam Commissioning on Sky | 155 | 24.0 | 46 | 3721 |
+  | Planned maintenance downtime | 5 | 25.6 | 28 | 128 |
+  | Early Operations | 223 | 23.5 | 37 | 5240 |
+  | Pre-commissioning / other | 36 | 10.1 | 21 | 364 |
+  The AuxTel max of 23 is `BLOCK-R225` (2025-04-11), a LSSTCam-prep ramp-up cycle
+  just before the 04-15 boundary; the user chose to keep it in AuxTel (prep for
+  LSSTCam on-sky). The paper quotes only the four main campaigns.
+- Commissioning-era date ranges used for plot annotations (user-confirmed
+  2026-06-05; maintenance window approximate, exact dates unclear):
   | Era | Range |
   |-----|-------|
-  | ComCam Commissioning on Sky | 2024-10-01 → 2024-12-31 |
-  | AuxTel only (ComCam→LSSTCam swap) | 2024-12-31 → 2025-04-01 |
-  | LSSTCam Commissioning on Sky | 2025-04-01 → 2025-09-22 |
-  | Planned maintenance downtime | 2025-09-22 → 2025-10-17 |
-  | Early Operations | 2025-10-17 → present |
+  | ComCam Commissioning on Sky | 2024-10-24 → 2024-12-15 |
+  | AuxTel only (ComCam→LSSTCam swap) | 2024-12-15 → 2025-04-15 |
+  | LSSTCam Commissioning on Sky | 2025-04-15 → 2025-09-22 |
+  | Planned maintenance downtime | 2025-09-22 → 2025-10-26 |
+  | Early Operations | 2025-10-26 → present |
 
 ---
 
@@ -210,7 +228,8 @@ protanopia/deuteranopia.
 |------|--------------|--------|
 | `cache_test_cycles.py` | Finds the "Commissioning Plans" folder subtree and caches all raw test-cycle payloads | `cache/test_cycles.json`, `cache/folders.json` |
 | `count_test_cases_per_cycle.py` | Counts unique test cases per cycle (concurrency 8, **incremental save + resume** — re-run until 0 remaining) | `cache/test_case_counts.json` |
-| `plot_timeline_weekly.py` | Weekly-binned bar chart with era spans + downtime, Rubin brand colors | `test_cases_timeline_weekly.png` |
+| `count_executed_test_cases_per_cycle.py` | Like above, but also counts **executed** cases per cycle (last execution not `Not Executed`); basis for the paper's plot/table (**incremental save + resume**) | `cache/test_case_counts_executed.json` |
+| `plot_timeline_weekly.py` | Weekly-binned bar chart of **executed** cases per cycle, era spans + downtime, Rubin brand colors (reads `test_case_counts_executed.json`) | `test_cases_timeline_weekly.png` |
 | `plot_timeline.py` | Earlier per-cycle scatter version | `test_cases_timeline.png` |
 | `stats_test_cases_per_campaign.py` | Mean/median/max test cases per cycle, grouped by commissioning campaign (era) | stdout table |
 | `cache_test_cases.py` | Lists all 680 test cases in project `BLOCK` and caches raw payloads | `cache/test_cases.json` |
@@ -226,11 +245,18 @@ API. `count_test_cases_per_cycle.py` is resume-safe: it skips cycles already in
 
 ## 6. Handoff — current state (2026-06-05)
 
-Three investigations are **complete**; all data is cached, so the plots/tables
+Four investigations are **complete**; all data is cached, so the plots/tables
 regenerate offline (no API calls needed).
 
 **Done**
 
+- *Executed test cases per cycle / per campaign* — for all 526 cycles, counted
+  both all-memberships and **executed** cases (last execution not `Not
+  Executed`) via `count_executed_test_cases_per_cycle.py`
+  (`cache/test_case_counts_executed.json`). The timeline plot and per-campaign
+  table now use executed counts; campaign date boundaries were corrected per the
+  user 2026-06-05 (§3). Headline: 11,284 executed memberships; per-cycle median
+  23; per-campaign means ComCam 32.8, AuxTel 4.0, LSSTCam 24.0, Early Ops 23.5.
 - *Versions per test case* — counted versions for all **680** cases via
   `testcases/{key}/versions` (`cache/test_case_version_counts.json`, 680/680).
   Headline for the SPIE paper: max is **19** versions, **none exceeds 20**, and

@@ -18,7 +18,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 CACHE_DIR = Path(__file__).parent / "cache"
-COUNTS_FILE = CACHE_DIR / "test_case_counts.json"
+COUNTS_FILE = CACHE_DIR / "test_case_counts_executed.json"
+COUNT_FIELD = "n_executed"  # executed test cases per cycle (excl. Not Executed)
 OUT_PNG = Path(__file__).parent / "test_cases_timeline_weekly.png"
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 NOW = datetime(2026, 6, 5)
@@ -46,18 +47,21 @@ RUBIN = {
 # so all spans stay contiguous and never overlap.
 HALF_WEEK = timedelta(days=3.5)
 DT_START = datetime(2025, 9, 22) + HALF_WEEK
-DT_END = datetime(2025, 10, 17) + HALF_WEEK
+# Right edge nudged one weekly bin left so the (operations) week-ending 2025-10-26
+# bar falls in Early Operations, not inside the downtime band.
+DT_END = datetime(2025, 10, 19) + HALF_WEEK
 DOWNTIMES = [
     (DT_START, DT_END, "Planned maintenance downtime"),
 ]
 
 # Commissioning eras: (start, end, label, color), tinted with the Rubin palette.
+# ComCam left edge sits just left of the week-ending 2024-10-20 ramp-up bar.
 ERAS = [
-    (datetime(2024, 10, 1), datetime(2024, 12, 31),
+    (datetime(2024, 10, 17), datetime(2024, 12, 15),
      "ComCam Commissioning\n on Sky", RUBIN["dark_teal"]),
-    (datetime(2024, 12, 31), datetime(2025, 4, 1),
+    (datetime(2024, 12, 15), datetime(2025, 4, 15),
      "AuxTel only\n(ComCam→LSSTCam swap)", RUBIN["cool_gray"]),
-    (datetime(2025, 4, 1), DT_START,
+    (datetime(2025, 4, 15), DT_START,
      "LSSTCam Commissioning on Sky", RUBIN["purple"]),
     (DT_END, NOW,
      "Early Operations", RUBIN["blue"]),
@@ -72,7 +76,7 @@ def main():
         m = DATE_RE.search(r.get("name") or "")
         if m:
             dates.append(datetime.strptime(m.group(1), "%Y-%m-%d"))
-            counts.append(r["n_test_cases"])
+            counts.append(r[COUNT_FIELD])
         else:
             undated.append(r["key"])
 
@@ -82,7 +86,7 @@ def main():
     print(f"{len(s)} dated cycles -> {len(weekly)} weeks with data "
           f"({len(undated)} undated: {', '.join(undated) or 'none'})")
 
-    fig, ax = plt.subplots(figsize=(16, 6.5))
+    fig, ax = plt.subplots(figsize=(16, 7.5))
 
     # Era spans + labels.
     era_texts = []
@@ -94,15 +98,19 @@ def main():
         era_texts.append(t)
 
     # Weekly bars (width ~6 days so bars nearly touch).
-    ax.bar(weekly.index, weekly.values, width=6, color="#1f77b4",
+    ax.bar(weekly.index, weekly.values, width=6, color="#006073",
            edgecolor="white", linewidth=0.3, zorder=2)
+
+    # Headroom above the tallest bar so the era labels (placed near the top)
+    # don't overlap the bars.
+    ax.set_ylim(0, weekly.max() * 1.20)
 
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
                  fontsize=15, fontweight="bold")
-    ax.set_title("Test cases per test cycle, binned by ISO week (weekly average)",
-                 fontsize=11)
+    ax.set_title("Executed test cases per test cycle, binned by ISO week "
+                 "(weekly average)", fontsize=11)
     ax.set_xlabel("Test cycle date (ISO week)")
-    ylabel = "Weekly average number of test cases per cycle"
+    ylabel = "Weekly average number of executed test cases per cycle"
     ax.set_ylabel(ylabel)
     ax.grid(True, axis="y", alpha=0.3)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
