@@ -63,7 +63,7 @@ ERAS = [
      "AuxTel only\n(ComCam→LSSTCam swap)", RUBIN["cool_gray"]),
     (datetime(2025, 4, 15), DT_START,
      "LSSTCam Commissioning on Sky", RUBIN["purple"]),
-    (DT_END, NOW,
+    (DT_END, None,  # None -> extend to the right edge of the plot
      "Early Operations", RUBIN["blue"]),
 ]
 
@@ -71,39 +71,55 @@ ERAS = [
 def main():
     rows = list(json.loads(COUNTS_FILE.read_text()).values())
 
-    dates, counts, undated = [], [], []
+    dates, counts_all, counts_exec, undated = [], [], [], []
     for r in rows:
         m = DATE_RE.search(r.get("name") or "")
         if m:
             dates.append(datetime.strptime(m.group(1), "%Y-%m-%d"))
-            counts.append(r[COUNT_FIELD])
+            counts_all.append(r["n_test_cases"])   # all cases added to the cycle
+            counts_exec.append(r[COUNT_FIELD])      # executed (not Not Executed)
         else:
             undated.append(r["key"])
 
-    s = pd.Series(counts, index=pd.DatetimeIndex(dates)).sort_index()
-    weekly = s.resample("W").mean()          # mean test cases per cycle, per week
-    weekly = weekly.dropna()
-    print(f"{len(s)} dated cycles -> {len(weekly)} weeks with data "
+    idx = pd.DatetimeIndex(dates)
+    weekly_all = pd.Series(counts_all, index=idx).sort_index().resample("W").mean().dropna()
+    weekly_exec = pd.Series(counts_exec, index=idx).sort_index().resample("W").mean().dropna()
+    print(f"{len(dates)} dated cycles -> {len(weekly_exec)} weeks with data "
           f"({len(undated)} undated: {', '.join(undated) or 'none'})")
+
+    # Plot x-range: a small margin around the first/last weekly bin. The Early
+    # Operations span (end=None) is drawn out to plot_right.
+    plot_left = weekly_all.index.min().to_pydatetime() - timedelta(days=7)
+    plot_right = weekly_all.index.max().to_pydatetime() + timedelta(days=7)
 
     fig, ax = plt.subplots(figsize=(16, 7.5))
 
     # Era spans + labels.
     era_texts = []
     for start, end, label, color in ERAS:
-        ax.axvspan(start, end, color=color, alpha=0.12, zorder=0)
-        t = ax.text(start + (end - start) / 2, ax.get_ylim()[1], label,
+        span_end = end if end is not None else plot_right
+        ax.axvspan(start, span_end, color=color, alpha=0.12, zorder=0)
+        t = ax.text(start + (span_end - start) / 2, ax.get_ylim()[1], label,
                     ha="center", va="top", fontsize=9.5, color=color,
                     fontweight="bold", style="italic")
         era_texts.append(t)
 
-    # Weekly bars (width ~6 days so bars nearly touch).
-    ax.bar(weekly.index, weekly.values, width=6, color="#006073",
-           edgecolor="white", linewidth=0.3, zorder=2)
+    # Weekly bars (width ~6 days so bars nearly touch). Grey bars (all test cases
+    # added to the cycle) sit behind; teal bars (executed) sit in front, so the
+    # grey peeking above each teal bar is the un-executed remainder.
+    ax.bar(weekly_all.index, weekly_all.values, width=6, color="#9AA0A0",
+           edgecolor="white", linewidth=0.3, zorder=2,
+           label="All test cases per cycle")
+    ax.bar(weekly_exec.index, weekly_exec.values, width=6, color="#006073",
+           edgecolor="white", linewidth=0.3, zorder=3,
+           label="Executed test cases per cycle")
 
-    # Headroom above the tallest bar so the era labels (placed near the top)
-    # don't overlap the bars.
-    ax.set_ylim(0, weekly.max() * 1.20)
+    # Headroom above the tallest (grey) bar so the era labels (placed near the
+    # top) don't overlap the bars.
+    ax.set_ylim(0, weekly_all.max() * 1.20)
+    # Legend in the right part of the plot, above the (shorter) bars there.
+    ax.legend(loc="upper left", bbox_to_anchor=(0.80, 0.80),
+              frameon=True, framealpha=0.9, fontsize=9.5)
 
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
                  fontsize=15, fontweight="bold")
@@ -116,17 +132,14 @@ def main():
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
     fig.autofmt_xdate()
-    ax.margins(x=0.01)
+    ax.set_xlim(plot_left, plot_right)
 
-    # Mirror the y-axis (ticks + label) on the right side.
-    secax = ax.secondary_yaxis("right")
-    secax.set_ylabel(ylabel)
-
-    # Planned downtimes: hatched gray overlay with a vertical label.
+    # Planned downtimes: light hatched overlay (kept lighter than the grey bars)
+    # with a vertical label.
     top = ax.get_ylim()[1]
     for start, end, label in DOWNTIMES:
-        ax.axvspan(start, end, facecolor=RUBIN["steel"], alpha=0.35,
-                   hatch="///", edgecolor=RUBIN["steel"], linewidth=0.0,
+        ax.axvspan(start, end, facecolor="#DCE0E3", alpha=0.8,
+                   hatch="///", edgecolor=RUBIN["cool_gray"], linewidth=0.0,
                    zorder=1)
         ax.text(start + (end - start) / 2, top * 0.45, label,
                 ha="center", va="center", rotation=90, fontsize=9,
