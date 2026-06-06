@@ -123,10 +123,10 @@ def main():
 
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
                  fontsize=15, fontweight="bold")
-    ax.set_title("Executed test cases per test cycle, binned by ISO week "
+    ax.set_title("Test cases per test cycle, binned by ISO week "
                  "(weekly average)", fontsize=11)
     ax.set_xlabel("Test cycle date (ISO week)")
-    ylabel = "Weekly average number of executed test cases per cycle"
+    ylabel = "Weekly average number of test cases per cycle"
     ax.set_ylabel(ylabel)
     ax.grid(True, axis="y", alpha=0.3)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
