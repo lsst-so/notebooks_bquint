@@ -55,9 +55,12 @@ def main():
         date = datetime.strptime(m.group(1), "%Y-%m-%d")
         buckets.setdefault(campaign_for(date), []).append(r[COUNT_FIELD])
 
+    # Mean/median are over *active* cycles (>=1 executed Test Case); cycles
+    # where nothing was executed are excluded so the average reflects a typical
+    # working night rather than being dragged down by empty/placeholder cycles.
     order = [c[0] for c in CAMPAIGNS] + ["Pre-commissioning / other"]
     header = (
-        f"{'Campaign':<38} {'#cycles':>7} {'mean':>7} {'median':>7} "
+        f"{'Campaign':<38} {'#cyc':>5} {'#act':>5} {'mean':>7} {'median':>7} "
         f"{'max':>5} {'total':>7}"
     )
     print(header)
@@ -66,11 +69,15 @@ def main():
         counts = sorted(buckets.get(label, []))
         if not counts:
             continue
-        n = len(counts)
-        mean = sum(counts) / n
-        median = counts[n // 2] if n % 2 else (counts[n // 2 - 1] + counts[n // 2]) / 2
+        active = [c for c in counts if c > 0]
+        na = len(active)
+        if na:
+            mean = sum(active) / na
+            median = active[na // 2] if na % 2 else (active[na // 2 - 1] + active[na // 2]) / 2
+        else:
+            mean = median = 0
         print(
-            f"{label:<38} {n:>7} {mean:>7.1f} {median:>7.1f} "
+            f"{label:<38} {len(counts):>5} {na:>5} {mean:>7.1f} {median:>7.1f} "
             f"{max(counts):>5} {sum(counts):>7}"
         )
 

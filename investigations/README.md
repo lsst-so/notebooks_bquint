@@ -162,19 +162,22 @@ do). The CLI is only on PATH if the package is `pip install`-ed.
   cases per cycle, not raw memberships). Counted by
   `count_executed_test_cases_per_cycle.py`.
 - **Test cases per campaign** (era), over each era's test cycles, counting
-  **executed** cases per cycle (mean / max *per cycle*, and campaign total).
-  Campaign date boundaries confirmed by the user 2026-06-05 (see ranges below):
-  | Campaign | #cycles | mean | max | total |
-  |----------|--------:|-----:|----:|------:|
-  | ComCam Commissioning on Sky | 49 | 32.8 | 56 | 1605 |
-  | AuxTel only (ComCam→LSSTCam swap) | 57 | 4.0 | 23 | 226 |
-  | LSSTCam Commissioning on Sky | 155 | 24.0 | 46 | 3721 |
-  | Planned maintenance downtime | 5 | 25.6 | 28 | 128 |
-  | Early Operations | 223 | 23.5 | 37 | 5240 |
-  | Pre-commissioning / other | 36 | 10.1 | 21 | 364 |
+  **executed** cases per cycle. **Mean / median are over _active_ cycles** (>=1
+  executed case; `#act` column) so empty/placeholder cycles don't drag the
+  average down; max and total are over all cycles. Campaign date boundaries
+  confirmed by the user 2026-06-05 (see ranges below):
+  | Campaign | #cyc | #act | mean | max | total |
+  |----------|-----:|-----:|-----:|----:|------:|
+  | ComCam Commissioning on Sky | 49 | 49 | 32.8 | 56 | 1605 |
+  | AuxTel only (ComCam→LSSTCam swap) | 57 | 44 | 5.1 | 23 | 226 |
+  | LSSTCam Commissioning on Sky | 155 | 153 | 24.3 | 46 | 3721 |
+  | Planned maintenance downtime | 5 | 5 | 25.6 | 28 | 128 |
+  | Early Operations | 223 | 222 | 23.6 | 37 | 5240 |
+  | Pre-commissioning / other | 36 | 35 | 10.4 | 21 | 364 |
   The AuxTel max of 23 is `BLOCK-R225` (2025-04-11), a LSSTCam-prep ramp-up cycle
   just before the 04-15 boundary; the user chose to keep it in AuxTel (prep for
-  LSSTCam on-sky). The paper quotes only the four main campaigns.
+  LSSTCam on-sky). The paper quotes only the four main campaigns. (The AuxTel
+  mean rises from 4.0 to 5.1 once its 13 zero-execution cycles are excluded.)
 - Commissioning-era date ranges used for plot annotations (user-confirmed
   2026-06-05; maintenance window approximate, exact dates unclear):
   | Era | Range |
