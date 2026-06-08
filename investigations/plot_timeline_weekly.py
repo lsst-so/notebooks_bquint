@@ -21,6 +21,16 @@ CACHE_DIR = Path(__file__).parent / "cache"
 COUNTS_FILE = CACHE_DIR / "test_case_counts_executed.json"
 COUNT_FIELD = "n_executed"  # executed test cases per cycle (excl. Not Executed)
 OUT_PNG = Path(__file__).parent / "test_cases_timeline_weekly.png"
+# Poster-resolution outputs. The figure is 16 in wide, so saving the PNG at
+# 300 dpi gives ~4800 px == ~40 cm at 300 dpi print resolution. The PDF is
+# vector and scales to any poster size without quality loss.
+OUT_POSTER_PNG = Path(__file__).parent / "test_cases_timeline_weekly_poster.png"
+OUT_POSTER_PDF = Path(__file__).parent / "test_cases_timeline_weekly_poster.pdf"
+OUT_POSTER_SVG = Path(__file__).parent / "test_cases_timeline_weekly_poster.svg"
+POSTER_DPI = 300
+# Font/line scale-up for the poster build, so text stays legible from a
+# distance and bars read more boldly.
+POSTER_SCALE = 1.7
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 NOW = datetime(2026, 6, 5)
 
@@ -68,7 +78,16 @@ ERAS = [
 ]
 
 
-def main():
+def main(poster=False):
+    # Scale fonts and line/bar weights up for the poster build; keep the
+    # manuscript build at its original, compact sizing.
+    s = POSTER_SCALE if poster else 1.0
+    # Era labels sit inside narrow campaign spans, so they get a gentler bump
+    # than the axis/title/legend text to avoid overlapping each other.
+    era_s = 1.2 if poster else 1.0
+    bar_w = 6.5 if poster else 6.0
+    bar_edge = 0.6 if poster else 0.3
+
     rows = list(json.loads(COUNTS_FILE.read_text()).values())
 
     dates, counts_all, counts_exec, undated = [], [], [], []
@@ -100,18 +119,18 @@ def main():
         span_end = end if end is not None else plot_right
         ax.axvspan(start, span_end, color=color, alpha=0.12, zorder=0)
         t = ax.text(start + (span_end - start) / 2, ax.get_ylim()[1], label,
-                    ha="center", va="top", fontsize=9.5, color=color,
+                    ha="center", va="top", fontsize=9.5 * era_s, color=color,
                     fontweight="bold", style="italic")
         era_texts.append(t)
 
     # Weekly bars (width ~6 days so bars nearly touch). Grey bars (all test cases
     # added to the cycle) sit behind; teal bars (executed) sit in front, so the
     # grey peeking above each teal bar is the un-executed remainder.
-    ax.bar(weekly_all.index, weekly_all.values, width=6, color="#9AA0A0",
-           edgecolor="white", linewidth=0.3, zorder=2,
+    ax.bar(weekly_all.index, weekly_all.values, width=bar_w, color="#9AA0A0",
+           edgecolor="white", linewidth=bar_edge, zorder=2,
            label="All test cases per cycle")
-    ax.bar(weekly_exec.index, weekly_exec.values, width=6, color="#006073",
-           edgecolor="white", linewidth=0.3, zorder=3,
+    ax.bar(weekly_exec.index, weekly_exec.values, width=bar_w, color="#006073",
+           edgecolor="white", linewidth=bar_edge, zorder=3,
            label="Executed test cases per cycle")
 
     # Headroom above the tallest (grey) bar so the era labels (placed near the
@@ -119,15 +138,16 @@ def main():
     ax.set_ylim(0, weekly_all.max() * 1.20)
     # Legend in the right part of the plot, above the (shorter) bars there.
     ax.legend(loc="upper left", bbox_to_anchor=(0.80, 0.80),
-              frameon=True, framealpha=0.9, fontsize=9.5)
+              frameon=True, framealpha=0.9, fontsize=9.5 * s)
 
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
-                 fontsize=15, fontweight="bold")
+                 fontsize=15 * s, fontweight="bold")
     ax.set_title("Test cases per test cycle, binned by ISO week "
-                 "(weekly average)", fontsize=11)
-    ax.set_xlabel("Test cycle date (ISO week)")
+                 "(weekly average)", fontsize=11 * s)
+    ax.set_xlabel("Test cycle date (ISO week)", fontsize=11 * s)
     ylabel = "Weekly average number of test cases per cycle"
-    ax.set_ylabel(ylabel)
+    ax.set_ylabel(ylabel, fontsize=11 * s)
+    ax.tick_params(axis="both", labelsize=9.5 * s)
     ax.grid(True, axis="y", alpha=0.3)
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
@@ -142,7 +162,7 @@ def main():
                    hatch="///", edgecolor=RUBIN["cool_gray"], linewidth=0.0,
                    zorder=1)
         ax.text(start + (end - start) / 2, top * 0.45, label,
-                ha="center", va="center", rotation=90, fontsize=9,
+                ha="center", va="center", rotation=90, fontsize=9 * s,
                 color=RUBIN["steel"], fontweight="bold")
 
     # Re-place era labels now that ylim is final.
@@ -150,9 +170,19 @@ def main():
         txt.set_y(top * 0.97)
 
     fig.tight_layout(rect=[0, 0, 1, 0.96])
-    fig.savefig(OUT_PNG, dpi=130)
-    print(f"Saved -> {OUT_PNG}")
+    if poster:
+        fig.savefig(OUT_POSTER_PNG, dpi=POSTER_DPI)
+        fig.savefig(OUT_POSTER_PDF)
+        fig.savefig(OUT_POSTER_SVG)
+        print(f"Saved -> {OUT_POSTER_PNG} ({POSTER_DPI} dpi, ~40 cm wide)")
+        print(f"Saved -> {OUT_POSTER_PDF} (vector)")
+        print(f"Saved -> {OUT_POSTER_SVG} (vector, for PowerPoint)")
+    else:
+        fig.savefig(OUT_PNG, dpi=130)
+        print(f"Saved -> {OUT_PNG}")
+    plt.close(fig)
 
 
 if __name__ == "__main__":
-    main()
+    main(poster=False)   # compact manuscript figure
+    main(poster=True)    # large-font, thick-bar poster figure
