@@ -151,8 +151,10 @@ def main(poster=False):
         ax.legend(loc="upper left", bbox_to_anchor=(0.80, 0.80),
                   frameon=True, framealpha=0.9, fontsize=9.5 * s)
 
+    # Lower the main title on the poster so it sits closer to the subtitle.
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
-                 fontsize=15 * s, fontweight="bold")
+                 fontsize=15 * s, fontweight="bold",
+                 y=0.965 if poster else 0.98)
     # Extra pad on the poster lifts the subtitle up toward the main title,
     # filling the gap above the plot.
     ax.set_title("Test cases per test cycle, binned by ISO week "
