@@ -58,9 +58,9 @@ DOWNTIMES = [
 # ComCam left edge sits just left of the week-ending 2024-10-20 ramp-up bar.
 ERAS = [
     (datetime(2024, 10, 17), datetime(2024, 12, 15),
-     "ComCam Commissioning\n on Sky", RUBIN["dark_teal"]),
+     "LSSTComCam Commissioning\n on Sky", RUBIN["dark_teal"]),
     (datetime(2024, 12, 15), datetime(2025, 4, 15),
-     "AuxTel only\n(ComCam→LSSTCam swap)", RUBIN["cool_gray"]),
+     "AuxTel only\n(LSSTComCam\nto LSSTCam swap)", RUBIN["cool_gray"]),
     (datetime(2025, 4, 15), DT_START,
      "LSSTCam Commissioning on Sky", RUBIN["purple"]),
     (DT_END, None,  # None -> extend to the right edge of the plot
