@@ -118,7 +118,12 @@ def main(poster=False):
     for start, end, label, color in ERAS:
         span_end = end if end is not None else plot_right
         ax.axvspan(start, span_end, color=color, alpha=0.12, zorder=0)
-        t = ax.text(start + (span_end - start) / 2, ax.get_ylim()[1], label,
+        # The ComCam span is narrow; on the poster (bigger fonts) wrap its
+        # label onto more lines so it stays inside the span.
+        label_text = label
+        if poster and label.startswith("LSSTComCam"):
+            label_text = "LSSTComCam\nCommissioning\non Sky"
+        t = ax.text(start + (span_end - start) / 2, ax.get_ylim()[1], label_text,
                     ha="center", va="top", fontsize=9.5 * era_s, color=color,
                     fontweight="bold", style="italic")
         era_texts.append(t)
@@ -137,19 +142,30 @@ def main(poster=False):
     # top) don't overlap the bars.
     ax.set_ylim(0, weekly_all.max() * 1.20)
     # Legend in the right part of the plot, above the (shorter) bars there.
-    ax.legend(loc="upper left", bbox_to_anchor=(0.80, 0.80),
-              frameon=True, framealpha=0.9, fontsize=9.5 * s)
+    # On the poster the legend is larger, so pin it to the upper-right corner
+    # inside the axes instead of anchoring its left edge (which overflowed).
+    if poster:
+        ax.legend(loc="upper right", bbox_to_anchor=(0.985, 0.88),
+                  frameon=True, framealpha=0.9, fontsize=9.5 * s)
+    else:
+        ax.legend(loc="upper left", bbox_to_anchor=(0.80, 0.80),
+                  frameon=True, framealpha=0.9, fontsize=9.5 * s)
 
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
                  fontsize=15 * s, fontweight="bold")
     ax.set_title("Test cases per test cycle, binned by ISO week "
                  "(weekly average)", fontsize=11 * s)
     ax.set_xlabel("Test cycle date (ISO week)", fontsize=11 * s)
-    ylabel = "Weekly average number of test cases per cycle"
+    # Single line fits the manuscript height; at the poster's larger font it
+    # would be taller than the axis, so wrap it onto two lines.
+    ylabel = ("Weekly average number of\ntest cases per cycle" if poster
+              else "Weekly average number of test cases per cycle")
     ax.set_ylabel(ylabel, fontsize=11 * s)
     ax.tick_params(axis="both", labelsize=9.5 * s)
     ax.grid(True, axis="y", alpha=0.3)
-    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    # Monthly ticks for the manuscript; every other month on the poster so the
+    # larger date labels don't crowd or collide with the y-axis label.
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2 if poster else 1))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
     fig.autofmt_xdate()
     ax.set_xlim(plot_left, plot_right)
