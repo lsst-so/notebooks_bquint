@@ -154,12 +154,12 @@ def main(poster=False):
     # Lower the main title on the poster so it sits closer to the subtitle.
     fig.suptitle("Rubin Observatory — Commissioning Plans Test Activity",
                  fontsize=15 * s, fontweight="bold",
-                 y=0.965 if poster else 0.98)
-    # Extra pad on the poster lifts the subtitle up toward the main title,
-    # filling the gap above the plot.
+                 y=0.955 if poster else 0.98)
+    # Modest pad on the poster keeps the subtitle close to the plot while
+    # leaving room for the main title above it.
     ax.set_title("Test cases per test cycle, binned by ISO week "
                  "(weekly average)", fontsize=11 * s,
-                 pad=18 if poster else 6)
+                 pad=8 if poster else 6)
     ax.set_xlabel("Test cycle date (ISO week)", fontsize=11 * s)
     # Single line fits the manuscript height; at the poster's larger font it
     # would be taller than the axis, so wrap it onto two lines.
