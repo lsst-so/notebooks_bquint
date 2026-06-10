@@ -56,7 +56,7 @@ def main():
     fig, ax = plt.subplots(figsize=(11, 6))
 
     bins = np.arange(0, mx + 2) - 0.5  # one bin per integer step count
-    ax.hist(steps, bins=bins, color=RUBIN["teal"], edgecolor="white", linewidth=0.4)
+    ax.hist(steps, bins=bins, color="#006073", edgecolor="white", linewidth=0.4)
 
     ax.axvline(mean, color=RUBIN["red"], linestyle="--", linewidth=1.6,
                label=f"mean = {mean:.1f}")

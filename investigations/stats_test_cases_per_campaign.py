@@ -18,18 +18,20 @@ from datetime import datetime
 from pathlib import Path
 
 CACHE_DIR = Path(__file__).parent / "cache"
-COUNTS_FILE = CACHE_DIR / "test_case_counts.json"
+COUNTS_FILE = CACHE_DIR / "test_case_counts_executed.json"
+COUNT_FIELD = "n_executed"  # executed test cases per cycle (excl. Not Executed)
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 NOW = datetime(2026, 6, 5)
 
 # Commissioning campaigns (eras): (label, start, end). Half-open [start, end).
-# Ranges from investigations/README.md section 3.
+# Boundaries confirmed by the user (2026-06-05); maintenance window is
+# approximate (exact dates unclear), ended at the Early Operations start.
 CAMPAIGNS = [
-    ("ComCam Commissioning on Sky", datetime(2024, 10, 1), datetime(2024, 12, 31)),
-    ("AuxTel only (ComCam->LSSTCam swap)", datetime(2024, 12, 31), datetime(2025, 4, 1)),
-    ("LSSTCam Commissioning on Sky", datetime(2025, 4, 1), datetime(2025, 9, 22)),
-    ("Planned maintenance downtime", datetime(2025, 9, 22), datetime(2025, 10, 17)),
-    ("Early Operations", datetime(2025, 10, 17), NOW),
+    ("ComCam Commissioning on Sky", datetime(2024, 10, 24), datetime(2024, 12, 15)),
+    ("AuxTel only (ComCam->LSSTCam swap)", datetime(2024, 12, 15), datetime(2025, 4, 15)),
+    ("LSSTCam Commissioning on Sky", datetime(2025, 4, 15), datetime(2025, 9, 22)),
+    ("Planned maintenance downtime", datetime(2025, 9, 22), datetime(2025, 10, 26)),
+    ("Early Operations", datetime(2025, 10, 26), NOW),
 ]
 
 
@@ -51,11 +53,14 @@ def main():
             undated.append(r["key"])
             continue
         date = datetime.strptime(m.group(1), "%Y-%m-%d")
-        buckets.setdefault(campaign_for(date), []).append(r["n_test_cases"])
+        buckets.setdefault(campaign_for(date), []).append(r[COUNT_FIELD])
 
+    # Mean/median are over *active* cycles (>=1 executed Test Case); cycles
+    # where nothing was executed are excluded so the average reflects a typical
+    # working night rather than being dragged down by empty/placeholder cycles.
     order = [c[0] for c in CAMPAIGNS] + ["Pre-commissioning / other"]
     header = (
-        f"{'Campaign':<38} {'#cycles':>7} {'mean':>7} {'median':>7} "
+        f"{'Campaign':<38} {'#cyc':>5} {'#act':>5} {'mean':>7} {'median':>7} "
         f"{'max':>5} {'total':>7}"
     )
     print(header)
@@ -64,11 +69,15 @@ def main():
         counts = sorted(buckets.get(label, []))
         if not counts:
             continue
-        n = len(counts)
-        mean = sum(counts) / n
-        median = counts[n // 2] if n % 2 else (counts[n // 2 - 1] + counts[n // 2]) / 2
+        active = [c for c in counts if c > 0]
+        na = len(active)
+        if na:
+            mean = sum(active) / na
+            median = active[na // 2] if na % 2 else (active[na // 2 - 1] + active[na // 2]) / 2
+        else:
+            mean = median = 0
         print(
-            f"{label:<38} {n:>7} {mean:>7.1f} {median:>7.1f} "
+            f"{label:<38} {len(counts):>5} {na:>5} {mean:>7.1f} {median:>7.1f} "
             f"{max(counts):>5} {sum(counts):>7}"
         )
 
