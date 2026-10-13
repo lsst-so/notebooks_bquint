@@ -1,0 +1,8 @@
+# Run `pre-commit install` once per clone to enable these hooks.
+# Strip notebook outputs so only source is committed:
+#   pre-commit run --all-files
+repos:
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout
