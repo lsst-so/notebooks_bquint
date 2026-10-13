@@ -7,17 +7,17 @@ assigned to a campaign by the date embedded in its name. Within a campaign we
 report, over its test cycles, the number of cycles and the mean / median / max
 number of test cases per cycle (plus the campaign total).
 
-Reads cache/test_case_counts.json (per-cycle unique test-case counts).
+Reads data/test_case_counts.json (per-cycle unique test-case counts).
 
 Usage:
-    PYTHONPATH=../python python stats_test_cases_per_campaign.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python stats_test_cases_per_campaign.py
 """
 import json
 import re
 from datetime import datetime
 from pathlib import Path
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 COUNTS_FILE = CACHE_DIR / "test_case_counts_executed.json"
 COUNT_FIELD = "n_executed"  # executed test cases per cycle (excl. Not Executed)
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")

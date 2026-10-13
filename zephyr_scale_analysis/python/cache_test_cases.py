@@ -6,7 +6,7 @@ test case (keyed BLOCK-T##). As of this writing it returns 680 test cases.
 
 Usage:
     source ~/.zapi
-    PYTHONPATH=../python python cache_test_cases.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python cache_test_cases.py
 """
 import asyncio
 import json
@@ -15,7 +15,7 @@ from pathlib import Path
 
 from lsst.ts.planning.tool.zephyr_interface import ZephyrInterface
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 OUT_FILE = CACHE_DIR / "test_cases.json"
 PAGE = 100
 PROJECT = "BLOCK"

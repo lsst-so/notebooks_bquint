@@ -1,4 +1,4 @@
-# Investigations — reference notes
+# Zephyr Scale analysis — reference notes
 
 Working notes for ad-hoc analyses against Zephyr Scale / Jira via the
 `ts_planning_tool` package. Captures the setup and findings so investigations
@@ -23,25 +23,24 @@ The simplest working combo:
 - **Credentials:** the three required env vars live in `~/.zapi` (sourced from
   `~/.zshrc`). Source it before running.
 
-Canonical invocation from inside `investigations/`:
+Canonical invocation (scripts live in `python/`, read/write `data/`, and save
+figures to `plots/` — paths are resolved from the script location, so the
+working directory does not matter):
 
 ```zsh
 source ~/.zapi
 PYTHONPATH="/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python" \
-  /Users/bquint/miniforge3/envs/lsst-scipipe-12.1.0/bin/python <script>.py
+  /Users/bquint/miniforge3/envs/lsst-scipipe-12.1.0/bin/python python/<script>.py
 ```
 
-Note: the older scripts' docstrings still say `PYTHONPATH=../python` from when
-this folder lived inside `ts_planning_tool`; use the absolute path above instead.
-
-Required env vars (see repo top-level `README.md`):
+Required env vars:
 `ZEPHYR_API_TOKEN`, `JIRA_API_TOKEN`, `JIRA_USERNAME`.
 
 ---
 
 ## 2. How the Zephyr/Jira API works (ZAPI)
 
-Code lives in [`../python/lsst/ts/planning/tool/zephyr_interface.py`](../python/lsst/ts/planning/tool/zephyr_interface.py).
+Code lives in `ts_planning_tool`: `python/lsst/ts/planning/tool/zephyr_interface.py`.
 
 - **Base URLs**
   - Zephyr Scale: `https://api.zephyrscale.smartbear.com/v2/`
@@ -91,7 +90,7 @@ count equals the number of test cases.
 
 ### CLI
 
-A `zapi` CLI exists ([`../python/lsst/ts/planning/tool/cli.py`](../python/lsst/ts/planning/tool/cli.py)) but only
+A `zapi` CLI exists (`ts_planning_tool`: `python/lsst/ts/planning/tool/cli.py`) but only
 supports `get {test_case,test_cycle,test_execution,steps,user}` and
 `list test_executions`. It has **no folder support and no count command**, so
 folder-level analyses use `ZephyrInterface.get()` directly (as the scripts here
@@ -192,8 +191,8 @@ do). The CLI is only on PATH if the package is `pip install`-ed.
 
 ## 4. Rubin Observatory brand colors
 
-From the **Visual Identity Manual V7** (`../20210212 Visual Identity Manual —V7
-(1).pdf`), pages 27–30. These are the *brand* colors (use these for
+From the **Visual Identity Manual V7** (`20210212 Visual Identity Manual —V7
+(1).pdf`, not in this repo), pages 27–30. These are the *brand* colors (use these for
 Rubin-branded figures), **not** the ugrizy filter-plot colors.
 
 | Name | HEX | RGB | Pantone | Notes |
@@ -229,18 +228,18 @@ protanopia/deuteranopia.
 
 | File | What it does | Output |
 |------|--------------|--------|
-| `cache_test_cycles.py` | Finds the "Commissioning Plans" folder subtree and caches all raw test-cycle payloads | `cache/test_cycles.json`, `cache/folders.json` |
-| `count_test_cases_per_cycle.py` | Counts unique test cases per cycle (concurrency 8, **incremental save + resume** — re-run until 0 remaining) | `cache/test_case_counts.json` |
-| `count_executed_test_cases_per_cycle.py` | Like above, but also counts **executed** cases per cycle (last execution not `Not Executed`); basis for the paper's plot/table (**incremental save + resume**) | `cache/test_case_counts_executed.json` |
-| `plot_timeline_weekly.py` | Weekly-binned bar chart of **executed** cases per cycle, era spans + downtime, Rubin brand colors (reads `test_case_counts_executed.json`) | `test_cases_timeline_weekly.png` |
-| `plot_timeline.py` | Earlier per-cycle scatter version | `test_cases_timeline.png` |
+| `cache_test_cycles.py` | Finds the "Commissioning Plans" folder subtree and caches all raw test-cycle payloads | `data/test_cycles.json`, `data/folders.json` |
+| `count_test_cases_per_cycle.py` | Counts unique test cases per cycle (concurrency 8, **incremental save + resume** — re-run until 0 remaining) | `data/test_case_counts.json` |
+| `count_executed_test_cases_per_cycle.py` | Like above, but also counts **executed** cases per cycle (last execution not `Not Executed`); basis for the paper's plot/table (**incremental save + resume**) | `data/test_case_counts_executed.json` |
+| `plot_timeline_weekly.py` | Weekly-binned bar chart of **executed** cases per cycle, era spans + downtime, Rubin brand colors (reads `test_case_counts_executed.json`) | `plots/test_cases_timeline_weekly.png` |
+| `plot_timeline.py` | Earlier per-cycle scatter version | `plots/test_cases_timeline.png` |
 | `stats_test_cases_per_campaign.py` | Mean/median/max test cases per cycle, grouped by commissioning campaign (era) | stdout table |
-| `cache_test_cases.py` | Lists all 680 test cases in project `BLOCK` and caches raw payloads | `cache/test_cases.json` |
-| `count_steps_per_test_case.py` | Counts steps per test case via `testcases/{key}/teststeps` (**incremental save + resume**) | `cache/test_case_step_counts.json` |
-| `plot_steps_histogram.py` | Histogram of steps per test case, Rubin brand colors | `steps_per_test_case_histogram.png` |
-| `count_versions_per_test_case.py` | Counts versions per test case via `testcases/{key}/versions` (**incremental save + resume**) | `cache/test_case_version_counts.json` |
+| `cache_test_cases.py` | Lists all 680 test cases in project `BLOCK` and caches raw payloads | `data/test_cases.json` |
+| `count_steps_per_test_case.py` | Counts steps per test case via `testcases/{key}/teststeps` (**incremental save + resume**) | `data/test_case_step_counts.json` |
+| `plot_steps_histogram.py` | Histogram of steps per test case, Rubin brand colors | `plots/steps_per_test_case_histogram.png` |
+| `count_versions_per_test_case.py` | Counts versions per test case via `testcases/{key}/versions` (**incremental save + resume**) | `data/test_case_version_counts.json` |
 
-`cache/` holds the offline copies so re-runs and new analyses don't re-hit the
+`data/` holds the offline copies so re-runs and new analyses don't re-hit the
 API. `count_test_cases_per_cycle.py` is resume-safe: it skips cycles already in
 `test_case_counts.json`, so a timeout just means "run it again."
 
@@ -256,23 +255,23 @@ regenerate offline (no API calls needed).
 - *Executed test cases per cycle / per campaign* — for all 526 cycles, counted
   both all-memberships and **executed** cases (last execution not `Not
   Executed`) via `count_executed_test_cases_per_cycle.py`
-  (`cache/test_case_counts_executed.json`). The timeline plot and per-campaign
+  (`data/test_case_counts_executed.json`). The timeline plot and per-campaign
   table now use executed counts; campaign date boundaries were corrected per the
   user 2026-06-05 (§3). Headline: 11,284 executed memberships; per-cycle median
   23; per-campaign means ComCam 32.8, AuxTel 4.0, LSSTCam 24.0, Early Ops 23.5.
 - *Versions per test case* — counted versions for all **680** cases via
-  `testcases/{key}/versions` (`cache/test_case_version_counts.json`, 680/680).
+  `testcases/{key}/versions` (`data/test_case_version_counts.json`, 680/680).
   Headline for the SPIE paper: max is **19** versions, **none exceeds 20**, and
   ~82% are single-version (stats in §3). Regenerate with
   `count_versions_per_test_case.py` (resume-safe).
 
 - *Test cases per campaign* — grouped the 526 commissioning cycles by era and
   computed mean/median/max cases per cycle (table in §3). Source data:
-  `cache/test_case_counts.json` (526 cycles, already populated). Regenerate the
+  `data/test_case_counts.json` (526 cycles, already populated). Regenerate the
   table with `stats_test_cases_per_campaign.py` (reads cache, instant).
 - *Steps per test case* — enumerated all **680** test cases in project `BLOCK`
-  (`cache/test_cases.json`) and counted steps for each
-  (`cache/test_case_step_counts.json`, 680/680 done, 0 remaining). Histogram:
+  (`data/test_cases.json`) and counted steps for each
+  (`data/test_case_step_counts.json`, 680/680 done, 0 remaining). Histogram:
   `steps_per_test_case_histogram.png` (x capped at 30; 10 cases exceed it). The
   10 cases with > 30 steps are listed with web-UI links in §3.
 
@@ -292,6 +291,6 @@ regenerate offline (no API calls needed).
 **To resume / extend**
 
 - Refresh data: re-run `cache_test_cases.py` then `count_steps_per_test_case.py`
-  (resume-safe — delete the relevant `cache/*.json` to force a full refetch).
+  (resume-safe — delete the relevant `data/*.json` to force a full refetch).
 - Env: `source ~/.zapi` + the `lsst-scipipe-12.1.0` python + `PYTHONPATH` to
-  `../python` (see §1).
+  `ts_planning_tool/python` (see §1).

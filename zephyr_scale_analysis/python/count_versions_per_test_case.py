@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 """Count the number of versions of each test case of project BLOCK.
 
-For every test case (from cache/test_cases.json) this queries
+For every test case (from data/test_cases.json) this queries
 ``testcases/{key}/versions`` and counts the version entries returned. Each entry
 in the paginated ``values`` list corresponds to one version of the test case.
 
 Resilient to timeouts: results are written incrementally to
-``cache/test_case_version_counts.json`` and the script resumes, skipping cases
+``data/test_case_version_counts.json`` and the script resumes, skipping cases
 already counted. Just re-run it until it reports 0 remaining.
 
 Usage:
     source ~/.zapi
-    PYTHONPATH=../python python count_versions_per_test_case.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python count_versions_per_test_case.py
 """
 import asyncio
 import json
@@ -20,7 +20,7 @@ from pathlib import Path
 
 from lsst.ts.planning.tool.zephyr_interface import ZephyrInterface
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 CASES_FILE = CACHE_DIR / "test_cases.json"
 COUNTS_FILE = CACHE_DIR / "test_case_version_counts.json"
 PAGE = 100

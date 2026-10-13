@@ -4,11 +4,11 @@ subfolders) from Zephyr Scale, saving raw payloads locally for offline analysis.
 
 Usage:
     source ~/.zapi
-    PYTHONPATH=../python python cache_test_cycles.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python cache_test_cycles.py
 
 Writes:
-    cache/test_cycles.json   - list of raw test-cycle payloads
-    cache/folders.json       - the TEST_CYCLE folder subtree under the root
+    data/test_cycles.json   - list of raw test-cycle payloads
+    data/folders.json       - the TEST_CYCLE folder subtree under the root
 """
 import asyncio
 import json
@@ -19,7 +19,7 @@ from lsst.ts.planning.tool.zephyr_interface import ZephyrInterface
 
 PROJECT_KEY = "BLOCK"
 ROOT_FOLDER_NAME = "Commissioning Plans"
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 PAGE = 100
 
 

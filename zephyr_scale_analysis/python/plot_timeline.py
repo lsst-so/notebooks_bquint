@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """Plot a timeline of test-case count per test cycle in "Commissioning Plans".
 
-Reads cache/test_case_counts.json, extracts the YYYY-MM-DD date embedded in
+Reads data/test_case_counts.json, extracts the YYYY-MM-DD date embedded in
 each cycle name, and plots date vs. number of test cases.
 
 Usage:
-    PYTHONPATH=../python python plot_timeline.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python plot_timeline.py
 """
 import json
 import re
@@ -15,9 +15,9 @@ from pathlib import Path
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 COUNTS_FILE = CACHE_DIR / "test_case_counts.json"
-OUT_PNG = Path(__file__).parent / "test_cases_timeline.png"
+OUT_PNG = Path(__file__).parent.parent / "plots" / "test_cases_timeline.png"
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
 

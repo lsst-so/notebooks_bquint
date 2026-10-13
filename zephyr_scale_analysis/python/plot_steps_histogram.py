@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """Histogram of the number of steps per test case (project BLOCK, 680 cases).
 
-Reads cache/test_case_step_counts.json and renders a histogram with the Rubin
+Reads data/test_case_step_counts.json and renders a histogram with the Rubin
 brand palette, annotated with summary statistics.
 
 Usage:
-    PYTHONPATH=../python python plot_steps_histogram.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python plot_steps_histogram.py
 """
 import json
 from pathlib import Path
@@ -13,9 +13,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 COUNTS_FILE = CACHE_DIR / "test_case_step_counts.json"
-OUT_PNG = Path(__file__).parent / "steps_per_test_case_histogram.png"
+OUT_PNG = Path(__file__).parent.parent / "plots" / "steps_per_test_case_histogram.png"
 
 # Web UI base URL for a test case; append the BLOCK-T## key.
 TC_BASE_URL = (
