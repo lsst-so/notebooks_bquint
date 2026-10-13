@@ -1,0 +1,11 @@
+{
+    "python.defaultInterpreterPath": "/Users/bquint/miniforge3/envs/lsst-scipipe-10.1.0/bin/python",
+    "python.analysis.extraPaths": [
+        "/Users/bquint/miniforge3/envs/lsst-scipipe-10.1.0/lib/python3.12/site-packages"
+    ],
+    "python.linting.flake8Args": [
+        "--max-line-length=110"
+    ],
+    "editor.formatOnSave": true,
+    "workbench.colorTheme": "Solarized Dark"
+}
