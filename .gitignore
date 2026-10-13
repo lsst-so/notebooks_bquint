@@ -6,3 +6,6 @@ consdb_*.csv
 # Local editor / Claude Code settings
 .claude/settings.local.json
 .vscode/
+
+# Query caches for nightly_survey_speed (regenerate from ConsDB)
+nightly_survey_speed/cache/
