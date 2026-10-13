@@ -9,6 +9,7 @@ extracted into its own technote repo.
 | [`zephyr_scale_analysis/`](zephyr_scale_analysis/) | Test cases per cycle, steps and versions per test case in Zephyr Scale (SPIE paper/poster) | — | Done |
 | [`dimm_data_quality/`](dimm_data_quality/) | DIMM seeing bias under low flux/wind; cross-check vs. ConsDB donut blur | RSO-656 | WIP |
 | [`night_failures/`](night_failures/) | CSC faults and script failures per night | RSO-544 | WIP |
+| [`mthexapod_warmup/`](mthexapod_warmup/) | Camera hexapod warm-up: strut motor currents vs. commands, inPosition and error logs | — | WIP |
 | [`image_quality_trending/`](image_quality_trending/) | Per-visit image-quality trends from ConsDB | — | WIP |
 | [`focus_offset_temperature/`](focus_offset_temperature/) | Initial focus offset vs. truss temperature | RSO-87 | WIP |
 | [`seeing_length_scale/`](seeing_length_scale/) | Correlation length scale of atmospheric seeing (PCA) | RSO-36 | WIP |
