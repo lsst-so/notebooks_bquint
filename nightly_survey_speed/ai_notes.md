@@ -141,3 +141,28 @@ visits (the 4 at 20 to 21 UTC and some at 22 UTC).
   2.6:1, so values are also in hover and the CSV.
 - No headless browser on the login node, so Bokeh PNG export is not possible here; static
   snapshots are matplotlib renders of the same data in the notebook.
+
+## Handoff (2026-10-13, end of first session)
+
+State: branch `u/bquint/summit-performance-on-sky-utilization`, 6 local commits on top of
+`main` (`ee3c466`), nothing pushed, no PR. Working tree clean apart from pre-existing untracked
+files in `notebooks/`.
+
+Done: Steps 1 to 4 of the task. Reproduction verified against the JOR 2026 screenshot;
+interactive notebook and `utils.py` executed headless from an SDF login node via the Postgres
+replica; README written.
+
+Not yet verified:
+- The token route (`CLIENT_PREFER="token"`, `rubin_nights.connections.get_clients()`) in a
+  Nublado kernel. Only the Postgres fallback was exercised.
+- The Bokeh figure rendered in a live browser (hover, legend toggles, wheel zoom). The HTML was
+  inspected for the expected models only. No headless browser on the login node.
+- `[check: Rubin visual identity palette]` in README section 6.
+
+Open decisions for Bruno: push and open the PR; start the DIQ versus visit rate notebook
+(`diq_vs_visit_rate.ipynb` in lsst/sp_notebooks, Lynne Jones) in this folder reusing
+`utils.get_consdb_client`, `fetch_visits`, `categorize_visits`.
+
+Scratch locations outside the repo (safe to delete): `~/tmp_clones/sp_notebooks`,
+`~/tmp_clones/rtn-122` (read-only clones), `/tmp/nss_build/` (notebook builder scripts
+`build_repro.py`, `build_interactive.py`, `cvd_check.py`, comparison crops).
