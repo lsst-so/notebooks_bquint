@@ -132,7 +132,7 @@ visits (the 4 at 20 to 21 UTC and some at 22 UTC).
   "_" marker; `segment` with data-space width was tried first and made the HTML heavy without
   gain). Bars are `vbar` from `t_start_h` to `t_end_h`. One renderer per layer, legend
   `click_policy="hide"`, HoverTool `snap_to_data`. All models built inside `build_timeline()`;
-  `render()` does `reset_output()` before save and before show (see memory note).
+  `render()` does `reset_output()` before save and before show, because a Bokeh model may belong to one document only and a failed render otherwise poisons the kernel.
 - Headless run of the default variant: 2.5 min, 17.7 MB HTML, no errors. A second run with
   exclusive + bars + categorical on 20251026-20260131 also clean (test artifacts deleted).
 - Colorblind check (Python port of the dataviz validator, OKLab dE x100, Machado 2009 sev 1.0):

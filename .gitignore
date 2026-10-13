@@ -10,3 +10,4 @@ consdb_*.csv
 # Query caches for nightly_survey_speed (regenerate from ConsDB)
 nightly_survey_speed/cache/
 nightly_survey_speed/plots/*.html
+__pycache__/
