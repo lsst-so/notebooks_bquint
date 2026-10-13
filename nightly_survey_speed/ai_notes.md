@@ -117,3 +117,27 @@ Conclusion: the reproduction is faithful. Bookkeeping: 96365 visits on 187 of 26
 63605 survey, 6868 focus (all drawn twice), 32760 "engineering" including the 6868 focus visits.
 Data span -3.11 to 10.75 h, so the hard-coded `ylim(-1.5, 11)` clips a few early-evening
 visits (the 4 at 20 to 21 UTC and some at 22 UTC).
+
+## Step 3: utils.py and interactive notebook (2026-10-13)
+
+- `utils.py`: `get_consdb_client` (token first, Postgres fallback), `fetch_visits` (original
+  WHERE clause plus LEFT JOIN of `visit1_quicklook.psf_sigma_median`, parquet cache),
+  `categorize_visits(exclusive=False|True)`, `category_changes`, `programs_in_range`,
+  `day_obs_to_time`, `day_obs_range`, `hours_after_utc_midnight`, `add_time_columns`,
+  `twilight_table`, `rubin_category_colors`. Ruff clean.
+- Checks on 20251026-20260714: layers original 32760/63605/6868, exclusive 25892/63605/6868
+  (sum 96365). Only BLOCK-T539 (6868) moves. Exposure durations 1.9 to 180.9 s, median 30.9 s.
+  Twilight table 262 rows in 32 s. `hours_after_utc_midnight(mjd of 03:00 UTC) == 3.0`.
+- Bokeh: ticks are `scatter(marker="dash")` with WebGL (fixed screen size, like the matplotlib
+  "_" marker; `segment` with data-space width was tried first and made the HTML heavy without
+  gain). Bars are `vbar` from `t_start_h` to `t_end_h`. One renderer per layer, legend
+  `click_policy="hide"`, HoverTool `snap_to_data`. All models built inside `build_timeline()`;
+  `render()` does `reset_output()` before save and before show (see memory note).
+- Headless run of the default variant: 2.5 min, 17.7 MB HTML, no errors. A second run with
+  exclusive + bars + categorical on 20251026-20260131 also clean (test artifacts deleted).
+- Colorblind check (Python port of the dataviz validator, OKLab dE x100, Machado 2009 sev 1.0):
+  rubin cycle blue/orange/green worst pair 9.2 (protan, orange vs green), normal-vision worst 18.5:
+  PASS. Original tab10 orange vs green: 0.7 under protanopia: FAIL. Orange contrast on white
+  2.6:1, so values are also in hover and the CSV.
+- No headless browser on the login node, so Bokeh PNG export is not possible here; static
+  snapshots are matplotlib renders of the same data in the notebook.
