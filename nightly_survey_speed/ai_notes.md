@@ -86,3 +86,34 @@ taken, and open items. Dates are absolute (YYYY-MM-DD).
   cell (token first, Postgres fallback) and the parameters differ.
 - Interactive notebook puts shared logic in `utils.py` with switches that default to the
   original behavior so every improvement can be toggled for comparison.
+
+## Step 2: comparison with the JOR 2026 screenshot (2026-10-13)
+
+Reference: `plots/reference_jor2026_screenshot.png` (slide 5, "Efficiency Evolution: Getting
+Bluer!", Joint Operations Review, 1 to 3 September 2026). Reproduction:
+`plots/on_sky_utilization_repro_20251026-20260714.png`.
+
+Same in both: date range (first tick 20251026, last 20260714), twilight band shapes and alpha,
+legend text and order, y limits -1.5 to 11 with ticks 0 to 10, x tick label style, the gap
+pattern (late Dec to early Jan humidity gap, two late Jan to mid Feb LSSTCam gaps with the single
+night 20260128 between them, 20260619 isolated), the mid March orange AOS block, and the all-blue
+LSST period from 20260629.
+
+Differences and likely causes:
+
+1. Marker density. Colored pixels cover 35.5 % of the axes in the screenshot and 41.6 % in the
+   reproduction. Shares by color agree to within 2 points (blue 0.645 vs 0.623, orange 0.271 vs
+   0.281, green 0.083 vs 0.096). Cause: the screenshot is a slide render at about 1700 px for the
+   axes, versus 3000 px here, so thin "_" markers (size 20) vanish when downsampled. Not a data
+   difference.
+2. Slightly more green visible here, consistent with point 1 (green ticks are the sparsest, so
+   downsampling hides proportionally more of them).
+3. No column present in one figure and absent in the other was found. ConsDB `visit1` rows come
+   from image headers at ingest, so the row set for a finished night does not change later.
+   [check: the slide figure may have been made from a notebook version before `cf187d3`, but
+   the plot cell is byte-identical across all versions, so this cannot cause a difference]
+
+Conclusion: the reproduction is faithful. Bookkeeping: 96365 visits on 187 of 262 nights;
+63605 survey, 6868 focus (all drawn twice), 32760 "engineering" including the 6868 focus visits.
+Data span -3.11 to 10.75 h, so the hard-coded `ylim(-1.5, 11)` clips a few early-evening
+visits (the 4 at 20 to 21 UTC and some at 22 UTC).
