@@ -8,12 +8,12 @@ testexecutions endpoint returns the last execution per test case, so the
 number of unique test cases == the count we want.
 
 Resilient to timeouts: results are written incrementally to
-``cache/test_case_counts.json`` and the script resumes, skipping cycles that
+``data/test_case_counts.json`` and the script resumes, skipping cycles that
 are already counted. Just re-run it until it reports 0 remaining.
 
 Usage:
     source ~/.zapi
-    PYTHONPATH=../python python count_test_cases_per_cycle.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python count_test_cases_per_cycle.py
 """
 import asyncio
 import json
@@ -22,7 +22,7 @@ from pathlib import Path
 
 from lsst.ts.planning.tool.zephyr_interface import ZephyrInterface
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 CYCLES_FILE = CACHE_DIR / "test_cycles.json"
 COUNTS_FILE = CACHE_DIR / "test_case_counts.json"
 PAGE = 100

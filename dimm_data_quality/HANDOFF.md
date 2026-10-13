@@ -67,8 +67,8 @@ See query template in `FINDINGS.md` / the query notebook.
 - ConsDB needs `os.environ["no_proxy"] += ",.consdb"` before
   `ConsDbClient("http://consdb-pq.consdb:8080/consdb")`, else the in-cluster call is
   proxied and fails.
-- Cache ConsDB pulls to `consdb_<start>_<end>.csv`; prefer re-reading over re-querying.
-- Plots → `notebooks/dimm_data_quality/plots/`, named by `dayObs`.
+- Cache ConsDB pulls to `data/consdb_<start>_<end>.csv` (gitignored); prefer re-reading over re-querying.
+- Plots → `dimm_data_quality/plots/`, named by `dayObs`.
 
 ## Progress log
 

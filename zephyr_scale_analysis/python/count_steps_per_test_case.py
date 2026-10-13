@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 """Count the number of steps in each test case of project BLOCK.
 
-For every test case (from cache/test_cases.json) this queries
+For every test case (from data/test_cases.json) this queries
 ``testcases/{key}/teststeps`` and counts the steps. Steps are counted as the
 raw number of step entries returned by the endpoint (a "call to test" step is
 counted as one step; it is NOT expanded into the called case's steps).
 
 Resilient to timeouts: results are written incrementally to
-``cache/test_case_step_counts.json`` and the script resumes, skipping cases
+``data/test_case_step_counts.json`` and the script resumes, skipping cases
 already counted. Just re-run it until it reports 0 remaining.
 
 Usage:
     source ~/.zapi
-    PYTHONPATH=../python python count_steps_per_test_case.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python count_steps_per_test_case.py
 """
 import asyncio
 import json
@@ -21,7 +21,7 @@ from pathlib import Path
 
 from lsst.ts.planning.tool.zephyr_interface import ZephyrInterface
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 CASES_FILE = CACHE_DIR / "test_cases.json"
 COUNTS_FILE = CACHE_DIR / "test_case_step_counts.json"
 PAGE = 100

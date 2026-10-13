@@ -4,32 +4,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-`notebooks_bquint` (GitHub: `lsst-sitcom/notebooks_bquint`) is Bruno Quint's personal collection of
-Rubin Observatory / LSST commissioning engineering-analysis notebooks. Unlike the parent `notebooks/`
-working directory (which is *not* a repo), this **is** its own git repository. There is no package, no
-test suite, and no build — the `python/` directory is empty and the deliverables are the notebooks
-themselves. A broader description of the RSP/SLAC SDF environment lives in the parent
-`../../CLAUDE.md`; this file only adds what is specific to this repo.
+`notebooks_bquint` (GitHub: `lsst-so/notebooks_bquint`) is Bruno Quint's personal collection of
+Rubin Observatory / LSST commissioning engineering-analysis notebooks and scripts. Unlike the parent
+`notebooks/` working directory (which is *not* a repo), this **is** its own git repository. There is
+no package, no test suite, and no build — the deliverables are the notebooks, scripts and plots. A
+broader description of the RSP/SLAC SDF environment lives in the parent `../../CLAUDE.md`; this file
+only adds what is specific to this repo.
 
-All analysis notebooks live under `notebooks/`, grouped loosely by subsystem
-(`image_quality/`, `mthexapod/`) or named for the study (`TMA - Maximum Slew Velocities.ipynb`,
-`OBS-1479 Condensation Investigation.ipynb`, `rso87.ipynb`). Names encode the Jira ticket or campaign
-when there is one — preserve that scheme for new notebooks.
+## Layout: one self-contained folder per investigation
+
+Each investigation lives in its own top-level folder (index in `README.md`) so it can later be
+extracted into a standalone technote repo with `git filter-repo --subdirectory-filter <folder>`:
+
+```
+<investigation>/
+├── README.md     # what it is, Jira ticket, status, contents
+├── notebooks/    # Jupyter notebooks
+├── python/       # standalone scripts / modules
+├── data/         # cached query results (large files gitignored)
+├── plots/        # figures
+└── notes/        # session notes, handoffs (optional)
+```
+
+Rules:
+- Only create the subfolders an investigation actually needs.
+- **No imports or relative paths across investigation folders** — that breaks extraction. Copy small
+  helpers rather than sharing them.
+- Notebooks run from `notebooks/`, so they read `../data/` and write `../plots/`. Scripts in
+  `python/` resolve paths from `Path(__file__).parent.parent`.
+- Folders are named by topic (`dimm_data_quality`); the Jira ticket goes in the folder README and
+  in notebook filenames (`RSO-656 DIMM telemetry exploration.ipynb`).
 
 ## Environment & tooling
 
 - Runs on the LSST Science Pipelines / `ts_*` stack provided by **EUPS**, not pip. `lsst.*` and
   `lsst_efd_client` are already on the kernel `PYTHONPATH`; do not add pip installs for them.
-- `create_dot_env.py` — run from inside a set-up kernel shell (`python create_dot_env.py`) to dump
-  `PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH` plus every `*_DIR` with a matching `SETUP_*` var into `.env`
-  so VS Code's Python extension can resolve the stack. The generated `.env` is large and
-  machine-specific — regenerate, never hand-edit.
-- Lint/format with **ruff** (`ruff check <file>` / `ruff format <file>`); a `.ruff_cache/` is present
-  under `notebooks/mthexapod/`.
+- A machine-specific `.env` (`PATH`/`PYTHONPATH`/`LD_LIBRARY_PATH` plus every `*_DIR` with a
+  matching `SETUP_*` var) lets VS Code's Python extension resolve the stack. It is generated from a
+  set-up kernel shell — regenerate, never hand-edit.
+- Lint/format with **ruff** (`ruff check <file>` / `ruff format <file>`).
 - Notebooks commonly open with `%load_ext autoreload` / `%autoreload 2` and `%load_ext lab_black`
   (Black-on-save for cells). `%matplotlib widget` is used for interactive plots.
-- `.gitignore` excludes `**/.ipynb_checkpoints`. Note `Untitled.ipynb` and CSV data caches are
-  currently committed/tracked despite being scratch/derived — be deliberate about what you add.
+- `.gitignore` excludes `**/.ipynb_checkpoints`, `consdb_*.csv` (ConsDB exports exceed GitHub's
+  100 MB file limit) and local `.claude/` / `.vscode/` settings — be deliberate about what you add.
+- The Zephyr Scale scripts (`zephyr_scale_analysis/`) run outside the stack, against a local conda
+  env and `ts_planning_tool`; see that folder's `CLAUDE.md`.
 
 ## Data access patterns specific to this repo
 
@@ -46,7 +65,7 @@ Three backends show up across the notebooks:
   client = ConsDbClient("http://consdb-pq.consdb:8080/consdb")
   ```
   Queries are SQL against `ccdvisit1_quicklook` (`psf_sigma`, `psf_ixx/ixy/iyy`, Zernikes `z4..`, etc.).
-  Results are cached to CSV (`notebooks/consdb_<start>_<end>.csv`) so the notebooks can be re-run
+  Results are cached to CSV (`<investigation>/data/consdb_<start>_<end>.csv`) so the notebooks can be re-run
   offline — prefer reading the existing CSV over re-querying when the date range matches.
 - **Butler / TAP** — used in the image-quality notebooks for image/catalog products.
 
@@ -55,7 +74,7 @@ Image-quality work uses seeing corrections from `lsst.summit.utils`
 `lsst.utils.plotting` (`publication_plots`, `get_multiband_plot_colors`). `CAM_FWHM = 0.207` arcsec
 is the assumed camera-contribution FWHM.
 
-Plot outputs are written to a `plots/` folder next to the notebook and named with the `dayObs`/visit
+Plot outputs are written to the investigation's `plots/` folder and named with the `dayObs`/visit
 they cover (e.g. `max_slew_velocity_<dayObs>.png`, `plots/<visit_id>.png`).
 
 ## Reference documentation

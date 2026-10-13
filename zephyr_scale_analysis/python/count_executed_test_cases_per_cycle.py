@@ -12,7 +12,7 @@ With ``onlyLastExecutions=True`` the endpoint returns one execution per test
 case (its latest), so we use that execution's status as the case's state.
 
 Resilient to timeouts: results are written incrementally to
-``cache/test_case_counts_executed.json`` and the script resumes, skipping cycles
+``data/test_case_counts_executed.json`` and the script resumes, skipping cycles
 already counted. Re-run until it reports 0 remaining.
 
 Usage:
@@ -28,7 +28,7 @@ from pathlib import Path
 
 from lsst.ts.planning.tool.zephyr_interface import ZephyrInterface
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 CYCLES_FILE = CACHE_DIR / "test_cycles.json"
 COUNTS_FILE = CACHE_DIR / "test_case_counts_executed.json"
 NOT_EXECUTED_ID = 6360081

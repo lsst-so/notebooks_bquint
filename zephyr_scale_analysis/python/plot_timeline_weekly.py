@@ -3,10 +3,10 @@
 commissioning-era spans annotated.
 
 Each bar is the mean number of test cases per cycle for cycles falling in that
-ISO week. Reads cache/test_case_counts.json.
+ISO week. Reads data/test_case_counts.json.
 
 Usage:
-    PYTHONPATH=../python python plot_timeline_weekly.py
+    PYTHONPATH=/Users/bquint/GitHub/lsst-ts/ts_planning_tool/python python plot_timeline_weekly.py
 """
 import json
 import re
@@ -17,16 +17,16 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
 
-CACHE_DIR = Path(__file__).parent / "cache"
+CACHE_DIR = Path(__file__).parent.parent / "data"
 COUNTS_FILE = CACHE_DIR / "test_case_counts_executed.json"
 COUNT_FIELD = "n_executed"  # executed test cases per cycle (excl. Not Executed)
-OUT_PNG = Path(__file__).parent / "test_cases_timeline_weekly.png"
+OUT_PNG = Path(__file__).parent.parent / "plots" / "test_cases_timeline_weekly.png"
 # Poster-resolution outputs. The figure is 16 in wide, so saving the PNG at
 # 300 dpi gives ~4800 px == ~40 cm at 300 dpi print resolution. The PDF is
 # vector and scales to any poster size without quality loss.
-OUT_POSTER_PNG = Path(__file__).parent / "test_cases_timeline_weekly_poster.png"
-OUT_POSTER_PDF = Path(__file__).parent / "test_cases_timeline_weekly_poster.pdf"
-OUT_POSTER_SVG = Path(__file__).parent / "test_cases_timeline_weekly_poster.svg"
+OUT_POSTER_PNG = Path(__file__).parent.parent / "plots" / "test_cases_timeline_weekly_poster.png"
+OUT_POSTER_PDF = Path(__file__).parent.parent / "plots" / "test_cases_timeline_weekly_poster.pdf"
+OUT_POSTER_SVG = Path(__file__).parent.parent / "plots" / "test_cases_timeline_weekly_poster.svg"
 POSTER_DPI = 300
 # Font/line scale-up for the poster build, so text stays legible from a
 # distance and bars read more boldly.

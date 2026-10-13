@@ -6,7 +6,7 @@ _Last updated: 2026-05-22_
 
 Building a multi-month "trending" companion to the working MVP
 `count_night_failures.ipynb`, which counts CSC faults & script failures for a
-single night. New notebook: **`count_night_failures_trending.ipynb`** (repo root).
+single night. New notebook: **`count_night_failures_trending.ipynb`** (in `notebooks/`).
 
 Runs in the LSST stack kernel (Nublado / USDF RSP) — `lsst_efd_client`, astropy,
 pandas, numpy, bokeh, matplotlib. It cannot be executed in a plain local Python
