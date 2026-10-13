@@ -57,3 +57,10 @@ is the assumed camera-contribution FWHM.
 
 Plot outputs are written to a `plots/` folder next to the notebook and named with the `dayObs`/visit
 they cover (e.g. `max_slew_velocity_<dayObs>.png`, `plots/<visit_id>.png`).
+
+## Reference documentation
+
+- EFD schema: https://ts-xml.lsst.io/ — commands map to `lsst.sal.<CSC>.command_<name>`, events to
+  `lsst.sal.<CSC>.logevent_<name>`, telemetry to `lsst.sal.<CSC>.<telemetry name>`.
+- ConsDB schema for LSSTCam: https://sdm-schemas.lsst.io/cdb_lsstcam.html
+- LSST Science Pipelines / Butler: https://pipelines.lsst.io/index.html
