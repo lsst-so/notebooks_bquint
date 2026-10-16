@@ -30,6 +30,10 @@ extracted into a standalone technote repo with `git filter-repo --subdirectory-f
 ```
 
 Rules:
+- **Leave the untracked top-level `notebooks/` folder alone.** It holds older loose notebooks and
+  large ConsDB CSVs that have not yet been sorted into investigation folders (deferred by Bruno,
+  2026-10-16). Do not add, move, delete or reorganise it; it is excluded from `git status` via
+  `.git/info/exclude`.
 - Only create the subfolders an investigation actually needs.
 - **No imports or relative paths across investigation folders** — that breaks extraction. Copy small
   helpers rather than sharing them.
