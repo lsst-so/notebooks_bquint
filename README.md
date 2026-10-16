@@ -6,6 +6,7 @@ extracted into its own technote repo.
 
 | Folder | Topic | Ticket | Status |
 |---|---|---|---|
+| [`observatory_high_level_performance/`](observatory_high_level_performance/) | Survey speed vs. delivered image quality, best two weeks of Early Ops vs. first two weeks of LSST, and by fiscal quarter (RASAB 2026 figure; interactive, talk, paper versions) | — | WIP |
 | [`zephyr_scale_analysis/`](zephyr_scale_analysis/) | Test cases per cycle, steps and versions per test case in Zephyr Scale (SPIE paper/poster) | — | Done |
 | [`dimm_data_quality/`](dimm_data_quality/) | DIMM seeing bias under low flux/wind; cross-check vs. ConsDB donut blur | RSO-656 | WIP |
 | [`night_failures/`](night_failures/) | CSC faults and script failures per night | RSO-544 | WIP |

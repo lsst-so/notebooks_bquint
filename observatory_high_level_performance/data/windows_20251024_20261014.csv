@@ -1,0 +1,5 @@
+label,label_long,series,n_nights_calendar,n_nights_with_visits,n_nights_weather,n_visits,n_vis_expected,ratio,ratio_q25,ratio_q75,idiq_aos_cam_med,idiq_aos_cam_q25,idiq_aos_cam_q75,fwhm_500_zenith_med,fwhm_geom_med,last_day_obs_with_visits,low_n,is_lsst,weather_known
+"Best 2 weeks, Early Ops","Best 2 weeks, Early Ops (16 Nov–29 Nov 2025, 14 nights)",all,14,13,0,2491,9978.0,0.2496,0.0808,0.3897,0.4669,0.4191,0.5221,1.0096,1.0224,20251129,False,False,False
+"First 2 weeks, LSST","First 2 weeks, LSST (29 Jun–12 Jul 2026, 14 nights)",all,14,9,2,6588,15128.0,0.4355,0.0,0.7506,0.4098,0.3829,0.4446,0.9483,1.0003,20260712,False,True,True
+"Best 2 weeks, Early Ops","Best 2 weeks, Early Ops (16 Nov–29 Nov 2025, 14 nights)",weather_excluded,14,13,0,2491,9978.0,0.2496,0.0808,0.3897,0.4669,0.4191,0.5221,1.0096,1.0224,20251129,False,False,False
+"First 2 weeks, LSST","First 2 weeks, LSST (29 Jun–12 Jul 2026, 12 nights)",weather_excluded,12,9,0,6588,12961.0,0.5083,0.2834,0.7668,0.4098,0.3829,0.4446,0.9483,1.0003,20260712,False,True,True
