@@ -23,7 +23,10 @@ This folder holds:
 |---|---|
 | `notebooks/on_sky_utilization_repro.ipynb` | Cell-by-cell reproduction of the original static figure. The reference, quirks included. |
 | `notebooks/on_sky_utilization_interactive.ipynb` | Bokeh version with hover, zoom, legend toggles and switchable improvements. |
-| `utils.py` | Shared code: ConsDB client, query, categorization, time handling, twilight, colors. |
+| `utils.py` | Shared code: ConsDB client, query, categorization, time handling (UTC and Chile local frames), twilight, colors. |
+| `downtime_annotations.csv` | Known downtime spans (dates are `day_obs`, inclusive) with cause, category, severity, confidence and FRACAS tickets. Rows with `label = UNKNOWN` are blank runs in ConsDB with no explanation yet. `talk = 1` flags the five spans labelled on the RASAB 2026 slide. |
+| `downtime.py` | `annotate_downtime(ax, csv_path, ...)` (matplotlib) and `annotate_downtime_bokeh(p, csv_path, ...)` (Bokeh): draw the CSV spans on the timeline (bands, identity strips, staggered labels, category legend, LSST start marker; hover with the CSV row in Bokeh). |
+| `make_utilization_annotated.py` | Builds `plots/utilization_annotated.{png,pdf}` (all categories except unknown; `--talk` for faults of 2+ nights only) and `plots/downtime_summary.md`. |
 | `plots/` | Figures (`png`, `pdf`), the reference screenshot, the per-night CSV. Interactive `html` files are produced here but not committed. |
 | `cache/` | Parquet cache of the ConsDB query, not committed. |
 
@@ -186,8 +189,14 @@ the same code and the same date range.
   `observation_reason`, `img_type`, band, exposure time, PSF FWHM when available, and the
   category. Clicking a legend entry hides or shows that category. Legend labels include counts.
 - **Switches**, all defaulting to the original behavior: `EXCLUSIVE_CATEGORIES`, `DRAW_BARS`,
-  `X_AXIS`, `Y_RANGE` (None gives twilight-based automatic limits instead of the fixed -1.5 to 11,
-  so no visit is clipped), and the two program lists as parameters.
+  `X_AXIS`, `Y_REF` (`"utc"`, the original reference, or `"local"` for Chile clock time with
+  `HH:00` ticks; each night is shifted by its own UTC offset, so the twilight curves step by 1 h
+  at the daylight-saving change on 2026-04-05), `Y_RANGE` (None gives twilight-based automatic
+  limits instead of the fixed -1.5 to 11, so no visit is clipped), and the two program lists as
+  parameters. `ANNOTATE_DOWNTIME` (default on) adds the downtime layer of Section 9 with
+  `DOWNTIME_MIN_NIGHTS`, `DOWNTIME_CATEGORIES` and `DOWNTIME_LABEL_CATEGORIES` as selectors;
+  it needs the continuous x axis. The default range now ends at 20260713, the last night before
+  the July storm.
 - **Colors.** `lsst.utils.plotting` has no named categorical palette. We read the color cycle of
   its `rubin.mplstyle`, which the file documents as the seaborn colorblind palette, and keep the
   original roles: slot 1 `#0173B2` blue for Survey Programs, slot 2 `#DE8F05` orange for
@@ -264,3 +273,34 @@ replica; the twilight table takes about 30 seconds; the Bokeh render about one m
 
 **Caching.** `fetch_visits` writes `cache/lsstcam_visits_ql_<min>_<max>.parquet` and reads it
 back when `USE_CACHE=True`. Delete the file or set `USE_CACHE=False` to refresh.
+
+## 9. Downtime annotations (2026-10-16)
+
+For the RASAB 2026 talk the timeline is overlaid with the downtime spans of
+`downtime_annotations.csv`, drawn by `downtime.annotate_downtime` and rendered by
+`make_utilization_annotated.py` for 20251026 to 20260713 (the last night before the July
+storm; the storm row stays in the CSV and is not drawn).
+
+- A night is "blank" when fewer than 50 visits pass the plot's filters. Over the 261 nights
+  there are 80 blank nights in 27 contiguous runs. The `low`/`medium` rows of the CSV were
+  aligned to these runs (confidence raised to `high`, note "dates from ConsDB"); 18
+  `UNKNOWN` rows cover the 25 blank nights with no explanation yet. `UNKNOWN` rows are
+  not drawn by default.
+- Colours are Rubin palette slots (`rubin_color_pallete/rubin_palette.py`): fault red,
+  weather teal, planned green, mixed orange, degraded purple (hatched, no band), unknown
+  grey. A solid strip along the top edge of the axes carries the colour at full saturation,
+  because the pale extent bands alone do not separate under colour-vision deficiency.
+- `plots/downtime_summary.md` lists every span with its count of blank nights and the
+  per-category totals.
+- `make_utilization_annotated.py` writes four variants. `utilization_annotated` (16:9, white
+  background) draws every category but unknown with staggered text labels above the plot; it is
+  the backup slide. `utilization_annotated_talk` is the RASAB 2026 slide figure: 9.5 x 4 inch,
+  transparent background, fault / weather / mixed spans of 3+ nights as bands, and the five
+  spans with `talk = 1` numbered chronologically inside their strip (water condensation,
+  Dynalene loss, vacuum leak #1, PCS compressor failure + vacuum leak #2, TMA encoder + cryo
+  warm-up: the faults that cost four or more nights and appear in Sandrine Thomas' notes). The
+  three legends (visit types, downtime colours, numbered events) are stacked to the right of the
+  plot with thin separators. Both come with a `_local` twin (Chile clock time y axis, 18:30 to
+  07:30; the June solstice sunset is 17:46 and the earliest twilight end 18:46). The interactive
+  notebook draws the same layer with `annotate_downtime_bokeh` (text labels above the plot, with
+  the span's dates, category, FRACAS tickets and notes on hover).

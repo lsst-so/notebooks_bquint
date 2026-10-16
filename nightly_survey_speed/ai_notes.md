@@ -166,3 +166,58 @@ Open decisions for Bruno: push and open the PR; start the DIQ versus visit rate 
 Scratch locations outside the repo (safe to delete): `~/tmp_clones/sp_notebooks`,
 `~/tmp_clones/rtn-122` (read-only clones), `/tmp/nss_build/` (notebook builder scripts
 `build_repro.py`, `build_interactive.py`, `cvd_check.py`, comparison crops).
+
+## Step 5: downtime annotations for the RASAB 2026 talk (2026-10-16)
+
+Decisions and findings, in order:
+
+- Blank night = fewer than 50 visits passing the plot filter (`cache/nights_20251026_20260713.csv`
+  has the per-night counts; the raw per-night-per-img_type query is next to it). 80 blank nights
+  in 27 runs over 261 nights. 75 of them have zero plotted visits.
+- CSV edits (Bruno confirmed the proposals): low/medium rows moved to the observed runs with
+  confidence high and "dates from ConsDB" in notes; partial rows kept with a ConsDB check note;
+  18 UNKNOWN rows for unexplained blank runs (25 nights), not drawn by default. Bruno: small gaps
+  are probably minor faults or weather, UNKNOWN is fine, do not plot them. High rows never touched,
+  so the tails 20260417 and 20260508-10 are UNKNOWN rows rather than extensions.
+- `talk` column (0/1) in the CSV marks the five spans labelled on the slide. Label of the March
+  event shortened to "PCS compressor failure + vacuum leak #2" so it wraps on two legend lines.
+- The y axis: 0 is 00:00 UTC on the morning date, i.e. 21:00 CLST / 20:00 CLT, so the evening
+  twilight crossing zero in summer is correct. `Y_REF="local"` shifts each night by its own
+  America/Santiago offset (-3 / -4 h); there is a 1 h step at the 2026-04-05 DST change. Local
+  y range 18:30 to 07:30 (one stray visit at 17:53 on 20251130 is clipped).
+- Colours: Rubin palette slots (fault red `#DB5451`, weather teal `#058B8C`, planned green
+  `#00630C`, mixed orange `#CE7F00`, degraded purple `#74369E`, unknown grey). At band alpha the
+  pairs fail the CVD check, so the solid strip above the axes carries the identity; at full
+  saturation all pairs pass except fault/mixed under deuteranopia (6.7), covered by labels.
+- Strips end exactly at the axes top edge (`strip_overlap=0`) and are drawn under the spines.
+  Digits are centred on glyph ink (`_digit_ink_center_pt`), not the font box, in strips and in
+  the legend chips (the chip DrawingArea is in points; do not multiply by dpi/72 there).
+- Slide style (`STYLES["slide"]`): 9.5 x 4 in, transparent figure face with a white axes patch,
+  axis labels 10 pt, ticks 12 pt, legends 9 pt, numbers 12 pt, visit-legend keys +2 pt. Legend
+  stack on the right is 1.98 in wide; axes about 6.6 x 3.1 in. `fit_margins` tightens the
+  margins to 0.02 in after annotating (geometry outside the axes is in inches so it survives).
+- Minor x ticks on days 8, 15, 22 (quarter-month marks aligned to the month majors).
+- The box right of "4" on the slide is "PCS chiller flow variations" (partial, 26 Feb to 18 Mar,
+  one blank night), a different event from the compressor failure (20 to 23 Mar); kept separate.
+
+Verified: all four figure variants render; the notebook executes headless end to end (scratch
+copy via nbconvert, Postgres route); PNG alpha checked (corners 0, plot area 255); digit padding
+measured in the PNG (9 to 10 px top and bottom at 300 dpi).
+
+Not verified: the Bokeh figure in a live browser (no headless browser on the login node); the
+Bokeh label stagger uses estimated text widths; the notebook's Bokeh layer still uses text
+labels above the plot, not the numbered mode; the token route in a Nublado kernel.
+
+## Handoff (2026-10-16, end of second session)
+
+State: branch `u/bquint/summit-performance-on-sky-utilization`, nothing pushed, no PR. Two new
+commits this session: code (scripts, CSV, utils, notebook, docs) and the regenerated figures.
+
+Files: `downtime_annotations.csv` (35 rows, `talk` column), `downtime.py`
+(`annotate_downtime`, `annotate_downtime_bokeh`, `select_spans`, `fit_margins`),
+`make_utilization_annotated.py` (`--talk`, `--y-ref utc|local`), `plots/utilization_annotated*`
+(8 files), `plots/downtime_summary.md`.
+
+Open for Bruno: research the 18 UNKNOWN rows (FRACAS, narrative log, #summit-announce); dark
+slide background would need an ink-colour option (text and chips are dark ink on white boxes);
+numbered mode for the Bokeh layer if wanted; push and PR.

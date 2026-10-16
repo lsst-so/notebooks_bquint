@@ -44,6 +44,8 @@ __all__ = [
     "day_obs_to_time",
     "day_obs_range",
     "hours_after_utc_midnight",
+    "local_offset_hours",
+    "to_local_hours",
     "add_time_columns",
     "twilight_table",
     "rubin_category_colors",
@@ -374,6 +376,27 @@ def hours_after_utc_midnight(mjd, day_obs) -> np.ndarray:
     ref = np.atleast_1d(day_obs_to_time(day_obs).mjd) + 1.0
     hours = (np.asarray(mjd, dtype=float) - ref) * 24.0
     return float(hours[0]) if np.ndim(mjd) == 0 and np.ndim(day_obs) == 0 else hours
+
+
+def local_offset_hours(day_obs) -> np.ndarray:
+    """UTC offset of ``SUMMIT_TZ`` (hours, negative) at 00:00 UTC on day_obs + 1.
+
+    The Chilean night does not cross a daylight-saving change (changes happen at
+    24:00 local on a Saturday, i.e. 03:00/04:00 UTC on Sunday, which is in the
+    middle of the night, but the ``day_obs`` rollover at 12:00 UTC keeps whole
+    nights on one side), so one value per night is enough: -3 (CLST, summer) or
+    -4 (CLT, winter).
+    """
+    s = pd.Series(np.atleast_1d(day_obs)).astype(int).astype(str)
+    t = pd.to_datetime(s, format="%Y%m%d", utc=True) + pd.Timedelta(days=1)
+    return np.array(
+        [x.tz_convert(SUMMIT_TZ).utcoffset().total_seconds() / 3600 for x in t]
+    )
+
+
+def to_local_hours(hours_utc, day_obs) -> np.ndarray:
+    """Hours after 00:00 UTC on day_obs + 1 -> hours after local clock midnight."""
+    return np.asarray(hours_utc, dtype=float) + local_offset_hours(day_obs)
 
 
 def add_time_columns(visits: pd.DataFrame) -> pd.DataFrame:
