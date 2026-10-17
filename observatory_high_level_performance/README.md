@@ -24,7 +24,7 @@ are counted, never removed (§5):
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
-| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary; titled, no direct label), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260713.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary; titled, no direct label), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
@@ -125,15 +125,20 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   28189 expected, speed 0.17 (nightly IQR 0.01–0.25), iDIQ median 0.459″ [0.418–0.517]. No weather
   state exists for these nights. Saved to `data/window_early_ops_octnov_20251024_20251130.{parquet,csv}`.
 - **Early Ops vs. LSST** (`03_static_png.ipynb`, `PERIOD = "early_ops_vs_lsst"`, the talk figure):
-  the Early Ops window above plus one window for the whole LSST on-sky stretch, 20260629–20260713
-  (season start to the last night with survey visits; the storm closes the dome from 20260714).
-  15 calendar nights, 10 with visits, 7267 visits of 16201 expected, speed 0.45 (nightly IQR
-  0.00–0.74), iDIQ median 0.414″ [0.385–0.449]. Two of the five closed nights (20260702–20260703)
-  carry the EFD WEATHER flag and stay in the count (removing them would give 0.52; see below for why
-  that is not done). Early Ops keeps the brand teal, LSST is `CATEGORICAL[2]` purple (nights and
+  the Early Ops window above plus one window for the whole LSST on-sky stretch, 20260629–20260714.
+  The end date is chosen to match Lynne Jones's `diq_vs_visit_rate` plot ("20260629 to 20260714") so
+  that the two figures, which are shown side by side, give the same number; survey visits end on
+  20260713 and 20260714 is a closed weather night (storm). 16 calendar nights, 10 with visits, 7267
+  visits of 17273 expected, speed 0.42 (nightly IQR 0.00–0.73), iDIQ median 0.414″ [0.385–0.449].
+  Three of the six closed nights (20260702–20260703, 20260714) carry the EFD WEATHER flag and stay
+  in the count (see below for why). Ending on 20260713 instead gives speed 0.45. Checked against
+  Lynne's figure 2026-10-17: the ten nightly points coincide; her near-zero points are the closed
+  nights, which her notebook draws at the period-median iDIQ plus jitter and ours omits (no IQ
+  exists for them); both include them in the speed. Her aggregate is the mean of nightly ratios,
+  ours the ratio of sums; for this window they agree to 0.001. Early Ops keeps the brand teal, LSST is `CATEGORICAL[2]` purple (nights and
   whiskers in the same hue), passed to `build_static_figure(colors=...)`. Each window is described in
   the legend (`labels_in_legend=True`), so no direct labels are drawn. Saved to
-  `data/windows_early_ops_vs_lsst_20251024_20260713.{parquet,csv}`.
+  `data/windows_early_ops_vs_lsst_20251024_20260714.{parquet,csv}`.
 - **Windows** (`ohlp.binning.window_table`, `period_kind = "window"`, `period` = window index) are
   named inclusive `day_obs` ranges with the same columns as a quarter. The two windows used:
   - *Best 2 weeks, Early Ops*, 20251116–20251129: the 14-night contiguous window of Oct–Dec 2025
