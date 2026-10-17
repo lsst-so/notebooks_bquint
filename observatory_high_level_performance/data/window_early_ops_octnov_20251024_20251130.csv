@@ -1,0 +1,3 @@
+label_long,series,n_nights_calendar,n_nights_with_visits,n_visits,n_vis_expected,ratio,ratio_q25,ratio_q75,idiq_aos_cam_med,idiq_aos_cam_q25,idiq_aos_cam_q75
+"Early Ops, Oct–Nov 2025 (24 Oct–30 Nov 2025, 38 nights)",all,38,29,4708,28189.0,0.167,0.0091,0.2537,0.4591,0.418,0.5165
+"Early Ops, Oct–Nov 2025 (24 Oct–30 Nov 2025, 38 nights)",weather_excluded,38,29,4708,28189.0,0.167,0.0091,0.2537,0.4591,0.418,0.5165

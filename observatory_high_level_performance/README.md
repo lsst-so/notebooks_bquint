@@ -24,6 +24,7 @@ three outputs that share one cached table:
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary, default; titled, no direct label) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
@@ -37,11 +38,13 @@ observatory_high_level_performance/
 │   ├── data.py                # ConsDB / expected visits / weather → ../data/*.parquet
 │   ├── binning.py             # per-night, per-quarter, per-month and per-window tables
 │   ├── style.py               # imports ../rubin_color_pallete/rubin_palette.py; role → colour map
-│   └── interactive.py         # Bokeh figure builder
+│   ├── interactive.py         # Bokeh figure builder
+│   └── static.py              # matplotlib figure builder (PNG)
 ├── 01_data_and_binning.ipynb  # builds the cache, prints the per-quarter and per-window tables, cross-checks ConsDB
+├── 03_static_png.ipynb        # matplotlib PNG version (same tables, same palette roles)
 ├── 04_interactive.ipynb       # Bokeh version
 ├── data/                      # parquet caches + windows_<tag>.csv, quarterly_<tag>.csv, monthly_<tag>.csv (visits parquet gitignored)
-└── figures/                   # outputs (HTML gitignored)
+└── figures/                   # outputs (HTML gitignored; static PNGs committed)
 ```
 
 Notebooks run from this folder (`sys.path.insert(0, ".")`). The only cross-folder dependency is
@@ -109,6 +112,13 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather-excluded nights
   `FY*10 + Q`, e.g. 261 = FY26 Q1). FY26 Q1 starts at 20251024, the first survey night (69 calendar
   nights, 45 with visits). FY27 Q1 runs to the query date and is empty. Months (`day_obs // 100`) are
   available with `period="month"`.
+- **Single Early Ops summary** (`03_static_png.ipynb`, `PERIOD = "early_ops"`): one window
+  20251024–20251130, the first survey night to the last night before the Dec 2025–Mar 2026 sequence
+  of downtimes (water condensation, Dynalene loss, vacuum leak, earthquake; list in
+  `nightly_survey_speed/plots/downtime_summary.md`). 38 calendar nights, 29 with visits, 4708 visits of
+  28189 expected, speed 0.17 (nightly IQR 0.01–0.25), iDIQ median 0.459″ [0.418–0.517]. No weather
+  state exists for these nights, so the two series coincide and no hollow point is drawn. Saved to
+  `data/window_early_ops_octnov_20251024_20251130.{parquet,csv}`.
 - **Windows** (`ohlp.binning.window_table`, `period_kind = "window"`, `period` = window index) are
   named inclusive `day_obs` ranges with the same columns as a quarter. The two windows used:
   - *Best 2 weeks, Early Ops*, 20251116–20251129: the 14-night contiguous window of Oct–Dec 2025
