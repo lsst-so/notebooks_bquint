@@ -3,6 +3,9 @@
 ``build_figure`` takes the period (fiscal quarter, month or named window) and nightly tables from :mod:`ohlp.binning`
 and returns a Bokeh layout with the plot and its controls. All interactivity is
 client-side (CustomJS), so the saved HTML is standalone.
+
+Weather nights are counted, never removed: the "LSST = 1" reference is the v5.1
+baseline simulation, which already loses nights to its cloud and downtime models.
 """
 
 from __future__ import annotations
@@ -53,9 +56,9 @@ MARKER_LSST = "square"
 
 
 def _period_source(
-    m: pd.DataFrame, series: str, colors: list[str], iq_col: str, latest: int
+    m: pd.DataFrame, colors: list[str], iq_col: str, latest: int
 ) -> ColumnDataSource:
-    d = m[(m["series"] == series) & (m["n_visits"] > 0)].sort_values("period").copy()
+    d = m[m["n_visits"] > 0].sort_values("period").copy()
     label_all = len(d) <= 6  # few points: label every one directly
     data = {
         "period": d["period"].to_numpy(),
@@ -63,8 +66,6 @@ def _period_source(
         "t_index": d["t_index"].to_numpy(),
         "label": d["label"].to_numpy(),
         "label_long": d["label_long"].to_numpy(),
-        "series_label": ["all nights" if series == "all" else "weather-excluded nights"]
-        * len(d),
         "x": d["ratio"].to_numpy(),
         "x_lo": d["ratio_q25"].to_numpy(),
         "x_hi": d["ratio_q75"].to_numpy(),
@@ -92,9 +93,7 @@ def _period_source(
         ),
         "marker": np.where(d["is_lsst"], MARKER_LSST, MARKER_EARLY),
         "color": [colors[i] for i in d["t_index"]],
-        "fill": [colors[i] for i in d["t_index"]]
-        if series == "all"
-        else [COLORS["hollow_face"]] * len(d),
+        "fill": [colors[i] for i in d["t_index"]],
         "alpha": np.where(d["low_n"], 0.45, 1.0),
         "size": np.where(d["period"] == latest, 20, 14),
         "period_name": np.where(d["is_lsst"], "LSST", "Early Ops"),
@@ -121,7 +120,7 @@ def _period_source(
     first_lsst = np.flatnonzero(d["is_lsst"].to_numpy())
     if len(first_lsst) and len(d) and not is_window:
         text[first_lsst[0]] = d["label"].iloc[first_lsst[0]] + " (LSST start)"
-    data["text"] = text if series == "all" else np.full(len(d), "", dtype=object)
+    data["text"] = text
     return ColumnDataSource(data)
 
 
@@ -173,7 +172,7 @@ def _nightly_source(
     nightly: pd.DataFrame, periods: pd.DataFrame, iq_col: str, kind: str
 ) -> ColumnDataSource:
     n = nightly[nightly["n_vis"] > 0].copy()
-    p_all = periods[periods["series"] == "all"]
+    p_all = periods
     if kind == "window":
         # Assign nights to windows by day_obs range; nights outside any window drop.
         n["t_index"] = np.nan
@@ -188,7 +187,7 @@ def _nightly_source(
         n["period"] = period_key(n["day_obs"], kind)
         n["t_index"] = n["period"].map(p_all.set_index("period")["t_index"])
     n["date_str"] = n["date"].dt.strftime("%Y-%m-%d")
-    n["weather_label"] = np.where(n["is_weather_night"], "weather night (excluded)", "")
+    n["weather_label"] = np.where(n["is_weather_night"], "weather night", "")
     n["weather_label"] = np.where(
         n["weather_known"].fillna(False),
         n["weather_label"],
@@ -240,18 +239,14 @@ def build_figure(
     kind_word = PERIODS[kind]
     if kind == "window":
         show_nightly = True  # few windows: their nights are the useful context
-    p_all = periods[
-        (periods["series"] == "all") & (periods["n_visits"] > 0)
-    ].sort_values("period")
+    p_all = periods[periods["n_visits"] > 0].sort_values("period")
     n_periods = len(p_all)
     latest = int(p_all["period"].max())
     latest_in_table = int(periods["period"].max())
     colors = time_colors(n_periods)
 
-    src_all = _period_source(periods, "all", colors, iq_col, latest)
-    src_wx = _period_source(periods, "weather_excluded", colors, iq_col, latest)
+    src_all = _period_source(periods, colors, iq_col, latest)
     seg_all, seg_rows_all = _segment_source(src_all, colors)
-    seg_wx, seg_rows_wx = _segment_source(src_wx, colors)
     src_night = _nightly_source(nightly, periods, iq_col, kind)
     yref = ref.Y_REFERENCE[iq_col]
 
@@ -391,108 +386,99 @@ def build_figure(
     )
 
     # Monthly path, whiskers, points ----------------------------------------- #
-    filters = {}
-    renderers = {}
-    arrows = {"all": [], "weather_excluded": []}
-    for key, src, seg, seg_rows in (
-        ("all", src_all, seg_all, seg_rows_all),
-        ("weather_excluded", src_wx, seg_wx, seg_rows_wx),
-    ):
-        hollow = key == "weather_excluded"
-        f_pts = BooleanFilter(booleans=[True] * len(src.data["x"]))
-        f_seg = BooleanFilter(booleans=[True] * len(seg.data["x0"]))
-        filters[key] = (f_pts, f_seg)
-        r_seg = p.segment(
-            "x0",
-            "y0",
-            "x1",
-            "y1",
-            source=seg,
-            view=CDSView(filter=f_seg),
-            line_color="color",
-            line_dash="dash",
-            line_width=1.5 if not hollow else 1.2,
-            line_alpha=0.9 if not hollow else 0.7,
+    f_all_pts = BooleanFilter(booleans=[True] * len(src_all.data["x"]))
+    f_all_seg = BooleanFilter(booleans=[True] * len(seg_all.data["x0"]))
+    r_seg = p.segment(
+        "x0",
+        "y0",
+        "x1",
+        "y1",
+        source=seg_all,
+        view=CDSView(filter=f_all_seg),
+        line_color="color",
+        line_dash="dash",
+        line_width=1.5,
+        line_alpha=0.9,
+    )
+    arrows_all = []
+    for s in seg_rows_all:
+        a = Arrow(
+            end=VeeHead(size=9, fill_color=s["color"], line_color=s["color"]),
+            x_start=(s["x0"] + s["x1"]) / 2,
+            y_start=(s["y0"] + s["y1"]) / 2,
+            x_end=(s["x0"] + s["x1"]) / 2 + (s["x1"] - s["x0"]) * 1e-3,
+            y_end=(s["y0"] + s["y1"]) / 2 + (s["y1"] - s["y0"]) * 1e-3,
+            line_alpha=0,
         )
-        for s in seg_rows:
-            a = Arrow(
-                end=VeeHead(size=9, fill_color=s["color"], line_color=s["color"]),
-                x_start=(s["x0"] + s["x1"]) / 2,
-                y_start=(s["y0"] + s["y1"]) / 2,
-                x_end=(s["x0"] + s["x1"]) / 2 + (s["x1"] - s["x0"]) * 1e-3,
-                y_end=(s["y0"] + s["y1"]) / 2 + (s["y1"] - s["y0"]) * 1e-3,
-                line_alpha=0,
-            )
-            a.tags = [s["t0"], s["t1"]]
-            p.add_layout(a)
-            arrows[key].append(a)
-        wy = Whisker(
-            source=src,
-            base="x",
-            upper="y_hi",
-            lower="y_lo",
-            dimension="height",
-            line_color="color",
-            line_alpha=0.5,
-            line_width=1,
-            upper_head=None,
-            lower_head=None,
+        a.tags = [s["t0"], s["t1"]]
+        p.add_layout(a)
+        arrows_all.append(a)
+    wy = Whisker(
+        source=src_all,
+        base="x",
+        upper="y_hi",
+        lower="y_lo",
+        dimension="height",
+        line_color="color",
+        line_alpha=0.5,
+        line_width=1,
+        upper_head=None,
+        lower_head=None,
+    )
+    wx = Whisker(
+        source=src_all,
+        base="y",
+        upper="x_hi",
+        lower="x_lo",
+        dimension="width",
+        line_color="color",
+        line_alpha=0.5,
+        line_width=1,
+        upper_head=None,
+        lower_head=None,
+    )
+    p.add_layout(wy)
+    p.add_layout(wx)
+    r_pts = p.scatter(
+        "x",
+        "y",
+        source=src_all,
+        view=CDSView(filter=f_all_pts),
+        marker="marker",
+        size="size",
+        fill_color="fill",
+        fill_alpha="alpha",
+        line_color="color",
+        line_alpha="alpha",
+        line_width=1,
+    )
+    r_all = [r_seg, r_pts, wy, wx]
+    p.add_tools(
+        HoverTool(
+            renderers=[r_pts],
+            tooltips=[
+                ("Period", "@label_long (@period_name)"),
+                (
+                    "Nights with visits",
+                    "@n_nights_with_visits of @n_nights_calendar calendar",
+                ),
+                ("Weather nights (counted, not removed)", "@n_nights_weather"),
+                ("Visits", "@n_visits{0,0} / @n_vis_expected{0,0} expected"),
+                (
+                    "Speed, median [IQR of nights]",
+                    "@x{0.00} [@x_lo{0.00}–@x_hi{0.00}]",
+                ),
+                (
+                    "IQ, median [IQR of visits]",
+                    "@y{0.000}″ [@y_lo{0.000}–@y_hi{0.000}]",
+                ),
+                ("Last night with visits", "@last_night"),
+                ("Storm-truncated", "@storm_note"),
+                ("Few nights", "@low_n"),
+                ("Weather state available", "@weather_known"),
+            ],
         )
-        wx = Whisker(
-            source=src,
-            base="y",
-            upper="x_hi",
-            lower="x_lo",
-            dimension="width",
-            line_color="color",
-            line_alpha=0.5,
-            line_width=1,
-            upper_head=None,
-            lower_head=None,
-        )
-        p.add_layout(wy)
-        p.add_layout(wx)
-        r_pts = p.scatter(
-            "x",
-            "y",
-            source=src,
-            view=CDSView(filter=f_pts),
-            marker="marker",
-            size="size",
-            fill_color="fill",
-            fill_alpha="alpha",
-            line_color="color",
-            line_alpha="alpha",
-            line_width=2 if hollow else 1,
-        )
-        renderers[key] = {"seg": r_seg, "pts": r_pts, "wy": wy, "wx": wx}
-        p.add_tools(
-            HoverTool(
-                renderers=[r_pts],
-                tooltips=[
-                    ("Period", "@label_long (@period_name)"),
-                    ("Series", "@series_label"),
-                    (
-                        "Nights with visits",
-                        "@n_nights_with_visits of @n_nights_calendar calendar",
-                    ),
-                    ("Weather nights", "@n_nights_weather"),
-                    ("Visits", "@n_visits{0,0} / @n_vis_expected{0,0} expected"),
-                    (
-                        "Speed, median [IQR of nights]",
-                        "@x{0.00} [@x_lo{0.00}–@x_hi{0.00}]",
-                    ),
-                    (
-                        "IQ, median [IQR of visits]",
-                        "@y{0.000}″ [@y_lo{0.000}–@y_hi{0.000}]",
-                    ),
-                    ("Last night with visits", "@last_night"),
-                    ("Storm-truncated", "@storm_note"),
-                    ("Few nights", "@low_n"),
-                    ("Weather state available", "@weather_known"),
-                ],
-            )
-        )
+    )
 
     labels = LabelSet(
         source=src_all,
@@ -507,11 +493,7 @@ def build_figure(
     p.add_layout(labels)
 
     # Storm gap note ---------------------------------------------------------- #
-    gap_periods = periods[
-        (periods["series"] == "all")
-        & (periods["n_visits"] == 0)
-        & (periods["period"] > latest)
-    ]
+    gap_periods = periods[(periods["n_visits"] == 0) & (periods["period"] > latest)]
     if len(gap_periods):
         from .binning import period_label
 
@@ -557,7 +539,7 @@ def build_figure(
     p.add_layout(cbar, "right")
 
     # Legend ----------------------------------------------------------------- #
-    legend_src = ColumnDataSource({"x": [np.nan] * 3, "y": [np.nan] * 3})
+    legend_src = ColumnDataSource({"x": [np.nan] * 2, "y": [np.nan] * 2})
     l_early = p.scatter(
         "x",
         "y",
@@ -576,21 +558,10 @@ def build_figure(
         fill_color=colors[-1],
         line_color=colors[-1],
     )
-    l_wx = p.scatter(
-        "x",
-        "y",
-        source=legend_src,
-        marker=MARKER_EARLY,
-        size=11,
-        fill_color=COLORS["hollow_face"],
-        line_color=colors[len(colors) // 2],
-        line_width=2,
-    )
     legend = Legend(
         items=[
-            LegendItem(label=f"Early Ops {kind_word}, all nights", renderers=[l_early]),
-            LegendItem(label=f"LSST {kind_word}, all nights", renderers=[l_lsst]),
-            LegendItem(label="weather nights excluded (hollow)", renderers=[l_wx]),
+            LegendItem(label=f"Early Ops {kind_word}", renderers=[l_early]),
+            LegendItem(label=f"LSST {kind_word}", renderers=[l_lsst]),
             LegendItem(label="LSST = 1", renderers=[r_star]),
             LegendItem(label="nightly values", renderers=[r_night]),
         ],
@@ -604,14 +575,13 @@ def build_figure(
     # Controls ---------------------------------------------------------------- #
     checks = CheckboxGroup(
         labels=[
-            "All nights",
-            "Weather-excluded nights",
+            "Period points",
             "Nightly points",
             "ROST full-system band",
         ],
         active=[
             i
-            for i, on in enumerate([True, True, show_nightly, iq_col == "idiq_aos_cam"])
+            for i, on in enumerate([True, show_nightly, iq_col == "idiq_aos_cam"])
             if on
         ],
         inline=True,
@@ -634,7 +604,8 @@ def build_figure(
         text=(
             "<b>How to read:</b> right is faster, down is sharper. Lightness carries time (light = first %s, dark = latest). "
             "Faded points are %ss with fewer than %d nights. Whiskers are the 25–75%% range: over nights on x, over visits on y. "
-            "Weather-excluded series uses the EFD WEATHER state (available from 2026-02-25; earlier periods are identical in both series)."
+            "Weather nights are counted, not removed: the LSST = 1 reference comes from the v5.1 baseline simulation, "
+            "which already includes cloud and downtime losses. The EFD WEATHER state (from 2026-02-25) only outlines nights in the hover."
         )
         % (kind_word, kind_word, ref.MIN_NIGHTS_PER_MONTH),
         width=width,
@@ -644,11 +615,9 @@ def build_figure(
     labels_js = {k: v for k, v in IQ_COLUMNS.items()}
     cb_args = dict(
         src_all=src_all,
-        src_wx=src_wx,
         src_night=src_night,
         src_star=src_star,
         seg_all=seg_all,
-        seg_wx=seg_wx,
         box=box,
         box_label=box_label,
         star_label=star_label,
@@ -658,8 +627,7 @@ def build_figure(
         yrange=p.y_range,
         yref=yref_js,
         ylabels=labels_js,
-        arrows_all=arrows["all"],
-        arrows_wx=arrows["weather_excluded"],
+        arrows_all=arrows_all,
         checks=checks,
         box_x_min=ref.VISIT_RATE.box_x_min,
     )
@@ -667,15 +635,13 @@ def build_figure(
         args=cb_args,
         code="""
         const stat = cb_obj.value;
-        for (const src of [src_all, src_wx]) {
-            src.data['y'] = src.data[stat + '_med'];
-            src.data['y_lo'] = src.data[stat + '_q25'];
-            src.data['y_hi'] = src.data[stat + '_q75'];
-            src.change.emit();
-        }
+        src_all.data['y'] = src_all.data[stat + '_med'];
+        src_all.data['y_lo'] = src_all.data[stat + '_q25'];
+        src_all.data['y_hi'] = src_all.data[stat + '_q75'];
+        src_all.change.emit();
         src_night.data['y'] = src_night.data[stat + '_med'];
         src_night.change.emit();
-        for (const [src, seg, arrows] of [[src_all, seg_all, arrows_all], [src_wx, seg_wx, arrows_wx]]) {
+        for (const [src, seg, arrows] of [[src_all, seg_all, arrows_all]]) {
             const y = src.data['y'];
             const n = seg.data['x0'].length;
             for (let i = 0; i < n; i++) {
@@ -698,64 +664,44 @@ def build_figure(
         yaxis.axis_label = ylabels[stat];
         yrange.start = r['ymin']; yrange.end = r['ymax'];
         const is_idiq = (stat === 'idiq_aos_cam');
-        rost.visible = is_idiq && checks.active.includes(3);
+        rost.visible = is_idiq && checks.active.includes(2);
         rost_label.visible = rost.visible;
         """,
     )
     stat_select.js_on_change("value", stat_js)
 
     vis_args = dict(
-        r_all=[
-            renderers["all"]["seg"],
-            renderers["all"]["pts"],
-            renderers["all"]["wy"],
-            renderers["all"]["wx"],
-        ],
-        r_wx=[
-            renderers["weather_excluded"]["seg"],
-            renderers["weather_excluded"]["pts"],
-            renderers["weather_excluded"]["wy"],
-            renderers["weather_excluded"]["wx"],
-        ],
-        arrows_all=arrows["all"],
-        arrows_wx=arrows["weather_excluded"],
+        r_all=r_all,
+        arrows_all=arrows_all,
         r_night=r_night,
         rost=rost,
         rost_label=rost_label,
         stat_select=stat_select,
         labels=labels,
         slider=slider,
-        f_all_pts=filters["all"][0],
-        f_all_seg=filters["all"][1],
-        f_wx_pts=filters["weather_excluded"][0],
-        f_wx_seg=filters["weather_excluded"][1],
+        f_all_pts=f_all_pts,
+        f_all_seg=f_all_seg,
         f_night=night_filter,
         src_all=src_all,
-        src_wx=src_wx,
         src_night=src_night,
         seg_all=seg_all,
-        seg_wx=seg_wx,
     )
     vis_code = """
         const act = checks.active;
         const [lo, hi] = slider.value;
         const in_range = (t) => (t >= lo && t <= hi);
-        const show_all = act.includes(0), show_wx = act.includes(1);
+        const show_all = act.includes(0);
         for (const r of r_all) r.visible = show_all;
-        for (const r of r_wx) r.visible = show_wx;
         labels.visible = show_all;
         for (const a of arrows_all) a.visible = show_all && in_range(a.tags[0]) && in_range(a.tags[1]);
-        for (const a of arrows_wx) a.visible = show_wx && in_range(a.tags[0]) && in_range(a.tags[1]);
-        r_night.visible = act.includes(2);
+        r_night.visible = act.includes(1);
         const is_idiq = (stat_select.value === 'idiq_aos_cam');
-        rost.visible = is_idiq && act.includes(3);
+        rost.visible = is_idiq && act.includes(2);
         rost_label.visible = rost.visible;
         f_all_pts.booleans = Array.from(src_all.data['t_index'], in_range);
-        f_wx_pts.booleans = Array.from(src_wx.data['t_index'], in_range);
         f_all_seg.booleans = Array.from(seg_all.data['t0'], (t, i) => in_range(t) && in_range(seg_all.data['t1'][i]));
-        f_wx_seg.booleans = Array.from(seg_wx.data['t0'], (t, i) => in_range(t) && in_range(seg_wx.data['t1'][i]));
         f_night.booleans = Array.from(src_night.data['t_index'], in_range);
-        for (const f of [f_all_pts, f_wx_pts, f_all_seg, f_wx_seg, f_night]) f.change.emit();
+        for (const f of [f_all_pts, f_all_seg, f_night]) f.change.emit();
     """
     checks.js_on_change(
         "active", CustomJS(args=dict(checks=checks, **vis_args), code=vis_code)

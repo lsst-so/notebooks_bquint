@@ -2,9 +2,12 @@
 
 Same inputs as :mod:`ohlp.interactive` (the period and nightly tables from
 :mod:`ohlp.binning`), reduced to what survives on a small PNG: goal region,
-"LSST = 1" star, one point per period with 25-75 % whiskers, the hollow
-weather-excluded point when it differs, the nightly cloud for windows, and
-direct labels. Colours come from :mod:`ohlp.style` (Rubin palette) only.
+"LSST = 1" star, one point per period with 25-75 % whiskers, the nightly
+cloud for windows, and direct labels. Colours come from :mod:`ohlp.style`
+(Rubin palette) only.
+
+Weather nights are not removed anywhere: the reference star comes from the
+v5.1 baseline simulation, which already includes cloud and downtime losses.
 """
 
 from __future__ import annotations
@@ -35,7 +38,7 @@ MARKER_LSST = "s"
 
 def _nights_in_periods(nightly, periods, kind):
     n = nightly[nightly["n_vis"] > 0].copy()
-    p_all = periods[periods["series"] == "all"]
+    p_all = periods
     if kind == "window":
         n["t_index"] = np.nan
         for _, r in p_all.iterrows():
@@ -52,6 +55,15 @@ def _nights_in_periods(nightly, periods, kind):
     return n
 
 
+def _window_description(r: pd.Series) -> str:
+    """``"Early Ops, 24 Oct–30 Nov 2025\n4,708 visits on 29 of 38 nights"``."""
+    span = r["label_long"].split("(")[1].split(",")[0]
+    return (
+        f"{r['label']}, {span}\n{r['n_visits']:,} visits on"
+        f" {r['n_nights_with_visits']} of {r['n_nights_calendar']} nights"
+    )
+
+
 def build_static_figure(
     periods: pd.DataFrame,
     nightly: pd.DataFrame,
@@ -62,28 +74,47 @@ def build_static_figure(
     text_size: float = 9,
     transparent: bool = True,
     show_nightly: bool | None = None,
-    show_weather_excluded: bool = True,
     show_labels: bool | None = None,
     title: str | None = None,
+    colors: list[str] | None = None,
+    label_offsets: dict[int, tuple[float, float]] | None = None,
+    labels_in_legend: bool = False,
 ):
     """Return ``(fig, ax)``. Background is transparent unless ``transparent=False``.
 
     ``show_labels`` controls the direct labels next to each period point. By
     default they are drawn only when there is more than one period; a single
     point is already identified by the legend.
+
+    ``colors`` overrides the per-period colours (one hex per period, in
+    ``t_index`` order). By default one period is drawn in the brand teal and
+    several periods in the teal ramp, light (first) to dark (latest). Pass
+    e.g. ``[rp.TEAL, rp.CATEGORICAL[2]]`` to contrast an Early Ops point (teal)
+    with an LSST point (purple); nights and whiskers take the colour of their
+    period.
+
+    ``label_offsets`` overrides the direct-label position per ``period`` key as
+    an ``(dx, dy)`` offset in points from the point; the sign of each picks the
+    text alignment. Periods not listed keep the default placement.
+
+    ``labels_in_legend`` (windows only) moves the period description (date span,
+    visits, nights) into the legend entries and draws no direct labels; the
+    legend becomes a single column.
     """
     kind = str(periods["period_kind"].iloc[0])
     if show_nightly is None:
         show_nightly = kind == "window"
     yref = ref.Y_REFERENCE[iq_col]
-    p_all = periods[(periods["series"] == "all") & (periods["n_visits"] > 0)]
+    p_all = periods[periods["n_visits"] > 0]
     p_all = p_all.sort_values("period").reset_index(drop=True)
-    p_wx = periods[
-        (periods["series"] == "weather_excluded") & (periods["n_visits"] > 0)
-    ].set_index("period")
     # One period: brand teal. Several: the teal ramp, light (first) to dark (latest).
-    colors = [rp.TEAL] if len(p_all) == 1 else time_colors(len(p_all))
-    if show_labels is None:
+    if colors is None:
+        colors = [rp.TEAL] if len(p_all) == 1 else time_colors(len(p_all))
+    elif len(colors) < len(p_all):
+        raise ValueError(f"colors has {len(colors)} entries for {len(p_all)} periods")
+    if labels_in_legend:
+        show_labels = False
+    elif show_labels is None:
         show_labels = len(p_all) > 1
 
     with plt.rc_context(
@@ -177,7 +208,6 @@ def build_static_figure(
         # Period points, whiskers, path -------------------------------------- #
         x = p_all["ratio"].to_numpy()
         y = p_all[f"{iq_col}_med"].to_numpy()
-        drew_hollow = False
         for i, r in p_all.iterrows():
             c = colors[int(r["t_index"])]
             m = MARKER_LSST if r["is_lsst"] else MARKER_EARLY
@@ -211,28 +241,6 @@ def build_static_figure(
                 alpha=a,
                 zorder=5,
             )
-            if show_weather_excluded and r["period"] in p_wx.index:
-                w = p_wx.loc[r["period"]]
-                if not np.isclose(w["ratio"], r["ratio"]):
-                    drew_hollow = True
-                    ax.plot(
-                        [r["ratio"], w["ratio"]],
-                        [r[f"{iq_col}_med"], w[f"{iq_col}_med"]],
-                        color=c,
-                        lw=1,
-                        ls=":",
-                        zorder=3,
-                    )
-                    ax.scatter(
-                        w["ratio"],
-                        w[f"{iq_col}_med"],
-                        marker=m,
-                        s=90,
-                        facecolor="none",
-                        edgecolor=c,
-                        lw=1.8,
-                        zorder=5,
-                    )
         for i in range(len(p_all) - 1):
             c = colors[int(p_all.loc[i + 1, "t_index"])]
             gap = int(p_all.loc[i + 1, "seq"] - p_all.loc[i, "seq"]) > 1
@@ -257,11 +265,10 @@ def build_static_figure(
             if kind == "window":
                 span = r["label_long"].split("(")[1].split(",")[0]
                 text = f"{r['label']}\n{span}"
-                if len(p_all) == 1:
-                    text += (
-                        f"\n{r['n_nights_with_visits']} of {r['n_nights_calendar']}"
-                        " nights with visits"
-                    )
+                text += (
+                    f"\n{r['n_visits']:,} visits on {r['n_nights_with_visits']}"
+                    f" of {r['n_nights_calendar']} nights"
+                )
             elif r["is_lsst"] and not p_all.loc[max(i - 1, 0), "is_lsst"]:
                 text += " (LSST start)"
             if kind == "window":
@@ -270,10 +277,14 @@ def build_static_figure(
             else:  # many close points: alternate above/below along the path
                 above = i % 2 == 0
                 right = True
+            dx, dy = 9 if right else -9, 9 if above else -9
+            if label_offsets and int(r["period"]) in label_offsets:
+                dx, dy = label_offsets[int(r["period"])]
+                right, above = dx >= 0, dy >= 0
             ax.annotate(
                 text,
                 (r["ratio"], r[f"{iq_col}_med"]),
-                xytext=(9 if right else -9, 9 if above else -9),
+                xytext=(dx, dy),
                 textcoords="offset points",
                 fontsize=text_size,
                 color=COLORS["ink"],
@@ -291,44 +302,40 @@ def build_static_figure(
             ax.set_title(title, color=COLORS["ink"], loc="left", pad=6)
 
         # Legend ------------------------------------------------------------- #
-        mid = colors[len(colors) // 2]
+        mid = colors[len(p_all) // 2]
+        early = p_all[~p_all["is_lsst"]]
+        lsst = p_all[p_all["is_lsst"]]
+        # Few periods (windows): each period is identified by its own colour and
+        # the point is a median, so say so. Many periods (quarters, months): the
+        # ramp carries time and the legend only tells circles from squares.
+        few = len(p_all) <= 2
         handles = []
-        if (~p_all["is_lsst"]).any():
+        if len(early):
             handles.append(
                 Line2D(
                     [],
                     [],
                     marker=MARKER_EARLY,
-                    color=mid,
+                    color=colors[int(early["t_index"].iloc[0])] if few else mid,
                     ls="",
                     ms=7,
-                    label="Early Ops" if len(p_all) > 1 else "Early Ops, median",
+                    label=_window_description(early.iloc[0])
+                    if labels_in_legend and kind == "window"
+                    else ("Early Ops, median" if few else "Early Ops"),
                 )
             )
-        if p_all["is_lsst"].any():
+        if len(lsst):
             handles.append(
                 Line2D(
                     [],
                     [],
                     marker=MARKER_LSST,
-                    color=colors[-1],
+                    color=colors[int(lsst["t_index"].iloc[0])] if few else colors[-1],
                     ls="",
                     ms=7,
-                    label="LSST" if len(p_all) > 1 else "LSST, median",
-                )
-            )
-        if drew_hollow:
-            handles.append(
-                Line2D(
-                    [],
-                    [],
-                    marker=MARKER_EARLY,
-                    mfc="none",
-                    mec=mid,
-                    mew=1.6,
-                    ls="",
-                    ms=7,
-                    label="weather nights excluded",
+                    label=_window_description(lsst.iloc[0])
+                    if labels_in_legend and kind == "window"
+                    else ("LSST, median" if few else "LSST"),
                 )
             )
         if show_nightly:
@@ -337,7 +344,7 @@ def build_static_figure(
                     [],
                     [],
                     marker="o",
-                    color=mid,
+                    color=COLORS["ink_secondary"] if few and len(p_all) > 1 else mid,
                     alpha=0.4,
                     ls="",
                     ms=5,
@@ -347,7 +354,8 @@ def build_static_figure(
         ax.legend(
             handles=handles,
             loc="upper right",
-            ncol=2,
+            ncol=1 if labels_in_legend else 2,
+            labelspacing=0.8 if labels_in_legend else 0.5,
             columnspacing=1.0,
             frameon=False,
             fontsize=text_size,

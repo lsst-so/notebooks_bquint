@@ -6,10 +6,12 @@ FY26 Q1 is Oct-Dec 2025, Q2 Jan-Mar 2026, Q3 Apr-Jun 2026, Q4 Jul-Sep 2026).
 Definitions:
 
 x (survey speed)
-    ``n_vis / n_vis_expected`` summed over all calendar nights of the period
-    (closed nights count as zero visits in the "all nights" series and are
-    dropped in the weather-excluded series). The x whisker is the 25-75 %
-    range of the nightly ratios.
+    ``n_vis / n_vis_expected`` summed over all calendar nights of the period.
+    Closed nights, weather included, count as zero visits: the "LSST = 1"
+    reference is the v5.1 baseline simulation, which already loses nights to
+    its cloud and downtime models, so weather must stay in the measured
+    number for the comparison to hold. The x whisker is the 25-75 % range of
+    the nightly ratios.
 y (image quality)
     Median of the per-visit statistic over all visits of the period; the whisker
     is the 25-75 % range over visits. Default statistic ``idiq_aos_cam``.
@@ -212,13 +214,13 @@ def period_table(
     iq_cols: tuple[str, ...] = tuple(IQ_COLUMNS),
     min_nights: int = ref.MIN_NIGHTS_PER_MONTH,
 ) -> pd.DataFrame:
-    """One row per period per series (``all`` and ``weather_excluded``).
+    """One row per period.
 
-    ``weather_excluded`` drops the nights flagged ``is_weather_night`` from both
-    the numerator and the denominator of the visit ratio and from the IQ
-    distribution. Periods with fewer than ``min_nights`` nights with visits get
-    ``low_n=True``; they are kept. Periods without any visit are kept too, so
-    that gaps (the storm) are explicit.
+    Every calendar night of the period is counted; nights flagged
+    ``is_weather_night`` are only reported in ``n_nights_weather``. Periods with
+    fewer than ``min_nights`` nights with visits get ``low_n=True``; they are
+    kept. Periods without any visit are kept too, so that gaps (the storm) are
+    explicit.
     """
     if period not in ("month", "quarter"):
         raise ValueError(f"period must be 'month' or 'quarter', got {period!r}")
@@ -227,15 +229,9 @@ def period_table(
     rows = []
     for key, nights in nightly.groupby("period"):
         vis_p = visits[visits["day_obs"].isin(nights["day_obs"])]
-        for series, sel in (
-            ("all", np.ones(len(nights), dtype=bool)),
-            ("weather_excluded", ~nights["is_weather_night"].to_numpy()),
-        ):
-            n_sel = nights[sel]
-            v_sel = vis_p[vis_p["day_obs"].isin(n_sel["day_obs"])]
-            row = {"period": int(key), "period_kind": period, "series": series}
-            row.update(_aggregate(n_sel, v_sel, iq_cols))
-            rows.append(row)
+        row = {"period": int(key), "period_kind": period}
+        row.update(_aggregate(nights, vis_p, iq_cols))
+        rows.append(row)
     out = pd.DataFrame(rows)
     out["seq"] = period_seq(out["period"], period)
     out["label"] = out["period"].map(lambda k: period_label(k, period))
@@ -253,8 +249,8 @@ def period_table(
         out["period"].map(lambda k: str(period_start_day_obs(k, period))),
         format="%Y%m%d",
     )
-    out = out.sort_values(["series", "period"]).reset_index(drop=True)
-    out["t_index"] = out.groupby("series").cumcount()
+    out = out.sort_values("period").reset_index(drop=True)
+    out["t_index"] = np.arange(len(out))
     return out
 
 
@@ -324,21 +320,10 @@ def window_table(
     for i, (label, (lo, hi)) in enumerate(windows.items()):
         nights = nightly[(nightly["day_obs"] >= lo) & (nightly["day_obs"] <= hi)]
         vis_w = visits[visits["day_obs"].isin(nights["day_obs"])]
-        for series, sel in (
-            ("all", np.ones(len(nights), dtype=bool)),
-            ("weather_excluded", ~nights["is_weather_night"].to_numpy()),
-        ):
-            n_sel = nights[sel]
-            v_sel = vis_w[vis_w["day_obs"].isin(n_sel["day_obs"])]
-            row = {
-                "period": i,
-                "period_kind": "window",
-                "series": series,
-                "window_label": label,
-            }
-            row.update(_aggregate(n_sel, v_sel, iq_cols))
-            row["first_day_obs"], row["last_day_obs"] = int(lo), int(hi)
-            rows.append(row)
+        row = {"period": i, "period_kind": "window", "window_label": label}
+        row.update(_aggregate(nights, vis_w, iq_cols))
+        row["first_day_obs"], row["last_day_obs"] = int(lo), int(hi)
+        rows.append(row)
     out = pd.DataFrame(rows)
     out["seq"] = out["period"]
     t0 = pd.to_datetime(out["first_day_obs"].astype(str), format="%Y%m%d")
@@ -358,6 +343,6 @@ def window_table(
     out["low_n"] = out["n_nights_with_visits"] < min_nights
     out["weather_known"] = out["n_nights_weather_known"] > 0
     out["date"] = t0
-    out = out.sort_values(["series", "period"]).reset_index(drop=True)
-    out["t_index"] = out.groupby("series").cumcount()
+    out = out.sort_values("period").reset_index(drop=True)
+    out["t_index"] = np.arange(len(out))
     return out

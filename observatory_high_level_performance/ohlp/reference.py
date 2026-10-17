@@ -219,7 +219,8 @@ BOX_X_MAX: float = 1.2
 # --------------------------------------------------------------------------- #
 
 #: Fraction of the night (between the -12 deg twilights) that must be flagged as
-#: weather for the night to be "weather-excluded". No agreed value exists
+#: weather for the night to be flagged a "weather night" (informational; never
+#: removed from the speed, see README §5). No agreed value exists
 #: (ROSP-11 on hold, ROSP-24 draft). 0.7 is what Lynne Jones uses for her
 #: open-shutter plots (#ops-logging thread, 2026-08-28); Erik Dennihy uses 0.8.
 WEATHER_NIGHT_FRACTION: float = 0.7

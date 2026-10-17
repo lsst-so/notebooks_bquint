@@ -32,7 +32,6 @@ COLORS = {
     "ink_secondary": rp.NEUTRALS["ink_secondary"],
     "grid": rp.NEUTRALS["grid"],
     "muted": rp.NEUTRALS["muted"],
-    "hollow_face": "#FFFFFF",
 }
 
 

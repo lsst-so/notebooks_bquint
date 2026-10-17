@@ -18,13 +18,13 @@ them in time order. Two binnings are kept, from the same cache:
   2026, Q4 = Jul–Sep 2026). A monthly binning is also produced but is too cluttered for presentation.
 
 It rebuilds the per-night plot in Lynne Jones's `diq_vs_visit_rate.ipynb` (lsst/sp_notebooks) with
-these bins, two series (all nights, and weather nights excluded), the Rubin colour palette, and
-three outputs that share one cached table:
+these bins, the Rubin colour palette, and three outputs that share one cached table. Weather nights
+are counted, never removed (§5):
 
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
-| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary, default; titled, no direct label) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary; titled, no direct label), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260713.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
@@ -88,9 +88,15 @@ airmass filter, no bad-visit exclusion. Columns kept are listed in `ohlp/data.py
 **Expected visits per night.** `estimated_baseline_visit_range(day_obs)["n_vis_ave"]`: night length
 between the -12° twilights × open-shutter fraction (0.74 − 0.02 cos(seasonal)) / 30 s, calibrated on
 `baseline_v5.1.0_10yrs`. It assumes the whole night is available: downtime and weather are **not**
-removed. Added to `rubin_nights` in commit `7ffa675` (2026-02-06); not an agreed reference (see §3).
+removed from the per-night denominator. They **are** in the reference: the "LSST = 1" star is the v5.1
+10-year visit total divided by this estimator summed over 3650 nights, and the v5.1 run goes through
+`rubin_scheduler`'s `ModelObservatory` with its defaults, i.e. the historical cloud database (observing
+stops above a cloud fraction of 0.3, `cloud_limit=0.3`) plus the scheduled and unscheduled downtime
+models (`ScheduledDowntimeData`, `UnscheduledDowntimeMoreY1Data`). The star sits at 0.63, not 1.0, for
+that reason. Added to `rubin_nights` in commit `7ffa675` (2026-02-06); not an agreed reference (see §3).
 
-**Weather.** Per night, from two sources:
+**Weather.** Informational only; see "weather nights are counted, not removed" in §5. Per night, from two
+sources:
 
 - EFD Observatory Status `WEATHER` state hours (`get_observatory_state_times`), the primary source per
   the ROSP-24 draft taxonomy (Brian Stalder, 2026-10-10). Exists only from **2026-02-25**.
@@ -98,13 +104,13 @@ removed. Added to `rubin_nights` in commit `7ffa675` (2026-02-06); not an agreed
   token; from an SDF login node the client returns nothing and the column is empty. Reporting before
   2026-01-15 was inconsistent.
 
-A night is **weather-excluded** when `weather_hours_efd / night_hours ≥ 0.7`. No threshold is agreed
-(ROSP-11 is on hold); 0.7 is what Lynne Jones uses, Erik Dennihy uses 0.8. Before 2026-02-25 no night
-can be flagged, so the two series are identical there.
+A night is flagged a **weather night** when `weather_hours_efd / night_hours ≥ 0.7`. No threshold is
+agreed (ROSP-11 is on hold); 0.7 is what Lynne Jones uses, Erik Dennihy uses 0.8. Before 2026-02-25 no
+night can be flagged. The flag outlines the night in the nightly cloud and is counted per period
+(`n_nights_weather`); it never changes the speed.
 
 **Numbers for 20251024 to 20261014** (queried 2026-10-14 on the USDF Postgres replica): 356 calendar
-nights, 152 with survey visits, 64 145 survey visits, 21 weather-excluded nights (all after
-2026-03-20). No LSSTCam visit of any kind exists after `day_obs` 20260714 (storm, off sky).
+nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all after 2026-03-20). No LSSTCam visit of any kind exists after `day_obs` 20260714 (storm, off sky).
 
 ## 5. Definitions of the binned points
 
@@ -117,8 +123,17 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather-excluded nights
   of downtimes (water condensation, Dynalene loss, vacuum leak, earthquake; list in
   `nightly_survey_speed/plots/downtime_summary.md`). 38 calendar nights, 29 with visits, 4708 visits of
   28189 expected, speed 0.17 (nightly IQR 0.01–0.25), iDIQ median 0.459″ [0.418–0.517]. No weather
-  state exists for these nights, so the two series coincide and no hollow point is drawn. Saved to
-  `data/window_early_ops_octnov_20251024_20251130.{parquet,csv}`.
+  state exists for these nights. Saved to `data/window_early_ops_octnov_20251024_20251130.{parquet,csv}`.
+- **Early Ops vs. LSST** (`03_static_png.ipynb`, `PERIOD = "early_ops_vs_lsst"`, the talk figure):
+  the Early Ops window above plus one window for the whole LSST on-sky stretch, 20260629–20260713
+  (season start to the last night with survey visits; the storm closes the dome from 20260714).
+  15 calendar nights, 10 with visits, 7267 visits of 16201 expected, speed 0.45 (nightly IQR
+  0.00–0.74), iDIQ median 0.414″ [0.385–0.449]. Two of the five closed nights (20260702–20260703)
+  carry the EFD WEATHER flag and stay in the count (removing them would give 0.52; see below for why
+  that is not done). Early Ops keeps the brand teal, LSST is `CATEGORICAL[2]` purple (nights and
+  whiskers in the same hue), passed to `build_static_figure(colors=...)`. Each window is described in
+  the legend (`labels_in_legend=True`), so no direct labels are drawn. Saved to
+  `data/windows_early_ops_vs_lsst_20251024_20260713.{parquet,csv}`.
 - **Windows** (`ohlp.binning.window_table`, `period_kind = "window"`, `period` = window index) are
   named inclusive `day_obs` ranges with the same columns as a quarter. The two windows used:
   - *Best 2 weeks, Early Ops*, 20251116–20251129: the 14-night contiguous window of Oct–Dec 2025
@@ -126,10 +141,9 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather-excluded nights
     the same window, the runners-up are the same stretch shifted by one or two nights). 13 of 14
     nights have visits, 2491 visits of 9978 expected, speed 0.25, iDIQ median 0.467″.
   - *First 2 weeks, LSST*, 20260629–20260712: 14 nights from the season start. 9 of 14 nights have
-    visits, 6588 visits of 15128 expected, speed 0.44; weather-excluded (2 EFD WEATHER nights,
-    20260702–20260703, removed) speed 0.51; iDIQ median 0.410″. Survey visits stop on 20260713, so a
-    15-night window would add one more night (7267 visits, speed 0.45).
-  No weather state exists for the Early Ops window, so its two series coincide.
+    visits (2 of the closed nights are EFD WEATHER nights, 20260702–20260703), 6588 visits of 15128
+    expected, speed 0.44, iDIQ median 0.410″. Survey visits stop on 20260713, so a 15-night window
+    would add one more night (7267 visits, speed 0.45).
 - **x, survey speed** = Σ visits / Σ expected visits over all calendar nights of the period. Closed
   nights count as zero visits. Chosen over the median of nightly ratios because it keeps lost nights
   in the number and is not driven by short partial nights. The x whisker is the 25–75 % range of the
@@ -137,16 +151,20 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather-excluded nights
   point is instead the **mean of nightly ratios**; `ratio_median_nightly` is kept in the table.
 - **y, image quality** = median of the statistic over all visits of the period; whisker = 25–75 %
   range over visits. Not a median of nightly medians.
-- **weather_excluded series** removes weather nights from numerator, denominator and the IQ
-  distribution.
+- **Weather nights are counted, not removed** (decision 2026-10-17). An earlier version carried a
+  second, "weather-excluded" series (hollow markers) that dropped the flagged nights from numerator,
+  denominator and IQ distribution. It was removed because the reference it would be compared with
+  already pays for weather: the "LSST = 1" star is calibrated on the v5.1 baseline simulation, which
+  runs with the cloud and downtime models on (§4), so excluding weather from the measured speed would
+  count the loss once on one side and not on the other. The star, the goal edge and the filled points
+  are therefore on the same footing. `n_nights_weather` stays in the tables and in the hover.
 - **low_n**: fewer than 5 nights with visits. Drawn faded, never dropped. No quarter with data
   is affected; in the monthly table only Oct 2025 is.
 - **is_lsst**: periods starting on or after 20260629, i.e. FY26 Q4 (Jul–Sep 2026) onward; drawn as
   squares, Early Ops periods as circles. FY26 Q3 contains two LSST nights and stays Early Ops.
 - **Storm truncation**: survey visits end on 20260713. FY26 Q4 has 8 nights with visits out of 92
-  calendar nights, so its "all nights" speed (0.06) counts 84 closed nights as zero; its
-  weather-excluded value (0.07) removes only the six nights that carry an EFD WEATHER flag
-  (20260714–20260719). Hover shows the last night with visits and a storm note. FY27 Q1 has zero
+  calendar nights, so its speed (0.06) counts 84 closed nights as zero (only six of them,
+  20260714–20260719, carry an EFD WEATHER flag). Hover shows the last night with visits and a storm note. FY27 Q1 has zero
   visits and stays in the table; a path segment that skips a period is dashed and labelled
   "storm, off sky".
 
@@ -175,7 +193,7 @@ Caveat on labels: the source notebook's "goal" (0.39) is the SRD minimum less do
 | Role | Palette name |
 |---|---|
 | time (month order) | `teal_cmap()` from `SEQUENTIAL_TEAL`, light = Oct 2025, dark = latest; lightness carries order in grayscale |
-| weather-excluded series | same colour, hollow marker |
+| Early Ops vs. LSST (two-point static) | `TEAL` for Early Ops, `CATEGORICAL[2]` purple for LSST (`colors=` override in `ohlp.static`) |
 | goal region | `CATEGORICAL[4]` green, alpha 0.12 |
 | LSST = 1 star | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
 | ROST band | `CATEGORICAL[2]` purple, alpha 0.10, dotted edge |
@@ -186,11 +204,11 @@ Caveat on labels: the source notebook's "goal" (0.39) is the SRD minimum less do
 - `PERIOD = "window"` (default) reads `windows_<tag>.parquet`; `"quarter"` and `"month"` read the
   other tables. For windows the nightly points are on from the start (size 9, alpha 0.45), the
   direct labels carry the date span and night count, and no storm segment label is drawn.
-- Hover on a period point: quarter with its month span and Early Ops / LSST, series, nights with visits of calendar nights, weather
-  nights, visits / expected, speed median and IQR, IQ median and IQR, last night with visits, storm note,
+- Hover on a period point: quarter with its month span and Early Ops / LSST, nights with visits of calendar nights, weather
+  nights (counted, not removed), visits / expected, speed median and IQR, IQ median and IQR, last night with visits, storm note,
   low-n flag, weather-state availability. Hover on a nightly point: night, visits / expected, speed, IQ, EFD weather hours, flag.
-- Layers: all nights, weather-excluded nights (hollow), nightly cloud (off by default; faint,
-  coloured by date, weather nights outlined), ROST band. Dropdown: y statistic (`idiq_aos_cam`, `fwhm_500_zenith`,
+- Layers: period points, nightly cloud (off by default; faint, coloured by date, weather nights
+  outlined), ROST band. Dropdown: y statistic (`idiq_aos_cam`, `fwhm_500_zenith`,
   `fwhm_geom`); the star, box top and y range follow. Range slider: quarters shown by index. `PERIOD = "month"` in the notebook gives the monthly version.
 - Direct labels on every quarter (on the first, first-LSST and latest point when there are more than
   six periods); colour bar with period ticks; arrowheads at segment midpoints; dashed segment + "storm, off sky" across skipped months.
@@ -219,8 +237,8 @@ FY26 Q3, Apr 2026 and Jun 2026 equal a direct `COUNT(*)` on `cdb_lsstcam.visit1`
 
 - The expected-visit model and the star are **in flux** (v5.1 → v5.3.4, new downtime model, ROSP-6
   still a stub). State the version on the figure.
-- Speed includes closed nights; weather exclusion is possible only from 2026-02-25, and only by the
-  EFD state. The narrative-log column needs an RSP token (`~/.token_file`, scopes `read:image` and
+- Speed includes closed nights, by design (§5). The weather flag exists only from 2026-02-25, and only
+  from the EFD state. The narrative-log column needs an RSP token (`~/.token_file`, scopes `read:image` and
   `exec:notebook`, created at https://usdf-rsp.slac.stanford.edu/auth/tokens).
 - `idiq_aos_cam` is not comparable to Brian's 0.55–0.60″ (different quantity, see §6).
 - Per-band seeing differences are not removed from `idiq_aos_cam` (it has no atmosphere term) but
