@@ -1,0 +1,51 @@
+# Tailgate sweep — Simonyi night status, 2026-07-01 → 2026-07-14 (Source 1: Morning Tailgate notes)
+
+Source: Morning Tailgate Meeting Notes threads in #summit-announce (C07QCJ7F962), posted 2 Jul → 15 Jul 2026. 10 threads read (Jul 2, 3, 6, 7, 8, 9, 10, 13, 14, 15). No weekday note was missing in this window. The Jul 15 note is the last one before the storm evacuation ("STORM OF THE CENTURY — everyone goes down at 515 today"); it covers night 2026-07-14, included here as the last row. Nothing after 15 Jul is in scope (site evacuated).
+
+| Column | Meaning |
+|---|---|
+| day_obs | Chilean local date on which the night STARTS (YYYY-MM-DD). The tailgate note posted on date D describes night day_obs = D−1 (or Fri/Sat/Sun for a Monday note). |
+| note (link) | Date of the tailgate note and the Slack thread it came from. |
+| status | Simonyi on-sky status that night as judged from the note text: OPEN (observed, at most minor loss), PARTIAL (observed but a stated or clearly implied block of time lost), CLOSED (no Simonyi on-sky observing), UNKNOWN (note missing or silent on Simonyi). |
+| P(weather) | Judged probability, 0–1, that the lost time (if any) was caused by weather. 0 when no loss or no weather mentioned. "?" when status is UNKNOWN. |
+| P(fault) | Judged probability, 0–1, that the lost time (if any) was caused by faults/technical issues (includes power glitches). "?" when UNKNOWN. |
+| evidence | Verbatim or near-verbatim text from the note that supports the judgement. |
+| tickets | OBS/FRACAS/SUMMIT keys mentioned for that night. |
+
+P(weather) and P(fault) are judgements from the note text only; they are NOT measurements. They need not sum to 1. Power glitches / generator transitions count under P(fault), not weather; say "power glitch" in the evidence so they can be split out later.
+
+| day_obs | note (link) | status | P(weather) | P(fault) | evidence | tickets |
+|---|---|---|---|---|---|---|
+| 2026-07-01 | [2026-07-02](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783000273362599?thread_ts=1783000273.362599&cid=C07QCJ7F962) | CLOSED | 0.6 | 0.8 | "Recovery from OS updates delayed night start. Cold with high winds at start of night, too cloudy at end of night, too many faults when it was clear. No on-sky data obtained. Some u-band calibrations successfully acquired. OSS faults — OBS-1996 and OBS-1999 … Issues with M1M3 FA211 … Major issue with data ingestion / ConsDB" ("OBS-2000 … this is a blocker for any on-sky observing"). Mixed weather + faults; no hours given. | OBS-1996, OBS-1998, OBS-1999, OBS-2000 (OBS-1997 is LATISS) |
+| 2026-07-02 | [2026-07-03](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783087329680249?thread_ts=1783087329.680249&cid=C07QCJ7F962) | CLOSED | 0.7 | 0.8 | "Dome closed due to clouds. Also serious database issues remain which block on-sky observing (OBS-2000). Could not send the nightlog for the same reason. Multiple TMA faults: OSS and Thermal Control Main Cabinet. Observers had to warm up a sensor on L8 with their hands 3 times to start the OSS … 4-5C in a closed dome." Weather and a fault blocker coincided. | OBS-1996, OBS-2000 |
+| 2026-07-03 | [2026-07-06 (Mon)](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783348217812809?thread_ts=1783348217.812809&cid=C07QCJ7F962) | CLOSED | 0 | 0.9 | "High impact problems with the OSS and TMA sensors, effectively blocking observations Friday and Saturday night." No weather mentioned. | FRACAS-401 |
+| 2026-07-04 | [2026-07-06 (Mon)](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783348217812809?thread_ts=1783348217.812809&cid=C07QCJ7F962) | CLOSED | 0 | 0.95 | "The loss of observations on Saturday night were due to inability to recover from the main cabinet sensor error. … The 3 way valve was not calibrated on Saturday, so that is another investigation." | FRACAS-401 |
+| 2026-07-05 | [2026-07-06 (Mon)](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783348217812809?thread_ts=1783348217.812809&cid=C07QCJ7F962) | UNKNOWN | ? | ? | Monday note mentions only Friday and Saturday nights; silent on Sunday. | — |
+| 2026-07-06 | [2026-07-07](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783436409345549?thread_ts=1783436409.345549&cid=C07QCJ7F962) | OPEN | 0 | 0 | "Smooth, error free night for Simonyi" (the only error noted was ATCamera "EndIntegration", AuxTel). | — |
+| 2026-07-07 | [2026-07-08](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783521189040519?thread_ts=1783521189.040519&cid=C07QCJ7F962) | CLOSED | 0 | 1.0 | "Night lost due to camera outage, we will review any possible culprits and establish a new process for turning on one REB." Electrical anomaly with the camera REBs; "electrically, there was no obvious culprit … Dome electrical is completely isolated from TMA electrical". Not described as a site power glitch. | — (no key in note) |
+| 2026-07-08 | [2026-07-09](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783609558196399?thread_ts=1783609558.196399&cid=C07QCJ7F962) | PARTIAL | 0 | 0.95 | "Once the camera was recovered at 10:30 pm summit time, they got on sky and observed with few faults." Start of night lost to camera recovery (follow-on from Jul 7 outage). Daytime: "Electrical cut yesterday was successful, we are on commercial power today" (planned daytime cut, not an observing loss). | OBS-2011 (AuxTel dome shutter) |
+| 2026-07-09 | [2026-07-10](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783692336577829?thread_ts=1783692336.577829&cid=C07QCJ7F962) | PARTIAL | 1.0 | 0 | "Lost some time due to clouds, but there were no faults during observations" | — |
+| 2026-07-10 | [2026-07-13 (Mon)](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783950992836659?thread_ts=1783950992.836659&cid=C07QCJ7F962) | OPEN | 0 | 0.3 | "Chiller 4 failure on Friday — Emergency inspection on Saturday." Observing impact not stated; Mechanics: "revise all of the oil reserves after a full weekend of observations" implies the weekend was observed. Chiller 4 is tied to the server room in the Facilities line ("switch demand from chiller 4 to chiller 3 … can keep the server room alive"). | — |
+| 2026-07-11 | [2026-07-13 (Mon)](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783950992836659?thread_ts=1783950992.836659&cid=C07QCJ7F962) | OPEN | 0 | 0 | "Saturday night was smooth" | — |
+| 2026-07-12 | [2026-07-13 (Mon)](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1783950992836659?thread_ts=1783950992.836659&cid=C07QCJ7F962) | OPEN | 0 | 0.2 | "2 power glitches in the day on Sunday, one tripped off the chiller 2, which was reset" (power glitch, daytime); Electrical: "2 micro cuts this weekend, affecting chiller 2." Night status not stated explicitly; "a full weekend of observations" implies observed. | — |
+| 2026-07-13 | [2026-07-14](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1784038329074699?thread_ts=1784038329.074699&cid=C07QCJ7F962) | OPEN | 0 | 0.1 | "Observed all night without fault except for a nasmyth 2 overspeed error - OBS-2019" | OBS-2019 |
+| 2026-07-14 | [2026-07-15](https://rubin-obs.slack.com/archives/C07QCJ7F962/p1784124055028109?thread_ts=1784124055.028109&cid=C07QCJ7F962) | PARTIAL | 0.9 | 0.1 | "Night log — Closed early due to clouds. Reported issues with the cal system, team has been informed." Telescope not named, but LSSTCam warm-up was planned to start the next day ("Preparations … to begin camera warm up tomorrow", Jul 14 note), so Simonyi was still operational this night. Last night before evacuation. | — |
+
+## Summary for this window
+
+- **Nights with explicit weather closure / loss (Simonyi):** 2026-07-02 ("Dome closed due to clouds", but a database blocker OBS-2000 coincided); 2026-07-09 ("Lost some time due to clouds"); 2026-07-14 ("Closed early due to clouds", last night before the storm evacuation).
+- **Possible weather not confirmed for Simonyi:** 2026-07-01 — "Cold with high winds at start of night, too cloudy at end of night, too many faults when it was clear"; weather and faults interleaved, no hours given. 2026-07-14 — the note does not name the telescope.
+- **Nights mostly lost to faults:** 2026-07-01 (OS-update recovery, OSS faults, M1M3 FA211, ConsDB blocker); 2026-07-02 (OBS-2000 database blocker + OSS/TCMC faults, sensor warmed by hand); 2026-07-03 and 2026-07-04 (OSS/TMA sensor problems, main cabinet sensor error, FRACAS-401); 2026-07-07 (camera REB outage, electrical anomaly, no culprit found); 2026-07-08 (start of night lost until camera recovered at 22:30).
+- **Cooling / Dynalene / chiller events:** camera glycol circuits swapped to track ambient (Jul 1–2 notes, helping); Dynalene inspections planned (Jul 3); HVAC chiller 1 problems reported (Jul 9); **chiller 4 failure on Friday Jul 10** with emergency inspection Saturday; chiller 2 tripped by a daytime power glitch Sunday Jul 12 and reset; techs on site Jul 13–14 for chillers 1 and 2; PCS chiller oil level check (Jul 14). None of these is stated as a night-time Simonyi loss.
+- **Power glitches:** 2 daytime glitches Sunday Jul 12 (chiller 2 tripped, reset); "2 micro cuts this weekend". Planned daytime power cut Wed Jul 8 (generator tests), back on commercial power Jul 9. Flagged under fault, not weather.
+- **UNKNOWN nights:** 2026-07-05 (Monday note silent on Sunday).
+- **Daytime wind stoppages:** none mentioned in this window. Storm preparations from Jul 13 onward (AuxTel tarped and suspended, camera warm-up from Jul 15, site evacuated Jul 15 afternoon) are not observing losses within this table.
+
+## Caveats
+
+- No mention ≠ no weather: notes list what the note-taker chose to report; silence on weather does not mean clear skies.
+- Monday notes compress three nights (Fri/Sat/Sun); Jul 6 and Jul 13 notes each cover a weekend, and Jul 5 is silent entirely. Jul 10 and Jul 12 statuses rest on the Mechanics line "after a full weekend of observations", not on an explicit night-log statement.
+- Hours lost are quoted only when stated; no note in this window gives hours. "Recovered at 10:30 pm" (Jul 8) is the only clock time given.
+- The Jul 7 camera outage was electrical in origin but the note explicitly found no external power culprit; it is counted as fault, not as a power glitch.
+- 2026-07-14 is included because the Jul 15 note exists; drop the row if the series is cut at 13 Jul.
+- Single-source table: no other channels or sources were consulted.

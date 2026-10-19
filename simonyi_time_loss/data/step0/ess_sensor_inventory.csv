@@ -1,0 +1,267 @@
+topic,day,salIndex,sensorName,location,n_20min
+dewPoint,2025-11-15,107,Laser-ESS01,Laser Enclosure,836
+dewPoint,2025-11-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,849
+dewPoint,2025-11-15,112,M2-ESS02,M2; RPi with sticker 1,852
+dewPoint,2025-11-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,801
+dewPoint,2025-11-15,201,AuxTel-ESS02,AT azimuth axis,809
+dewPoint,2025-11-15,301,Weather tower computed dew point,Weather tower,312
+dewPoint,2026-01-15,107,Laser-ESS01,Laser Enclosure,780
+dewPoint,2026-01-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,905
+dewPoint,2026-01-15,112,M2-ESS02,M2; RPi with sticker 1,906
+dewPoint,2026-01-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,883
+dewPoint,2026-01-15,201,AuxTel-ESS02,AT azimuth axis,844
+dewPoint,2026-01-15,301,Weather tower computed dew point,Weather tower,312
+dewPoint,2026-03-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,859
+dewPoint,2026-03-15,112,M2-ESS02,M2; RPi with sticker 1,862
+dewPoint,2026-03-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,828
+dewPoint,2026-03-15,201,AuxTel-ESS02,AT azimuth axis,831
+dewPoint,2026-03-15,301,Weather tower computed dew point,Weather tower,312
+dewPoint,2026-05-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,811
+dewPoint,2026-05-15,112,M2-ESS02,M2; RPi with sticker 1,865
+dewPoint,2026-05-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,806
+dewPoint,2026-05-15,201,AuxTel-ESS02,AT azimuth axis,836
+dewPoint,2026-05-15,301,Weather tower computed dew point,Weather tower,312
+dewPoint,2026-05-15,404,Laser-ESS01,Laser Enclosure,830
+dewPoint,2026-07-10,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,884
+dewPoint,2026-07-10,112,M2-ESS02,M2; RPi with sticker 1,873
+dewPoint,2026-07-10,113,M1M3-ESS03,M1M3; RPi with sticker 4,830
+dewPoint,2026-07-10,201,AuxTel-ESS02,AT azimuth axis,812
+dewPoint,2026-07-10,301,Weather tower computed dew point,Weather tower,312
+dewPoint,2026-07-10,404,Laser-ESS01,Laser Enclosure,806
+temperature,2025-11-15,106,M2-ESS01,"Unused, Tangent link A1, Tangent link A2, Tangent link A3, T",450
+temperature,2025-11-15,107,Laser-ESS01,Laser Enclosure,836
+temperature,2025-11-15,107,Laser-ESS02,EnclosureFan FCUnit LaserTop LaserBottom LaserFan PowerSuppl,1195
+temperature,2025-11-15,108,CBP-ESS01,Photodiode PrimaryMirror MaskChanger ElectronicsCabinet,767
+temperature,2025-11-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,849
+temperature,2025-11-15,112,M2-ESS02,M2; RPi with sticker 1,852
+temperature,2025-11-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,801
+temperature,2025-11-15,114,m1m3-ts-01 1/6,M1M3,37
+temperature,2025-11-15,114,m1m3-ts-01 2/6,M1M3,37
+temperature,2025-11-15,114,m1m3-ts-01 3/6,M1M3,37
+temperature,2025-11-15,114,m1m3-ts-01 4/6,M1M3,37
+temperature,2025-11-15,114,m1m3-ts-01 5/6,M1M3,37
+temperature,2025-11-15,114,m1m3-ts-01 6/6,M1M3,37
+temperature,2025-11-15,115,m1m3-ts-02 1/6,M1M3,37
+temperature,2025-11-15,115,m1m3-ts-02 2/6,M1M3,37
+temperature,2025-11-15,115,m1m3-ts-02 3/6,M1M3,37
+temperature,2025-11-15,115,m1m3-ts-02 4/6,M1M3,37
+temperature,2025-11-15,115,m1m3-ts-02 5/6,M1M3,37
+temperature,2025-11-15,115,m1m3-ts-02 6/6,M1M3,37
+temperature,2025-11-15,116,m1m3-ts-03 1/6,M1M3,37
+temperature,2025-11-15,116,m1m3-ts-03 2/6,M1M3,37
+temperature,2025-11-15,116,m1m3-ts-03 3/6,M1M3,37
+temperature,2025-11-15,116,m1m3-ts-03 4/6,M1M3,37
+temperature,2025-11-15,116,m1m3-ts-03 5/6,M1M3,37
+temperature,2025-11-15,116,m1m3-ts-03 6/6,M1M3,37
+temperature,2025-11-15,117,m1m3-ts-04 1/6,M1M3,37
+temperature,2025-11-15,117,m1m3-ts-04 2/6,M1M3,37
+temperature,2025-11-15,117,m1m3-ts-04 3/6,M1M3,37
+temperature,2025-11-15,117,m1m3-ts-04 4/6,M1M3,37
+temperature,2025-11-15,117,m1m3-ts-04 5/6,M1M3,37
+temperature,2025-11-15,117,m1m3-ts-04 6/6,M1M3,37
+temperature,2025-11-15,119,RubinWiFiTest2,MTDome-ESS11,450
+temperature,2025-11-15,121,MTCameraAssembly-ESS01,"MT camera hexapod strut 7, MT camera hexapod strut 8, MT cam",450
+temperature,2025-11-15,122,M2-ESS02,"M2 hexapod strut 1, M2 hexapod strut 2, M2 hexapod strut 3, ",450
+temperature,2025-11-15,201,AuxTel-ESS01,"unused, AT air, AT truss, AT M2, unused, unused, unused, unu",450
+temperature,2025-11-15,201,AuxTel-ESS02,AT azimuth axis,809
+temperature,2025-11-15,201,AuxTel-ESS03,"M1 sensor 1, M1 sensor 2, M1 sensor 3, M1 sensor 4, M1 senso",1200
+temperature,2025-11-15,301,Weather tower air temperature,Weather tower,312
+temperature,2026-01-15,106,M2-ESS01,"Unused, Tangent link A1, Tangent link A2, Tangent link A3, T",450
+temperature,2026-01-15,107,Laser-ESS01,Laser Enclosure,780
+temperature,2026-01-15,107,Laser-ESS02,EnclosureFan FCUnit LaserTop LaserBottom LaserFan PowerSuppl,1215
+temperature,2026-01-15,108,CBP-ESS01,Photodiode PrimaryMirror MaskChanger ElectronicsCabinet,766
+temperature,2026-01-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,905
+temperature,2026-01-15,112,M2-ESS02,M2; RPi with sticker 1,906
+temperature,2026-01-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,883
+temperature,2026-01-15,114,m1m3-ts-01 1/6,M1M3,37
+temperature,2026-01-15,114,m1m3-ts-01 2/6,M1M3,37
+temperature,2026-01-15,114,m1m3-ts-01 3/6,M1M3,37
+temperature,2026-01-15,114,m1m3-ts-01 4/6,M1M3,37
+temperature,2026-01-15,114,m1m3-ts-01 5/6,M1M3,37
+temperature,2026-01-15,114,m1m3-ts-01 6/6,M1M3,37
+temperature,2026-01-15,115,m1m3-ts-02 1/6,M1M3,37
+temperature,2026-01-15,115,m1m3-ts-02 2/6,M1M3,37
+temperature,2026-01-15,115,m1m3-ts-02 3/6,M1M3,37
+temperature,2026-01-15,115,m1m3-ts-02 4/6,M1M3,37
+temperature,2026-01-15,115,m1m3-ts-02 5/6,M1M3,37
+temperature,2026-01-15,115,m1m3-ts-02 6/6,M1M3,37
+temperature,2026-01-15,116,m1m3-ts-03 1/6,M1M3,37
+temperature,2026-01-15,116,m1m3-ts-03 2/6,M1M3,37
+temperature,2026-01-15,116,m1m3-ts-03 3/6,M1M3,37
+temperature,2026-01-15,116,m1m3-ts-03 4/6,M1M3,37
+temperature,2026-01-15,116,m1m3-ts-03 5/6,M1M3,37
+temperature,2026-01-15,116,m1m3-ts-03 6/6,M1M3,37
+temperature,2026-01-15,117,m1m3-ts-04 1/6,M1M3,37
+temperature,2026-01-15,117,m1m3-ts-04 2/6,M1M3,37
+temperature,2026-01-15,117,m1m3-ts-04 3/6,M1M3,37
+temperature,2026-01-15,117,m1m3-ts-04 4/6,M1M3,37
+temperature,2026-01-15,117,m1m3-ts-04 5/6,M1M3,37
+temperature,2026-01-15,117,m1m3-ts-04 6/6,M1M3,37
+temperature,2026-01-15,119,RubinWiFiTest2,MTDome-ESS11,450
+temperature,2026-01-15,121,MTCameraAssembly-ESS01,"MT camera hexapod strut 7, MT camera hexapod strut 8, MT cam",450
+temperature,2026-01-15,122,M2-ESS02,"M2 hexapod strut 1, M2 hexapod strut 2, M2 hexapod strut 3, ",450
+temperature,2026-01-15,201,AuxTel-ESS01,"unused, AT air, AT truss, AT M2, unused, unused, unused, unu",450
+temperature,2026-01-15,201,AuxTel-ESS02,AT azimuth axis,844
+temperature,2026-01-15,201,AuxTel-ESS03,"M1 sensor 1, M1 sensor 2, M1 sensor 3, M1 sensor 4, M1 senso",1200
+temperature,2026-01-15,301,Weather tower air temperature,Weather tower,312
+temperature,2026-03-15,106,M2-ESS01,"Unused, Tangent link A1, Tangent link A2, Tangent link A3, T",450
+temperature,2026-03-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,859
+temperature,2026-03-15,112,M2-ESS02,M2; RPi with sticker 1,862
+temperature,2026-03-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,828
+temperature,2026-03-15,114,m1m3-ts-01 1/6,M1M3,37
+temperature,2026-03-15,114,m1m3-ts-01 2/6,M1M3,37
+temperature,2026-03-15,114,m1m3-ts-01 3/6,M1M3,37
+temperature,2026-03-15,114,m1m3-ts-01 4/6,M1M3,37
+temperature,2026-03-15,114,m1m3-ts-01 5/6,M1M3,37
+temperature,2026-03-15,114,m1m3-ts-01 6/6,M1M3,37
+temperature,2026-03-15,115,m1m3-ts-02 1/6,M1M3,37
+temperature,2026-03-15,115,m1m3-ts-02 2/6,M1M3,37
+temperature,2026-03-15,115,m1m3-ts-02 3/6,M1M3,37
+temperature,2026-03-15,115,m1m3-ts-02 4/6,M1M3,37
+temperature,2026-03-15,115,m1m3-ts-02 5/6,M1M3,37
+temperature,2026-03-15,115,m1m3-ts-02 6/6,M1M3,37
+temperature,2026-03-15,116,m1m3-ts-03 1/6,M1M3,37
+temperature,2026-03-15,116,m1m3-ts-03 2/6,M1M3,37
+temperature,2026-03-15,116,m1m3-ts-03 3/6,M1M3,37
+temperature,2026-03-15,116,m1m3-ts-03 4/6,M1M3,37
+temperature,2026-03-15,116,m1m3-ts-03 5/6,M1M3,37
+temperature,2026-03-15,116,m1m3-ts-03 6/6,M1M3,37
+temperature,2026-03-15,117,m1m3-ts-04 1/6,M1M3,37
+temperature,2026-03-15,117,m1m3-ts-04 2/6,M1M3,37
+temperature,2026-03-15,117,m1m3-ts-04 3/6,M1M3,37
+temperature,2026-03-15,117,m1m3-ts-04 4/6,M1M3,37
+temperature,2026-03-15,117,m1m3-ts-04 5/6,M1M3,37
+temperature,2026-03-15,117,m1m3-ts-04 6/6,M1M3,37
+temperature,2026-03-15,121,MTCameraAssembly-ESS01,"MT camera hexapod strut 7, MT camera hexapod strut 8, MT cam",450
+temperature,2026-03-15,122,M2-ESS02,"M2 hexapod strut 1, M2 hexapod strut 2, M2 hexapod strut 3, ",450
+temperature,2026-03-15,201,AuxTel-ESS01,"unused, AT air, AT truss, AT M2, unused, unused, unused, unu",449
+temperature,2026-03-15,201,AuxTel-ESS02,AT azimuth axis,831
+temperature,2026-03-15,201,AuxTel-ESS03,"unused, M1 sensor 1, M1 sensor 2, M1 sensor 3, M1 sensor 4, ",1200
+temperature,2026-03-15,301,Weather tower air temperature,Weather tower,312
+temperature,2026-03-15,405,CBP-ESS01,Photodiode PrimaryMirror MaskChanger ElectronicsCabinet,766
+temperature,2026-03-15,442,LouverH1H2Temp,"MTDomeLouver-H1, MTDomeLouver-H2, unused, unused, unused, un",450
+temperature,2026-05-15,106,M2-ESS01,"Unused, Tangent link A1, Tangent link A2, Tangent link A3, T",450
+temperature,2026-05-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,811
+temperature,2026-05-15,112,M2-ESS02,M2; RPi with sticker 1,865
+temperature,2026-05-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,806
+temperature,2026-05-15,114,m1m3-ts-01 1/6,M1M3,37
+temperature,2026-05-15,114,m1m3-ts-01 2/6,M1M3,37
+temperature,2026-05-15,114,m1m3-ts-01 3/6,M1M3,37
+temperature,2026-05-15,114,m1m3-ts-01 4/6,M1M3,37
+temperature,2026-05-15,114,m1m3-ts-01 5/6,M1M3,37
+temperature,2026-05-15,114,m1m3-ts-01 6/6,M1M3,37
+temperature,2026-05-15,115,m1m3-ts-02 1/6,M1M3,37
+temperature,2026-05-15,115,m1m3-ts-02 2/6,M1M3,37
+temperature,2026-05-15,115,m1m3-ts-02 3/6,M1M3,37
+temperature,2026-05-15,115,m1m3-ts-02 4/6,M1M3,37
+temperature,2026-05-15,115,m1m3-ts-02 5/6,M1M3,37
+temperature,2026-05-15,115,m1m3-ts-02 6/6,M1M3,37
+temperature,2026-05-15,116,m1m3-ts-03 1/6,M1M3,37
+temperature,2026-05-15,116,m1m3-ts-03 2/6,M1M3,37
+temperature,2026-05-15,116,m1m3-ts-03 3/6,M1M3,37
+temperature,2026-05-15,116,m1m3-ts-03 4/6,M1M3,37
+temperature,2026-05-15,116,m1m3-ts-03 5/6,M1M3,37
+temperature,2026-05-15,116,m1m3-ts-03 6/6,M1M3,37
+temperature,2026-05-15,117,m1m3-ts-04 1/6,M1M3,37
+temperature,2026-05-15,117,m1m3-ts-04 2/6,M1M3,37
+temperature,2026-05-15,117,m1m3-ts-04 3/6,M1M3,37
+temperature,2026-05-15,117,m1m3-ts-04 4/6,M1M3,37
+temperature,2026-05-15,117,m1m3-ts-04 5/6,M1M3,37
+temperature,2026-05-15,117,m1m3-ts-04 6/6,M1M3,37
+temperature,2026-05-15,121,MTCameraAssembly-ESS01,"MT camera hexapod strut 7, MT camera hexapod strut 8, MT cam",450
+temperature,2026-05-15,122,M2-ESS02,"M2 hexapod strut 1, M2 hexapod strut 2, M2 hexapod strut 3, ",450
+temperature,2026-05-15,201,AuxTel-ESS01,"unused, AT air, AT truss, AT M2, unused, unused, unused, unu",450
+temperature,2026-05-15,201,AuxTel-ESS02,AT azimuth axis,836
+temperature,2026-05-15,201,AuxTel-ESS03,"unused, M1 sensor 1, M1 sensor 2, M1 sensor 3, M1 sensor 4, ",1200
+temperature,2026-05-15,301,Weather tower air temperature,Weather tower,312
+temperature,2026-05-15,404,Laser-ESS01,Laser Enclosure,830
+temperature,2026-05-15,404,Laser-ESS02,EnclosureFan FCUnit LaserTop LaserBottom LaserFan PowerSuppl,1195
+temperature,2026-05-15,405,CBP-ESS01,Photodiode PrimaryMirror MaskChanger ElectronicsCabinet,767
+temperature,2026-05-15,442,LouverH1H2Temp,"MTDomeLouver-H1, MTDomeLouver-H2, unused, unused, unused, un",450
+temperature,2026-07-10,106,M2-ESS01,"Unused, Tangent link A1, Tangent link A2, Tangent link A3, T",450
+temperature,2026-07-10,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,884
+temperature,2026-07-10,112,M2-ESS02,M2; RPi with sticker 1,873
+temperature,2026-07-10,113,M1M3-ESS03,M1M3; RPi with sticker 4,830
+temperature,2026-07-10,114,m1m3-ts-01 1/6,M1M3,37
+temperature,2026-07-10,114,m1m3-ts-01 2/6,M1M3,37
+temperature,2026-07-10,114,m1m3-ts-01 3/6,M1M3,37
+temperature,2026-07-10,114,m1m3-ts-01 4/6,M1M3,37
+temperature,2026-07-10,114,m1m3-ts-01 5/6,M1M3,37
+temperature,2026-07-10,114,m1m3-ts-01 6/6,M1M3,37
+temperature,2026-07-10,115,m1m3-ts-02 1/6,M1M3,37
+temperature,2026-07-10,115,m1m3-ts-02 2/6,M1M3,37
+temperature,2026-07-10,115,m1m3-ts-02 3/6,M1M3,37
+temperature,2026-07-10,115,m1m3-ts-02 4/6,M1M3,37
+temperature,2026-07-10,115,m1m3-ts-02 5/6,M1M3,37
+temperature,2026-07-10,115,m1m3-ts-02 6/6,M1M3,37
+temperature,2026-07-10,116,m1m3-ts-03 1/6,M1M3,37
+temperature,2026-07-10,116,m1m3-ts-03 2/6,M1M3,37
+temperature,2026-07-10,116,m1m3-ts-03 3/6,M1M3,37
+temperature,2026-07-10,116,m1m3-ts-03 4/6,M1M3,37
+temperature,2026-07-10,116,m1m3-ts-03 5/6,M1M3,37
+temperature,2026-07-10,116,m1m3-ts-03 6/6,M1M3,37
+temperature,2026-07-10,117,m1m3-ts-04 1/6,M1M3,37
+temperature,2026-07-10,117,m1m3-ts-04 2/6,M1M3,37
+temperature,2026-07-10,117,m1m3-ts-04 3/6,M1M3,37
+temperature,2026-07-10,117,m1m3-ts-04 4/6,M1M3,37
+temperature,2026-07-10,117,m1m3-ts-04 5/6,M1M3,37
+temperature,2026-07-10,117,m1m3-ts-04 6/6,M1M3,37
+temperature,2026-07-10,121,MTCameraAssembly-ESS01,"MT camera hexapod strut 7, MT camera hexapod strut 8, MT cam",450
+temperature,2026-07-10,122,M2-ESS02,"M2 hexapod strut 1, M2 hexapod strut 2, M2 hexapod strut 3, ",450
+temperature,2026-07-10,201,AuxTel-ESS01,"unused, AT air, AT truss, AT M2, unused, unused, unused, unu",450
+temperature,2026-07-10,201,AuxTel-ESS02,AT azimuth axis,812
+temperature,2026-07-10,201,AuxTel-ESS03,"unused, M1 sensor 1, M1 sensor 2, M1 sensor 3, M1 sensor 4, ",1200
+temperature,2026-07-10,301,Weather tower air temperature,Weather tower,312
+temperature,2026-07-10,404,Laser-ESS01,Laser Enclosure,806
+temperature,2026-07-10,404,Laser-ESS02,EnclosureFan FCUnit LaserTop LaserBottom LaserFan PowerSuppl,1198
+temperature,2026-07-10,405,CBP-ESS01,Photodiode PrimaryMirror MaskChanger ElectronicsCabinet,766
+temperature,2026-07-10,442,LouverH1H2Temp,"MTDomeLouver-H1, MTDomeLouver-H2, unused, unused, unused, un",450
+relativeHumidity,2025-11-15,107,Laser-ESS01,Laser Enclosure,836
+relativeHumidity,2025-11-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,849
+relativeHumidity,2025-11-15,112,M2-ESS02,M2; RPi with sticker 1,852
+relativeHumidity,2025-11-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,801
+relativeHumidity,2025-11-15,201,AuxTel-ESS02,AT azimuth axis,809
+relativeHumidity,2025-11-15,301,Weather tower relative humidity,Weather tower,312
+relativeHumidity,2026-01-15,107,Laser-ESS01,Laser Enclosure,780
+relativeHumidity,2026-01-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,905
+relativeHumidity,2026-01-15,112,M2-ESS02,M2; RPi with sticker 1,906
+relativeHumidity,2026-01-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,883
+relativeHumidity,2026-01-15,201,AuxTel-ESS02,AT azimuth axis,844
+relativeHumidity,2026-01-15,301,Weather tower relative humidity,Weather tower,312
+relativeHumidity,2026-03-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,859
+relativeHumidity,2026-03-15,112,M2-ESS02,M2; RPi with sticker 1,862
+relativeHumidity,2026-03-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,828
+relativeHumidity,2026-03-15,201,AuxTel-ESS02,AT azimuth axis,831
+relativeHumidity,2026-03-15,301,Weather tower relative humidity,Weather tower,312
+relativeHumidity,2026-05-15,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,811
+relativeHumidity,2026-05-15,112,M2-ESS02,M2; RPi with sticker 1,865
+relativeHumidity,2026-05-15,113,M1M3-ESS03,M1M3; RPi with sticker 4,806
+relativeHumidity,2026-05-15,201,AuxTel-ESS02,AT azimuth axis,836
+relativeHumidity,2026-05-15,301,Weather tower relative humidity,Weather tower,312
+relativeHumidity,2026-05-15,404,Laser-ESS01,Laser Enclosure,830
+relativeHumidity,2026-07-10,111,Camera-ESS01,Camera inlet plane; RPi with sticker 3,884
+relativeHumidity,2026-07-10,112,M2-ESS02,M2; RPi with sticker 1,873
+relativeHumidity,2026-07-10,113,M1M3-ESS03,M1M3; RPi with sticker 4,830
+relativeHumidity,2026-07-10,201,AuxTel-ESS02,AT azimuth axis,812
+relativeHumidity,2026-07-10,301,Weather tower relative humidity,Weather tower,312
+relativeHumidity,2026-07-10,404,Laser-ESS01,Laser Enclosure,806
+airFlow,2025-11-15,118,RubinWiFiTest1,MTDome-ESS10,20
+airFlow,2025-11-15,120,RubinWiFiTest3,MTDome-ESS12,20
+airFlow,2025-11-15,204,AuxTel-Windsonic,AT Dome,20
+airFlow,2025-11-15,301,Weather tower airflow,Weather tower,937
+airFlow,2026-01-15,118,RubinWiFiTest1,MTDome-ESS10,20
+airFlow,2026-01-15,120,RubinWiFiTest3,MTDome-ESS12,20
+airFlow,2026-01-15,204,AuxTel-Windsonic,AT Dome,20
+airFlow,2026-01-15,301,Weather tower airflow,Weather tower,938
+airFlow,2026-03-15,204,AuxTel-Windsonic,AT Dome,20
+airFlow,2026-03-15,301,Weather tower airflow,Weather tower,937
+airFlow,2026-03-15,441,LouverH1Anem,MTDomeLouver-H1,20
+airFlow,2026-03-15,443,LouverH2Anem,MTDomeLouver-H2,20
+airFlow,2026-05-15,204,AuxTel-Windsonic,AT Dome,20
+airFlow,2026-05-15,301,Weather tower airflow,Weather tower,938
+airFlow,2026-05-15,441,LouverH1Anem,MTDomeLouver-H1,20
+airFlow,2026-05-15,443,LouverH2Anem,MTDomeLouver-H2,20
+airFlow,2026-07-10,204,AuxTel-Windsonic,AT Dome,20
+airFlow,2026-07-10,301,Weather tower airflow,Weather tower,937
+airFlow,2026-07-10,441,LouverH1Anem,MTDomeLouver-H1,20
+airFlow,2026-07-10,443,LouverH2Anem,MTDomeLouver-H2,20

@@ -6,6 +6,7 @@ extracted into its own technote repo.
 
 | Folder | Topic | Ticket | Status |
 |---|---|---|---|
+| [`simonyi_time_loss/`](simonyi_time_loss/) | Simonyi night time lost to weather vs. faults per night (WEATHER bit, EFD weather criteria, ConsDB visit coverage; human tables as cross-check) | — | Step 0 done, accounting pending |
 | [`nightlog_weather_fault_loss/`](nightlog_weather_fault_loss/) | Simonyi night-report summaries exported verbatim per night (weather vs fault time loss) | — | Export done, classification pending |
 | [`observatory_high_level_performance/`](observatory_high_level_performance/) | Survey speed vs. delivered image quality, best two weeks of Early Ops vs. first two weeks of LSST, and by fiscal quarter (RASAB 2026 figure; interactive, talk, paper versions) | — | WIP |
 | [`zephyr_scale_analysis/`](zephyr_scale_analysis/) | Test cases per cycle, steps and versions per test case in Zephyr Scale (SPIE paper/poster) | — | Done |

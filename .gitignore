@@ -20,3 +20,7 @@ __pycache__/
 observatory_high_level_performance/data/visits_*.parquet
 observatory_high_level_performance/data/*.log
 observatory_high_level_performance/figures/*.html
+
+# simonyi_time_loss: EFD/ConsDB caches (regenerate with python/pull_efd_weather_1min.py and notebook 03)
+simonyi_time_loss/data/cache/
+simonyi_time_loss/data/step0/*.parquet
