@@ -179,8 +179,32 @@ Decisions and findings, in order:
   18 UNKNOWN rows for unexplained blank runs (25 nights), not drawn by default. Bruno: small gaps
   are probably minor faults or weather, UNKNOWN is fine, do not plot them. High rows never touched,
   so the tails 20260417 and 20260508-10 are UNKNOWN rows rather than extensions.
-- `talk` column (0/1) in the CSV marks the five spans labelled on the slide. Label of the March
+- `talk` column (0/1) in the CSV marks the six spans labelled on the slide. Label of the March
   event shortened to "PCS compressor failure + vacuum leak #2" so it wraps on two legend lines.
+- 2026-10-19: the 20260620-24 blank run (an UNKNOWN row plus a 2-night "Camera cryo" row read
+  from Sandrine's plot) was merged into one 5-night fault span, label 6 "LSSTCam Cryo 4 lost +
+  Cryo 5 leak + Cryo 6 controller swap", from the night logs in `../nightlog_weather_fault_loss`
+  (Cryo 4 lost 10:54 UTC on 20260620 after a cloudy TCBP night; camera warmed up and purged;
+  Cryo 5 leak not repairable in time; cool-down 24 Jun; back on sky 25 Jun). 20 Jun was cloudy
+  but the WEATHER bit was never set; counted as fault for simplicity. No FRACAS ticket found.
+  The 20260701-04 mixed span, from the `simonyi_time_loss` per-night table: about 21 h weather
+  (WEATHER bit on 1-3 Jul, clouds then 15-20 m/s wind) against 23 h non-weather (OS updates and
+  the ConsDB/database outage OBS-2000 on 1-2 Jul, TMA OSS and thermal main-cabinet sensor faults
+  OBS-1996/1999/2003 through 4 Jul, M1M3 FA211/FA414, earthquake 3 Jul 03:10 UTC). On 2-3 Jul
+  weather and faults overlapped, so the weather hours are an upper bound. 20260707 (UNKNOWN) is
+  the camera REB power-off (67 of 71 REBs, 09:56 local; FRACAS-404 row is dated 20260708).
+- 2026-10-19: "PCS chiller flow variations" (26 Feb to 18 Mar, FRACAS-352/364) moved from
+  fault/partial to degraded/degraded. ConsDB shows 21 nights with a median of 685 plotted
+  visits and a single blank night (20260304, kept as its own UNKNOWN row), so the pale red
+  band read as three weeks lost next to label 4 when the system was only degraded. Talk mode
+  skips the degraded category (as for the earthquake span); the backup figure draws it hatched.
+  Fault nights-lost total 47 -> 46, degraded 8 -> 9.
+- 2026-10-19: label 5 "TMA encoder incident + camera cryo warm-up" extended from 20260507 to
+  20260510 and the 20260508-10 UNKNOWN row dropped. Night logs: on 8 May the electronics team
+  established the TMA azimuth drives cannot be enabled with one encoder head missing; 8-10 May
+  were closed-dome PTC calibrations in clear weather; 11 May the encoder head was back and the
+  survey resumed. The FRACAS status report the row was built from ended on 7 May, which is why
+  the ConsDB blank run had been filed separately. Fault 46 -> 49, UNKNOWN 22 -> 19 (16 rows).
 - The y axis: 0 is 00:00 UTC on the morning date, i.e. 21:00 CLST / 20:00 CLT, so the evening
   twilight crossing zero in summer is correct. `Y_REF="local"` shifts each night by its own
   America/Santiago offset (-3 / -4 h); there is a 1 h step at the 2026-04-05 DST change. Local

@@ -283,24 +283,30 @@ storm; the storm row stays in the CSV and is not drawn).
 
 - A night is "blank" when fewer than 50 visits pass the plot's filters. Over the 261 nights
   there are 80 blank nights in 27 contiguous runs. The `low`/`medium` rows of the CSV were
-  aligned to these runs (confidence raised to `high`, note "dates from ConsDB"); 18
-  `UNKNOWN` rows cover the 25 blank nights with no explanation yet. `UNKNOWN` rows are
+  aligned to these runs (confidence raised to `high`, note "dates from ConsDB"); 16
+  `UNKNOWN` rows cover the 19 blank nights with no explanation yet. `UNKNOWN` rows are
   not drawn by default.
 - Colours are Rubin palette slots (`rubin_color_pallete/rubin_palette.py`): fault red,
   weather teal, planned green, mixed orange, degraded purple (hatched, no band), unknown
-  grey. A solid strip along the top edge of the axes carries the colour at full saturation,
+  grey. `degraded` is for spans where the system was impaired but observing continued (the
+  earthquake 5 % TMA limit, the PCS chiller flow variations); they are not drawn in talk mode. A solid strip along the top edge of the axes carries the colour at full saturation,
   because the pale extent bands alone do not separate under colour-vision deficiency.
 - `plots/downtime_summary.md` lists every span with its count of blank nights and the
   per-category totals.
 - `make_utilization_annotated.py` writes four variants. `utilization_annotated` (16:9, white
   background) draws every category but unknown with staggered text labels above the plot; it is
-  the backup slide. `utilization_annotated_talk` is the RASAB 2026 slide figure: 9.5 x 4 inch,
-  transparent background, fault / weather / mixed spans of 3+ nights as bands, and the five
+  the backup slide. `utilization_annotated_talk` is the RASAB 2026 slide figure: 9.5 x 4.25 inch,
+  transparent background, fault / weather / mixed spans of 3+ nights as bands, and the six
   spans with `talk = 1` numbered chronologically inside their strip (water condensation,
   Dynalene loss, vacuum leak #1, PCS compressor failure + vacuum leak #2, TMA encoder + cryo
-  warm-up: the faults that cost four or more nights and appear in Sandrine Thomas' notes). The
-  three legends (visit types, downtime colours, numbered events) are stacked to the right of the
-  plot with thin separators. Both come with a `_local` twin (Chile clock time y axis, 18:30 to
+  warm-up, LSSTCam Cryo 4 lost + Cryo 5 leak + Cryo 6 controller swap: the faults that cost
+  four or more nights). The
+  three legends (visit types, downtime colours, numbered events) sit under the x axis in four
+  columns (the numbered list is split 1-3 / 4-6) so the plot uses the full slide width; the
+  margins are trimmed to the ink. `--bg white` writes a `_white` twin of the talk figure for
+  review on a light background. The LSST start is a 45 degree ink arrow under the x axis pointing
+  up at the first LSST night, "Start of the LSST" on one line beside its tail (no line across
+  the data). Both come with a `_local` twin (Chile clock time y axis, 18:30 to
   07:30; the June solstice sunset is 17:46 and the earliest twilight end 18:46). The interactive
   notebook draws the same layer with `annotate_downtime_bokeh` (text labels above the plot, with
   the span's dates, category, FRACAS tickets and notes on hover).

@@ -11,10 +11,12 @@ Outputs (in ``plots/``): ``utilization_annotated.png`` (300 dpi),
 Run from a stack shell (``setup lsst_distrib``) in this folder:
     python make_utilization_annotated.py [--talk]
 ``--talk`` draws fault, weather and mixed spans of at least 3 nights, labels
-only the rows flagged ``talk = 1`` in the CSV, and uses the 9.5 x 4 inch
-transparent slide style (writes ``*_talk.*``).
+only the rows flagged ``talk = 1`` in the CSV, and uses the 9.5 x 4.25 inch slide
+style with the legends in four columns under the x axis (writes ``*_talk.*``).
 ``--y-ref local`` puts the y axis in Chile clock time (America/Santiago, CLT/CLST)
 instead of hours after 00:00 UTC (writes ``*_local.*``).
+``--bg white`` / ``--bg transparent`` overrides the figure background of the
+style (the slide style is transparent by default); white writes ``*_white.*``.
 """
 
 from __future__ import annotations
@@ -39,7 +41,8 @@ CACHE = HERE / "cache"
 DAY_OBS_MIN = 20251026
 DAY_OBS_MAX = 20260713  # last night before the July storm
 #: Figure styles. "backup" is the full 16:9 slide; "slide" is the talk figure that
-#: drops into a 9.5 x 4 inch box on the RASAB slide (transparent background).
+#: drops into a 9.5 x 4.25 inch box on the RASAB slide (transparent background, all
+#: legends in four columns under the x axis, margins trimmed to the ink).
 STYLES = {
     "backup": dict(
         figsize=(13.3, 7.5),
@@ -51,14 +54,20 @@ STYLES = {
         pad=0.05,
     ),
     "slide": dict(
-        figsize=(9.5, 4.0),
-        axis_label_fs=10,
-        tick_fs=12,
-        legend_fs=9,
-        annot_fs=12,
+        figsize=(9.5, 4.25),
+        axis_label_fs=8,
+        tick_fs=10,
+        legend_fs=7,
+        annot_fs=10,
+        xtick_fs=8,  # month / year tick labels
+        ylabel_pad=2.0,  # points between the y tick labels and the y label
         transparent=True,
-        pad=0.02,
-        legend_loc="right",  # visit legend and downtime legends stacked on the right
+        pad={"left": 0.03, "right": 0.01, "top": 0.01, "bottom": 0.02},
+        legend_loc="bottom",  # four columns under the x axis: visits, downtime, 1-3, 4-5
+        # Left edge of each column (axes fraction); the last two are wider so the
+        # event labels fit on one line (legend_wrap disables wrapping).
+        legend_columns=(0.0, 0.2, 0.4, 0.64),
+        legend_wrap=80,
         label_mode="numbers",
         short_ylabel=True,  # the axes are short; the long label would overflow
     ),
@@ -161,7 +170,12 @@ def base_timeline(visits, twilight, colors, y_ref="utc", style=None):
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
     ax.xaxis.set_minor_locator(mdates.DayLocator(bymonthday=[8, 15, 22]))
-    ax.tick_params(axis="x", which="major", labelsize=style["tick_fs"], length=6)
+    ax.tick_params(
+        axis="x",
+        which="major",
+        labelsize=style.get("xtick_fs", style["tick_fs"]),
+        length=6,
+    )
     ax.tick_params(axis="x", which="minor", length=3)
     ax.tick_params(axis="y", labelsize=style["tick_fs"])
     if y_ref == "local":
@@ -178,7 +192,9 @@ def base_timeline(visits, twilight, colors, y_ref="utc", style=None):
             if style["short_ylabel"]
             else "Time of night (hours after 00:00 UTC)"
         )
-    ax.set_ylabel(ylabel, fontsize=style["axis_label_fs"])
+    ax.set_ylabel(
+        ylabel, fontsize=style["axis_label_fs"], labelpad=style.get("ylabel_pad")
+    )
     ax.set_xlabel("Night (day_obs)", fontsize=style["axis_label_fs"])
     if style["legend_loc"] == "right":
         ax.legend(
@@ -193,6 +209,25 @@ def base_timeline(visits, twilight, colors, y_ref="utc", style=None):
             labelspacing=0.3,
         )
         # Thicker line keys so the three visit colours read at slide distance.
+        for h in ax.get_legend().legend_handles:
+            h.set_linewidth(h.get_linewidth() + 2.0)
+    elif style["legend_loc"] == "bottom":
+        # First column under the x axis; downtime.annotate_downtime fills the others
+        # at the same depth (xaxis_depth_in + LEGEND_PAD_IN).
+        ax.legend(
+            loc="upper left",
+            bbox_to_anchor=(
+                style["legend_columns"][0],
+                -(downtime.xaxis_depth_in(ax) + downtime.LEGEND_PAD_IN),
+            ),
+            bbox_transform=downtime.below_anchor_transform(ax),
+            fontsize=style["legend_fs"],
+            frameon=False,
+            borderaxespad=0.0,
+            borderpad=0.2,
+            handlelength=1.6,
+            labelspacing=0.3,
+        )
         for h in ax.get_legend().legend_handles:
             h.set_linewidth(h.get_linewidth() + 2.0)
     else:
@@ -284,12 +319,20 @@ def main():
         default="utc",
         help="y axis reference: hours after 00:00 UTC (original) or Chile clock time",
     )
+    ap.add_argument(
+        "--bg",
+        choices=["transparent", "white"],
+        default=None,
+        help="figure background; default is the style's (slide: transparent)",
+    )
     args = ap.parse_args()
 
     csv_path = HERE / "downtime_annotations.csv"
     visits, twilight = load_data()
     colors = utils.rubin_category_colors()
-    style = STYLES["slide" if args.talk else "backup"]
+    style = dict(STYLES["slide" if args.talk else "backup"])
+    if args.bg is not None:
+        style["transparent"] = args.bg == "transparent"
     fig, ax = base_timeline(visits, twilight, colors, y_ref=args.y_ref, style=style)
     fig.subplots_adjust(left=0.065, right=0.99, bottom=0.2, top=0.97)
 
@@ -306,10 +349,18 @@ def main():
         stem = "utilization_annotated"
     if args.y_ref == "local":
         stem += "_local"
+    if args.bg == "white" and STYLES["slide" if args.talk else "backup"]["transparent"]:
+        stem += "_white"
     if style["legend_loc"] == "right":
         kw.update(
             legend_loc="right",
             legend_offset_in=downtime.legend_height_in(ax.get_legend()) + 0.1,
+        )
+    elif style["legend_loc"] == "bottom":
+        kw.update(
+            legend_loc="bottom",
+            legend_columns=style["legend_columns"][1:],
+            legend_wrap=style["legend_wrap"],
         )
     result = downtime.annotate_downtime(
         ax,

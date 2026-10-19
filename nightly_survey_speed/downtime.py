@@ -11,7 +11,8 @@ whose x axis is matplotlib date numbers of 00:00 UTC on ``day_obs``:
   not separate under colour-vision deficiency);
 * staggered labels above the axes with a leader line to the centre of the span;
 * a small category legend, added with ``ax.add_artist`` so the visit legend stays;
-* a vertical marker for the start of the LSST (``day_obs`` 20260629).
+* a marker for the start of the LSST (``day_obs`` 20260629): a 45 degree ink arrow
+  under the x axis pointing up at the first LSST night, caption left of its tail.
 
 Colours are the Rubin palette (``rubin_color_pallete/rubin_palette.py``) slots,
 checked at full saturation with the Machado (2009) protanopia/deuteranopia
@@ -29,6 +30,7 @@ import matplotlib.dates as mdates
 import matplotlib.legend as mlegend
 from matplotlib.legend_handler import HandlerBase
 import matplotlib.patches as mpatches
+import matplotlib.patheffects as mpe
 import matplotlib.text as mtext
 import matplotlib.transforms as mtransforms
 from matplotlib.font_manager import FontProperties
@@ -45,7 +47,10 @@ __all__ = [
     "select_spans",
     "annotate_downtime",
     "right_anchor_transform",
+    "below_anchor_transform",
+    "xaxis_depth_in",
     "legend_height_in",
+    "LEGEND_PAD_IN",
     "fit_margins",
     "annotate_downtime_bokeh",
 ]
@@ -77,6 +82,8 @@ CATEGORY_LEGEND_NAMES: dict[str, str] = {
 }
 LSST_START_DAY_OBS = 20260629
 _INK = "#313333"
+#: Gap in inches between the x axis label and a legend placed under it.
+LEGEND_PAD_IN = 0.08
 
 
 def _to_date(x) -> dt.date:
@@ -179,6 +186,30 @@ def right_anchor_transform(ax):
     return fig.dpi_scale_trans + mtransforms.ScaledTranslation(1, 1, ax.transAxes)
 
 
+def below_anchor_transform(ax):
+    """Transform whose x is axes fraction and y is inches above the axes bottom edge.
+
+    Negative y is below the axes. Use it as ``bbox_transform`` of legends placed
+    under the x axis so they keep their distance when the axes are resized.
+    """
+    fig = ax.figure
+    return mtransforms.blended_transform_factory(
+        ax.transAxes,
+        fig.dpi_scale_trans + mtransforms.ScaledTranslation(0, 0, ax.transAxes),
+    )
+
+
+def xaxis_depth_in(ax) -> float:
+    """Inches from the axes bottom edge to the bottom of the x tick labels and label."""
+    fig = ax.figure
+    fig.canvas.draw()
+    bb = ax.xaxis.get_tightbbox(fig.canvas.get_renderer())
+    if bb is None:
+        return 0.0
+    axes_bottom = ax.transAxes.transform((0, 0))[1]
+    return (axes_bottom - bb.y0) / fig.dpi
+
+
 def legend_height_in(legend) -> float:
     """Height of a drawn legend in inches (draws the figure first)."""
     fig = legend.figure
@@ -250,9 +281,10 @@ def annotate_downtime(
     level_step: float | None = None,
     leader_color: str = _INK,
     legend_loc: str = "below",
-    legend_pad: float = 0.08,
+    legend_pad: float = LEGEND_PAD_IN,
     legend_offset_in: float = 0.0,
     legend_gap: float = 0.1,
+    legend_columns: tuple[float, ...] = (0.25, 0.5, 0.75),
     legend_wrap: int = 23,
     legend_separators: bool = True,
     legend_fontsize: float = 11,
@@ -305,7 +337,13 @@ def annotate_downtime(
         ``legend_pad`` inches from it. ``"right"`` stacks the category legend and
         (in numbers mode) the numbered legend to the right of the axes, starting
         ``legend_offset_in`` inches below the axes top (leave room for a legend
-        you placed there yourself) with ``legend_gap`` inches between them. Any
+        you placed there yourself) with ``legend_gap`` inches between them.
+        ``"bottom"`` lays the legends out in columns under the x axis label, at
+        ``legend_pad`` inches from it: the category legend at the first x of
+        ``legend_columns`` (axes fraction) and, in numbers mode, the numbered
+        list split evenly over the remaining columns. The default columns leave
+        the first quarter free for the visit legend placed by the caller at the
+        same depth (see ``below_anchor_transform`` and ``xaxis_depth_in``). Any
         matplotlib ``loc`` puts the category legend inside the axes.
     legend_wrap
         Wrap numbered-legend labels longer than this many characters.
@@ -373,11 +411,7 @@ def annotate_downtime(
         fig.dpi_scale_trans + mtransforms.ScaledTranslation(0, 1, ax.transAxes),
     )
     # x in axes fraction, y in inches above the axes bottom edge (negative = below).
-    below_tr = mtransforms.blended_transform_factory(
-        ax.transAxes,
-        fig.dpi_scale_trans + mtransforms.ScaledTranslation(0, 0, ax.transAxes),
-    )
-    inside_tr = mtransforms.blended_transform_factory(ax.transData, ax.transAxes)
+    below_tr = below_anchor_transform(ax)
     has_degraded = bool((drawn["severity"] == "degraded").any())
     y_strip_top = strip_height * (2 if has_degraded else 1)
 
@@ -505,25 +539,68 @@ def annotate_downtime(
             )
         drawn.loc[labelled.index, "level"] = levels
 
-    # 3. LSST start marker.
+    # 3. LSST start marker: a 45 degree arrow under the x axis whose head touches
+    # the axes at the centre of the first LSST night and whose tail sits down-left
+    # of it, below the tick labels, with the caption on one line left of the tail.
+    # The head is anchored in data x so it stays on the night when the axes are
+    # resized later; tail and caption are point offsets from it. The legends
+    # (bottom mode) are placed below it.
+    lsst_depth = 0.0  # inches below the axes used by the marker
     if lsst_start is not None:
         d = _to_date(pd.Timestamp(str(lsst_start)))
-        xl = _x(d) - 0.5
-        if x0 <= xl <= x1:
-            ax.axvline(xl, color=_INK, linewidth=1.4, linestyle=(0, (4, 2)), zorder=2.5)
-            ax.text(
-                xl,
-                0.975,
-                "Start of the LSST ",
-                transform=inside_tr,
+        xc = _x(d)  # night centre, where its visit ticks are drawn
+        if x0 <= xc <= x1:
+            data_in = mtransforms.blended_transform_factory(
+                ax.transData,
+                fig.dpi_scale_trans + mtransforms.ScaledTranslation(0, 0, ax.transAxes),
+            )
+            ax_bb = ax.get_window_extent(renderer)
+            tick_bbs = [
+                t.get_window_extent(renderer)
+                for t in ax.get_xticklabels()
+                if t.get_visible() and t.get_text()
+            ]
+            tick_depth = (
+                max(ax_bb.y0 - bb.y0 for bb in tick_bbs) / fig.dpi if tick_bbs else 0.0
+            )
+            # Tail below the tick labels, far enough that the caption (centred on
+            # the tail) clears them too.
+            dy = tick_depth + 0.04 + 0.6 * font_in
+            ax.annotate(
+                "",
+                xy=(xc, -0.01),
+                xycoords=data_in,
+                xytext=(-dy * 72, -dy * 72),
+                textcoords="offset points",
+                arrowprops=dict(
+                    arrowstyle="-|>,head_length=0.5,head_width=0.25",
+                    color=_INK,
+                    linewidth=1.8,
+                    shrinkA=0,
+                    shrinkB=0,
+                    path_effects=[
+                        mpe.Stroke(linewidth=5.0, foreground="white"),
+                        mpe.Normal(),
+                    ],
+                ),
+                annotation_clip=False,
+                zorder=4,
+            )
+            caption = ax.annotate(
+                "Start of the LSST",
+                xy=(xc, -0.01),
+                xycoords=data_in,
+                xytext=(-(dy + 0.04) * 72, -dy * 72),
+                textcoords="offset points",
                 ha="right",
-                va="top",
+                va="center",
                 fontsize=label_fontsize,
                 fontweight="bold",
                 color=_INK,
+                annotation_clip=False,
                 zorder=4,
-                bbox=dict(facecolor="white", edgecolor="none", alpha=0.85, pad=2),
             )
+            lsst_depth = (ax_bb.y0 - caption.get_window_extent(renderer).y0) / fig.dpi
 
     # 4. Legends. Category colours first, then (numbers mode) the numbered list.
     handles = []
@@ -549,6 +626,7 @@ def annotate_downtime(
     right_tr = right_anchor_transform(ax)
     right_pad = 0.12
     y_right = legend_offset_in
+    bottom_offset = max(xaxis_depth_in(ax), lsst_depth) + legend_pad
     if handles:
         kw = dict(
             fontsize=legend_fontsize,
@@ -556,10 +634,7 @@ def annotate_downtime(
             framealpha=0.95,
         )
         if legend_loc == "below":
-            xaxis_bb = ax.xaxis.get_tightbbox(renderer)
-            axes_bottom = ax.transAxes.transform((0, 0))[1]
-            xaxis_depth = (axes_bottom - xaxis_bb.y0) / fig.dpi if xaxis_bb else 0.0
-            offset = xaxis_depth + legend_pad
+            offset = bottom_offset
             legend_depth = offset + 1.6 * legend_fontsize / 72.0
             kw.update(
                 loc="upper center",
@@ -574,11 +649,16 @@ def annotate_downtime(
             handles = [
                 mpatches.Patch(facecolor="none", edgecolor="none", label="Downtime:")
             ] + handles
-        elif legend_loc == "right":
+        elif legend_loc in ("right", "bottom"):
+            anchor = (
+                (right_pad, -y_right)
+                if legend_loc == "right"
+                else (legend_columns[0], -bottom_offset)
+            )
             kw.update(
                 loc="upper left",
-                bbox_to_anchor=(right_pad, -y_right),
-                bbox_transform=right_tr,
+                bbox_to_anchor=anchor,
+                bbox_transform=right_tr if legend_loc == "right" else below_tr,
                 frameon=False,
                 title="Downtime",
                 alignment="left",
@@ -618,18 +698,40 @@ def annotate_downtime(
             borderaxespad=0.0,
             borderpad=0.2,
         )
+        # One legend per column: a single legend in "bottom" mode, otherwise the
+        # numbered list is split evenly over the columns after the category legend.
+        chunks = [(num_handles, num_labels, None)]
         if legend_loc == "right":
             kw.update(
                 loc="upper left",
                 bbox_to_anchor=(right_pad, -y_right),
                 bbox_transform=right_tr,
             )
+        elif legend_loc == "bottom":
+            cols = list(legend_columns[1:]) or [legend_columns[0] + 0.25]
+            per_col = int(np.ceil(len(num_handles) / len(cols)))
+            chunks = [
+                (num_handles[i : i + per_col], num_labels[i : i + per_col], x)
+                for i, x in zip(range(0, len(num_handles), per_col), cols)
+            ]
+            kw.update(loc="upper left", bbox_transform=below_tr)
         else:
             kw.update(loc="lower right")
-        num_legend = mlegend.Legend(ax, num_handles, num_labels, **kw)
-        ax.add_artist(num_legend)
-        num_legend.set_clip_on(False)
-        legends.append(num_legend)
+        for hs, ls, x in chunks:
+            if x is not None:
+                kw["bbox_to_anchor"] = (x, -bottom_offset)
+            num_legend = mlegend.Legend(ax, hs, ls, **kw)
+            ax.add_artist(num_legend)
+            num_legend.set_clip_on(False)
+            legends.append(num_legend)
+
+    if legend_loc == "bottom" and legends:
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        axes_bottom = ax.transAxes.transform((0, 0))[1]
+        legend_depth = max(
+            (axes_bottom - L.get_window_extent(renderer).y0) / fig.dpi for L in legends
+        )
 
     if legend_loc == "right" and legend_separators and legends:
         # One thin line in the middle of each gap above a downtime legend.
@@ -674,25 +776,32 @@ def annotate_downtime(
     }
 
 
-def fit_margins(fig, pad: float = 0.03, iterations: int = 4) -> None:
+def fit_margins(fig, pad=0.03, iterations: int = 4) -> None:
     """Move the subplot margins so that everything drawn fills the figure.
 
     Measures the tight bounding box of the whole figure (axes, tick labels, axis
     labels, legends, and the annotation artists drawn outside the axes) and
     shifts ``left``, ``right``, ``bottom`` and ``top`` so that the box sits
-    ``pad`` inches from each edge of the figure. The figure size is unchanged,
-    so the output keeps the requested slide dimensions. Iterates because tick
-    label positions move with the axes.
+    ``pad`` inches from each edge of the figure. ``pad`` is one number for all
+    sides or a dict with any of the keys ``left``, ``right``, ``bottom``, ``top``
+    (missing keys fall back to ``pad["default"]`` or 0). The figure size is
+    unchanged, so the output keeps the requested slide dimensions. Iterates
+    because tick label positions move with the axes.
     """
+    if not isinstance(pad, dict):
+        pad = {"default": float(pad)}
+    d = pad.get("default", 0.0)
+    pl, pr = pad.get("left", d), pad.get("right", d)
+    pb, pt = pad.get("bottom", d), pad.get("top", d)
     W, H = fig.get_size_inches()
     for _ in range(iterations):
         fig.canvas.draw()
         bb = fig.get_tightbbox(fig.canvas.get_renderer())  # inches
         sp = fig.subplotpars
-        left = sp.left - (bb.x0 - pad) / W
-        right = sp.right + (W - pad - bb.x1) / W
-        bottom = sp.bottom - (bb.y0 - pad) / H
-        top = sp.top + (H - pad - bb.y1) / H
+        left = sp.left - (bb.x0 - pl) / W
+        right = sp.right + (W - pr - bb.x1) / W
+        bottom = sp.bottom - (bb.y0 - pb) / H
+        top = sp.top + (H - pt - bb.y1) / H
         if not (0 <= left < right <= 1 and 0 <= bottom < top <= 1):
             break
         fig.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
