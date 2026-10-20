@@ -41,7 +41,7 @@ __all__ = [
 
 #: Image-quality statistics available on the y axis, with axis labels.
 IQ_COLUMNS = {
-    "idiq_aos_cam": "Image quality added by the system, iDIQ (arcsec)",
+    "idiq_aos_cam": "Instr. Delivered Image Quality (iDIQ), arcsec",
     "fwhm_500_zenith": "Delivered FWHM corrected to 500 nm, zenith (arcsec)",
     "fwhm_geom": "Delivered FWHM, geometric (arcsec)",
 }

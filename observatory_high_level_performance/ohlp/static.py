@@ -27,7 +27,7 @@ __all__ = ["build_static_figure", "save_png"]
 
 #: Shorter y-axis labels for the small static figure (same quantities as IQ_COLUMNS).
 Y_LABELS_SHORT = {
-    "idiq_aos_cam": "System image quality, iDIQ (arcsec)",
+    "idiq_aos_cam": "Instr. Delivered Image Quality (iDIQ), arcsec",
     "fwhm_500_zenith": "Delivered FWHM, 500 nm zenith (arcsec)",
     "fwhm_geom": "Delivered FWHM, geometric (arcsec)",
 }

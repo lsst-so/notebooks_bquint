@@ -291,7 +291,7 @@ def build_figure(
         y=yref["box_top"],
         x_units="data",
         y_units="data",
-        text="goal region: speed > %.2f, system IQ < %.2f″"
+        text="goal region: speed > %.2f, IQ < %.2f″"
         % (ref.VISIT_RATE.box_x_min, yref["box_top"]),
         text_align="right",
         text_baseline="top",
@@ -323,7 +323,7 @@ def build_figure(
     )
     p.add_layout(star_label)
 
-    # ROST measured full-system band (iDIQ axis only) ------------------------ #
+    # ROST measured system (sDIQ) band (iDIQ axis only) ---------------------- #
     rost = BoxAnnotation(
         bottom=ref.SYS_IQ_MEASURED_ROST[0],
         top=ref.SYS_IQ_MEASURED_ROST[1],
@@ -339,7 +339,7 @@ def build_figure(
     rost_label = Label(
         x=0.01,
         y=ref.SYS_IQ_MEASURED_ROST[1],
-        text="full-system IQ measured %.2f–%.2f″ (ROST Sep 2026; includes dome seeing and tracking, not comparable one-to-one)"
+        text="system contribution, sDIQ, measured %.2f–%.2f″ (ROST Sep 2026; includes dome seeing and tracking, so not one-to-one with iDIQ)"
         % ref.SYS_IQ_MEASURED_ROST,
         text_font_size="9pt",
         text_color=COLORS["rost_band"],
@@ -577,7 +577,7 @@ def build_figure(
         labels=[
             "Period points",
             "Nightly points",
-            "ROST full-system band",
+            "ROST sDIQ band",
         ],
         active=[
             i

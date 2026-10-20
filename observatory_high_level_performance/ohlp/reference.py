@@ -88,12 +88,16 @@ IDIQ_MIN: float = float(np.sqrt(SYS_IQ_START_CRITERION**2 - DOME_FWHM_BUDGET**2)
 #: cell 10 ``fiducial_atm = 0.7`` (SOTN-004 quotes 0.72 for the baseline sims).
 FIDUCIAL_ATM_FWHM: float = 0.7
 
-#: Brian Stalder's measured full-system contribution, arcsec, ROST 21 Sep 2026
+#: Brian Stalder's measured system contribution (sDIQ), arcsec, ROST 21 Sep 2026
 #: slide 2 ("0.55-0.60 arcsec, against a 0.40 budget"). It is the quadrature sum
 #: of the "measured" rows of SOTN-004 ``tab:diq_budget`` (optical figure 0.4,
 #: tracking drift 0.1, jitter 0.02, dome seeing 0.3-0.4, diffusion 0.207) and
 #: therefore INCLUDES dome seeing and tracking, which ``idiq_aos_cam`` does not.
-#: Drawn as a separate, toggleable band; not comparable one-to-one with the box.
+#: Terminology (Phil Marshall, 2026-10-20): iDIQ = instrument contribution to the
+#: delivered image quality, excluding dome/tube seeing; sDIQ = system contribution,
+#: everything except the atmosphere, so including dome/tube seeing. The y axis of
+#: the figure is iDIQ; this band is sDIQ. Drawn as a separate, toggleable band;
+#: not comparable one-to-one with the box.
 SYS_IQ_MEASURED_ROST: tuple[float, float] = (0.55, 0.60)
 
 #: Lower edge of the green region on the iDIQ axis (purely cosmetic; cell 15 ``y1``).

@@ -78,8 +78,16 @@ airmass filter, no bad-visit exclusion. Columns kept are listed in `ohlp/data.py
 | Column | Definition | Role |
 |---|---|---|
 | `fwhm_geom` | `psf_sigma_median × 2.355 × pixel_scale_median` | total delivered FWHM |
-| `idiq_aos_cam` | `sqrt(aos_fwhm² + 0.207²)` | **default y**: optics (AOS estimate) + camera diffusion. Excludes atmosphere, dome seeing and tracking |
+| `idiq_aos_cam` | `sqrt(aos_fwhm² + 0.207²)` | **default y**: the *instrument* contribution to the delivered image quality, iDIQ: optics (AOS estimate) + camera diffusion. Excludes atmosphere, dome/tube seeing and tracking |
 | `fwhm_500_zenith` | `sqrt(atm_500_zenith² + idiq_aos_cam²)`, atmosphere scaled by airmass^0.6 and (500 nm / λ)^0.2 | delivered FWHM at a common reference |
+
+**iDIQ vs. sDIQ** (Phil Marshall, 2026-10-20). *iDIQ* is the instrument contribution to the
+delivered image quality and does not (purports not to) include dome/tube seeing. *sDIQ* is the
+system contribution: everything except the atmosphere, so it does include dome/tube seeing. The
+y axis of the figure is iDIQ; the ROST band (§6) is sDIQ. Axis labels and annotations must not call
+the y axis "system" image quality. Note that RTN-093 labels its 0.45″ survey-start criterion
+"sDIQ" while stating that it "excludes the dome seeing", i.e. it is an iDIQ-like quantity in Phil's
+terminology; this README keeps RTN-093's name when quoting it.
 
 `idiq_aos_cam` is the default because Lynne wrote "in general we trust the aos_fwhm version best"
 (2026-02-20) and it is the panel she draws first. Coverage of `aos_fwhm` among survey visits is above
@@ -183,12 +191,12 @@ All in `ohlp/reference.py`; the figure never hard-codes a number.
 | Box left edge | 0.440 | star x × `fE_min = 0.7` (RTN-093: lowest allowed normalised étendue, survey-start criterion "Survey Speed > 0.7") |
 | Box right edge | 1.2 | cosmetic, as in the source |
 | Star y (iDIQ) | 0.39″ | 0.40″ system requirement (LSE-29 LSR-REQ-0007 SysIm_0; LSE-30 OSS-REQ-0227/0228; LPM-17 §3.3.3.1 minimum) with the 0.084″ dome budget removed in quadrature. Proposed by Phil Marshall, #mtg-summit-kpi, 2026-02-12. Hard-coded `idiq = 0.39` in the source |
-| Box top (iDIQ) | 0.442″ | RTN-093 survey-start criterion 0.45″ (sDIQ, excludes dome seeing; reused in RTN-122) with 0.084″ removed in quadrature |
+| Box top (iDIQ) | 0.442″ | RTN-093 survey-start criterion 0.45″ (called "sDIQ" there but explicitly excluding dome seeing, see §4; reused in RTN-122) with 0.084″ removed in quadrature |
 | Star y (FWHM 500 nm zenith) | 0.806″ | `sqrt(0.7² + 0.39² + 0.084²)`; fiducial atmosphere 0.7″ from the source (SOTN-004 quotes 0.72″ for the baseline sims) |
 | Box top (FWHM 500 nm zenith) | 0.832″ | `sqrt(0.7² + 0.442² + 0.084²)` |
 | Star y / box top (FWHM geom) | 0.873″ / 0.897″ | atmosphere at airmass 1.2 (`0.7 × 1.2^0.6`), no dome term, as in the source |
 | 0.207″ (camera), 0.084″ (dome) | | SOTN-004 Table `tab:diq_budget` |
-| ROST band | 0.55–0.60″ | Brian Stalder, ROST 21 Sep 2026, slide 2: measured **full-system** contribution against a 0.40″ budget. Quadrature sum of the SOTN-004 "measured" rows: optical figure 0.4, tracking drift 0.1, jitter 0.02, dome seeing 0.3–0.4, diffusion 0.207. **Not the same quantity** as `idiq_aos_cam`, which omits dome seeing and tracking; the ~0.15″ difference is mostly measured dome seeing. Shown as a separate toggleable band on the iDIQ axis only |
+| ROST band | 0.55–0.60″ | Brian Stalder, ROST 21 Sep 2026, slide 2: measured **system** contribution (sDIQ) against a 0.40″ budget. Quadrature sum of the SOTN-004 "measured" rows: optical figure 0.4, tracking drift 0.1, jitter 0.02, dome seeing 0.3–0.4, diffusion 0.207. **Not the same quantity** as `idiq_aos_cam`, which omits dome seeing and tracking; the ~0.15″ difference is mostly measured dome seeing. Shown as a separate toggleable band ("ROST sDIQ band") on the iDIQ axis only |
 
 Caveat on labels: the source notebook's "goal" (0.39) is the SRD minimum less dome seeing, and its
 "minimum" (0.44) is the RTN-093 survey-start criterion.
@@ -245,7 +253,7 @@ FY26 Q3, Apr 2026 and Jun 2026 equal a direct `COUNT(*)` on `cdb_lsstcam.visit1`
 - Speed includes closed nights, by design (§5). The weather flag exists only from 2026-02-25, and only
   from the EFD state. The narrative-log column needs an RSP token (`~/.token_file`, scopes `read:image` and
   `exec:notebook`, created at https://usdf-rsp.slac.stanford.edu/auth/tokens).
-- `idiq_aos_cam` is not comparable to Brian's 0.55–0.60″ (different quantity, see §6).
+- `idiq_aos_cam` (iDIQ) is not comparable to Brian's 0.55–0.60″ (sDIQ, includes dome seeing; see §4 and §6).
 - Per-band seeing differences are not removed from `idiq_aos_cam` (it has no atmosphere term) but
   the band mix does change the `fwhm_*` statistics from period to period.
 - FY26 Q4 is 8 nights ending at the storm; its speed is dominated by the closed nights (see §5).
