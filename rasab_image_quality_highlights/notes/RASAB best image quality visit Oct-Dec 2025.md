@@ -17,18 +17,33 @@ The best delivered image quality in Oct–Dec 2025 was visit **2025112700095**, 
 2025-11-27 (dayObs 20251127, seq_num 95). It is a 30 s i-band LSSTCam science visit from the survey
 block BLOCK-407, on a low-dust survey field.
 
-Key numbers for that visit, from the ConsDB quicklook table:
+Key numbers for that visit, from the ConsDB quicklook tables. The rows are the same as in
+`RASAB best image quality visit May-Jul 2026.md`, grouped as conditions, delivered image quality,
+uniformity across the focal plane, and PSF shape, so the two periods can be compared row by row.
 
-| Quantity | Value |
+| Quantity | 2025112700095 |
 |---|---|
-| Delivered PSF FWHM (median over 188 detectors) | 0.65 arcsec |
-| FWHM range across the focal plane (5th to 95th percentile) | 0.61 to 0.69 arcsec |
-| AOS residual (optics) FWHM | 0.38 arcsec |
-| DIMM seeing at the time | 0.67 arcsec |
-| Donut-blur seeing estimate | 0.68 arcsec |
-| Airmass / altitude | 1.04 / 74 deg |
-| Field (RA, Dec) | 31.08, -42.29 deg |
+| Night / seq_num | 2025-11-27 / 95 |
+| Band / exposure | i / 30 s |
+| Image type, program, reason | science, BLOCK-407, `template_blob_i_33.0` (survey, low-dust field) |
 | Observation start (UTC) | 2025-11-28 03:09:38 |
+| Field (RA, Dec) | 31.08, -42.29 deg |
+| Altitude / airmass | 74.4 deg / 1.04 |
+| Azimuth / sky rotation | 216.7 / 310.7 deg |
+| Wind speed / air temperature | 9.1 m/s / 13.2 °C |
+| DIMM seeing | 0.67 arcsec |
+| Donut-blur seeing estimate | 0.68 arcsec |
+| AOS residual (optics) FWHM | 0.38 arcsec |
+| **Delivered PSF FWHM, median over 188 detectors** | **0.646 arcsec** |
+| FWHM corrected to zenith (× airmass^-0.6) | 0.631 arcsec |
+| Delivered / DIMM | 0.97 |
+| Delivered / donut blur | 0.95 |
+| FWHM across focal plane, min / 5th pct / 95th pct / max | 0.60 / 0.61 / 0.69 / 0.74 arcsec |
+| FWHM uniformity, 5th to 95th percentile span | 0.08 arcsec |
+| PSF ellipticity, median / 95th pct | 0.095 / 0.234 |
+| Fraction of detectors with ellipticity > 0.2 | 9 % |
+| Median e1 / e2 | +0.005 / +0.075 |
+| Guider mean e1 / e2 | -0.036 / +0.018 |
 
 For the narrative, three points are worth stating alongside it:
 
@@ -54,4 +69,7 @@ November and 1.06 in December.
 - Delivered FWHM = `psf_sigma_median` × 2√(2 ln 2) × 0.2 arcsec/pixel.
 - Zenith/500 nm correction (caveat only): FWHM × airmass^-0.6 × (λ_eff/500 nm)^0.2.
 - Per-detector spread for the winning visit from `ccdvisit1_quicklook.psf_sigma`, excluding the
-  corner wavefront sensors (detectors 191, 192, 195, 196, 199, 200, 203, 204).
+  corner wavefront sensors (detectors 191, 192, 195, 196, 199, 200, 203, 204). Ellipticity from
+  `psf_ixx/ixy/iyy`: e1 = (Ixx − Iyy)/(Ixx + Iyy), e2 = 2 Ixy/(Ixx + Iyy), |e| = √(e1² + e2²).
+  Guider e1/e2 are `visit1_quicklook.guider_e1_mean/guider_e2_mean`.
+- Table numbers via `describe_visit()` in `../python/rasab_iq_reports.py` (re-queried 2026-10-20).
