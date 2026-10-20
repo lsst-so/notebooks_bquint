@@ -6,9 +6,13 @@ extracted into its own technote repo.
 
 | Folder | Topic | Ticket | Status |
 |---|---|---|---|
+| [`simonyi_time_loss/`](simonyi_time_loss/) | Simonyi night time lost to weather vs. faults per night (WEATHER bit, EFD weather criteria, ConsDB visit coverage; human tables as cross-check) | — | Step 0 done, accounting pending |
+| [`nightlog_weather_fault_loss/`](nightlog_weather_fault_loss/) | Simonyi night-report summaries exported verbatim per night (weather vs fault time loss) | — | Export done, classification pending |
+| [`observatory_high_level_performance/`](observatory_high_level_performance/) | Survey speed vs. delivered image quality, best two weeks of Early Ops vs. first two weeks of LSST, and by fiscal quarter (RASAB 2026 figure; interactive, talk, paper versions) | — | WIP |
 | [`zephyr_scale_analysis/`](zephyr_scale_analysis/) | Test cases per cycle, steps and versions per test case in Zephyr Scale (SPIE paper/poster) | — | Done |
 | [`dimm_data_quality/`](dimm_data_quality/) | DIMM seeing bias under low flux/wind; cross-check vs. ConsDB donut blur | RSO-656 | WIP |
 | [`night_failures/`](night_failures/) | CSC faults and script failures per night | RSO-544 | WIP |
+| [`mthexapod_warmup/`](mthexapod_warmup/) | Camera hexapod warm-up: strut motor currents vs. commands, inPosition and error logs | — | WIP |
 | [`image_quality_trending/`](image_quality_trending/) | Per-visit image-quality trends from ConsDB | — | WIP |
 | [`focus_offset_temperature/`](focus_offset_temperature/) | Initial focus offset vs. truss temperature | RSO-87 | WIP |
 | [`seeing_length_scale/`](seeing_length_scale/) | Correlation length scale of atmospheric seeing (PCA) | RSO-36 | WIP |

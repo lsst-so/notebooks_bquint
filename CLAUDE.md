@@ -7,9 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 `notebooks_bquint` (GitHub: `lsst-so/notebooks_bquint`) is Bruno Quint's personal collection of
 Rubin Observatory / LSST commissioning engineering-analysis notebooks and scripts. Unlike the parent
 `notebooks/` working directory (which is *not* a repo), this **is** its own git repository. There is
-no package, no test suite, and no build — the deliverables are the notebooks, scripts and plots. A
-broader description of the RSP/SLAC SDF environment lives in the parent `../../CLAUDE.md`; this file
-only adds what is specific to this repo.
+no package, no test suite, and no build — the deliverables are the notebooks, scripts and plots. The
+one reusable module is `rubin_color_pallete/rubin_palette.py`: the Rubin-teal-primary,
+colour-blind-checked plotting palette (`CATEGORICAL` / `CATEGORICAL_DARK`, six slots in fixed order,
+`teal_cmap()`, `use()` to set the matplotlib cycle; see its README). Use it for new presentation
+plots instead of ad-hoc hex values. A broader description of the RSP/SLAC SDF environment lives in
+the parent `../../CLAUDE.md`; this file only adds what is specific to this repo.
 
 ## Layout: one self-contained folder per investigation
 
@@ -27,6 +30,10 @@ extracted into a standalone technote repo with `git filter-repo --subdirectory-f
 ```
 
 Rules:
+- **Leave the untracked top-level `notebooks/` folder alone.** It holds older loose notebooks and
+  large ConsDB CSVs that have not yet been sorted into investigation folders (deferred by Bruno,
+  2026-10-16). Do not add, move, delete or reorganise it; it is excluded from `git status` via
+  `.git/info/exclude`.
 - Only create the subfolders an investigation actually needs.
 - **No imports or relative paths across investigation folders** — that breaks extraction. Copy small
   helpers rather than sharing them.
