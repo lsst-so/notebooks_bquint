@@ -49,6 +49,7 @@ The remaining folders are unrelated to this work.
 | [`night_failures/`](night_failures/) | CSC faults and script failures per night | RSO-544 | WIP |
 | [`mthexapod_warmup/`](mthexapod_warmup/) | Camera hexapod warm-up: strut motor currents vs. commands, inPosition and error logs | — | WIP |
 | [`image_quality_trending/`](image_quality_trending/) | Per-visit image-quality trends from ConsDB | — | WIP |
+| [`rasab_image_quality_highlights/`](rasab_image_quality_highlights/) | Best delivered-IQ visits (Oct–Dec 2025, May–Jul 2026) and a good-FWHM / bad-ellipticity visit (Feb–Mar 2026) for the RASAB 2026 narrative; reproducible ConsDB script | — | Done |
 | [`focus_offset_temperature/`](focus_offset_temperature/) | Initial focus offset vs. truss temperature | RSO-87 | WIP |
 | [`seeing_length_scale/`](seeing_length_scale/) | Correlation length scale of atmospheric seeing (PCA) | RSO-36 | WIP |
 | [`tma_slew_velocities/`](tma_slew_velocities/) | TMA maximum slew velocities | — | Done |
