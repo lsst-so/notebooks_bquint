@@ -254,6 +254,11 @@ class VisitRateReference:
 
 VISIT_RATE = VisitRateReference()
 
+#: Name of the simulation behind the expected-visit estimator and the star,
+#: written on the figure because the reference is moving (v5.1 -> v5.3.4,
+#: Lynne Jones, 2026-10-12; README section 10).
+BASELINE_LABEL: str = "baseline v5.1"
+
 #: Right edge of the green region. Cosmetic; cell 15 draws it to 1.2.
 BOX_X_MAX: float = 1.2
 

@@ -185,7 +185,7 @@ def build_static_figure(
                 handles=box_handles,
                 loc=box_legend_loc,
                 frameon=False,
-                fontsize=text_size,
+                fontsize=text_size - 2,
                 labelcolor=COLORS["ink"],
                 handlelength=1.4,
                 handletextpad=0.5,
@@ -322,7 +322,9 @@ def build_static_figure(
         # Axes --------------------------------------------------------------- #
         ax.set_xlim(0, 1.1)
         ax.set_ylim(yref["ymin"], yref["ymax"])
-        ax.set_xlabel("Survey speed: visits acquired / expected")
+        ax.set_xlabel(
+            "Survey speed: visits acquired / expected (%s)" % ref.BASELINE_LABEL
+        )
         ax.set_ylabel(Y_LABELS_SHORT.get(iq_col, IQ_COLUMNS[iq_col]))
         if title:
             ax.set_title(title, color=COLORS["ink"], loc="left", pad=6)

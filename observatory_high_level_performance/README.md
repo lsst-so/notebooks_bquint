@@ -25,7 +25,7 @@ are counted, never removed (§5):
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
-| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents; requirement-box legend lower left, `box_legend_loc`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary; titled, no direct label), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary; titled, no direct label), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
