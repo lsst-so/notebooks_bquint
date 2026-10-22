@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 from . import reference as ref
 from .binning import IQ_COLUMNS, period_key
@@ -31,6 +32,9 @@ Y_LABELS_SHORT = {
     "fwhm_500_zenith": "Delivered FWHM, 500 nm zenith (arcsec)",
     "fwhm_geom": "Delivered FWHM, geometric (arcsec)",
 }
+
+#: Fill alpha of each requirement box; the overlap of n boxes shows as 1-(1-a)^n.
+BOX_ALPHA = 0.10
 
 MARKER_EARLY = "o"
 MARKER_LSST = "s"
@@ -79,6 +83,7 @@ def build_static_figure(
     colors: list[str] | None = None,
     label_offsets: dict[int, tuple[float, float]] | None = None,
     labels_in_legend: bool = False,
+    box_legend_loc: str | None = "lower left",
 ):
     """Return ``(fig, ax)``. Background is transparent unless ``transparent=False``.
 
@@ -100,6 +105,10 @@ def build_static_figure(
     ``labels_in_legend`` (windows only) moves the period description (date span,
     visits, nights) into the legend entries and draws no direct labels; the
     legend becomes a single column.
+
+    ``box_legend_loc`` places the legend that names the three requirement
+    regions (survey start, SRD minimum, SRD design) with their thresholds;
+    ``None`` draws no such legend.
     """
     kind = str(periods["period_kind"].iloc[0])
     if show_nightly is None:
@@ -145,28 +154,45 @@ def build_static_figure(
         ax.grid(True, lw=0.5, zorder=0)
         ax.set_axisbelow(True)
 
-        # Goal region + star -------------------------------------------------- #
-        ax.axvspan(
-            ref.VISIT_RATE.box_x_min,
-            ref.BOX_X_MAX,
-            ymin=0,
-            ymax=(yref["box_top"] - yref["ymin"]) / (yref["ymax"] - yref["ymin"]),
-            facecolor=COLORS["goal_region"],
-            alpha=0.12,
-            edgecolor=COLORS["goal_region"],
-            lw=0.8,
-            zorder=0.5,
-        )
-        ax.text(
-            1.08,
-            yref["ymin"] + 0.01 * (yref["ymax"] - yref["ymin"]),
-            "goal: speed > %.2f, IQ < %.2f″"
-            % (ref.VISIT_RATE.box_x_min, yref["box_top"]),
-            ha="right",
-            va="bottom",
-            fontsize=text_size,
-            color=COLORS["goal_region"],
-        )
+        # Requirement regions + star ----------------------------------------- #
+        # Three nested boxes in one hue and one alpha; where they overlap the
+        # shade stacks, so the strictest (SRD design) region reads darkest.
+        box_handles = []
+        for b in ref.REQUIREMENT_BOXES:
+            top = yref["box_tops"][b.key]
+            ax.axvspan(
+                b.x_min,
+                ref.BOX_X_MAX,
+                ymin=0,
+                ymax=(top - yref["ymin"]) / (yref["ymax"] - yref["ymin"]),
+                facecolor=COLORS["goal_region"],
+                alpha=BOX_ALPHA,
+                edgecolor=COLORS["goal_region"],
+                lw=0.8,
+                zorder=0.5,
+            )
+            box_handles.append(
+                Patch(
+                    facecolor=COLORS["goal_region"],
+                    alpha=1 - (1 - BOX_ALPHA) ** (len(box_handles) + 1),
+                    edgecolor=COLORS["goal_region"],
+                    lw=0.8,
+                    label="%s: speed > %.2f, IQ < %.2f″" % (b.label, b.x_min, top),
+                )
+            )
+        if box_legend_loc:
+            box_legend = ax.legend(
+                handles=box_handles,
+                loc=box_legend_loc,
+                frameon=False,
+                fontsize=text_size,
+                labelcolor=COLORS["ink"],
+                handlelength=1.4,
+                handletextpad=0.5,
+                borderaxespad=0.2,
+                labelspacing=0.3,
+            )
+            ax.add_artist(box_legend)
         ax.scatter(
             [ref.VISIT_RATE.star_x],
             [yref["star"]],
