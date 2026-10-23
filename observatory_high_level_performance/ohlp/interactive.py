@@ -46,6 +46,9 @@ from .style import COLORS, time_colors
 
 __all__ = ["build_figure", "save_html"]
 
+#: Fill alpha of each requirement box; the overlap of n boxes shows as 1-(1-a)^n.
+BOX_ALPHA = 0.10
+
 MARKER_EARLY = "circle"
 MARKER_LSST = "square"
 
@@ -272,35 +275,40 @@ def build_figure(
     p.axis.major_label_text_color = COLORS["ink_secondary"]
     p.title.text_color = COLORS["ink"]
 
-    # Goal region and star --------------------------------------------------- #
-    box = BoxAnnotation(
-        left=ref.VISIT_RATE.box_x_min,
-        right=ref.BOX_X_MAX,
-        bottom=ref.IDIQ_BOX_BOTTOM,
-        top=yref["box_top"],
-        fill_color=COLORS["goal_region"],
-        fill_alpha=0.12,
-        line_color=COLORS["goal_region"],
-        line_alpha=0.5,
-        line_width=1,
-        level="underlay",
-    )
-    p.add_layout(box)
-    box_label = Label(
-        x=ref.BOX_X_MAX - 0.02,
-        y=yref["box_top"],
-        x_units="data",
-        y_units="data",
-        text="goal region: speed > %.2f, system IQ < %.2f″"
-        % (ref.VISIT_RATE.box_x_min, yref["box_top"]),
-        text_align="right",
-        text_baseline="top",
-        text_font_size="10pt",
-        text_color=COLORS["goal_region"],
-        x_offset=0,
-        y_offset=-4,
-    )
-    p.add_layout(box_label)
+    # Requirement regions and star ------------------------------------------- #
+    # Three nested boxes in one hue and one alpha; the overlap stacks into a
+    # darker shade for each stricter level (survey start > SRD minimum > design).
+    boxes = {}
+    box_labels = {}
+    for i, b in enumerate(ref.REQUIREMENT_BOXES):
+        top = yref["box_tops"][b.key]
+        boxes[b.key] = BoxAnnotation(
+            left=b.x_min,
+            right=ref.BOX_X_MAX,
+            bottom=ref.IDIQ_BOX_BOTTOM,
+            top=top,
+            fill_color=COLORS["goal_region"],
+            fill_alpha=BOX_ALPHA,
+            line_color=COLORS["goal_region"],
+            line_alpha=0.5,
+            line_width=1,
+            level="underlay",
+        )
+        p.add_layout(boxes[b.key])
+        box_labels[b.key] = Label(
+            x=ref.BOX_X_MAX - 0.02,
+            y=top,
+            x_units="data",
+            y_units="data",
+            text="%s: speed > %.2f, IQ < %.2f″" % (b.label, b.x_min, top),
+            text_align="right",
+            text_baseline="top",
+            text_font_size="10pt",
+            text_color=COLORS["goal_region"],
+            x_offset=0,
+            y_offset=-4,
+        )
+        p.add_layout(box_labels[b.key])
     src_star = ColumnDataSource({"x": [ref.VISIT_RATE.star_x], "y": [yref["star"]]})
     r_star = p.scatter(
         "x",
@@ -323,7 +331,7 @@ def build_figure(
     )
     p.add_layout(star_label)
 
-    # ROST measured full-system band (iDIQ axis only) ------------------------ #
+    # ROST measured system (sDIQ) band (iDIQ axis only) ---------------------- #
     rost = BoxAnnotation(
         bottom=ref.SYS_IQ_MEASURED_ROST[0],
         top=ref.SYS_IQ_MEASURED_ROST[1],
@@ -339,7 +347,7 @@ def build_figure(
     rost_label = Label(
         x=0.01,
         y=ref.SYS_IQ_MEASURED_ROST[1],
-        text="full-system IQ measured %.2f–%.2f″ (ROST Sep 2026; includes dome seeing and tracking, not comparable one-to-one)"
+        text="system contribution, sDIQ, measured %.2f–%.2f″ (ROST Sep 2026; includes dome seeing and tracking, so not one-to-one with iDIQ)"
         % ref.SYS_IQ_MEASURED_ROST,
         text_font_size="9pt",
         text_color=COLORS["rost_band"],
@@ -577,7 +585,7 @@ def build_figure(
         labels=[
             "Period points",
             "Nightly points",
-            "ROST full-system band",
+            "ROST sDIQ band",
         ],
         active=[
             i
@@ -612,14 +620,16 @@ def build_figure(
     )
 
     yref_js = {k: v for k, v in ref.Y_REFERENCE.items()}
+    box_names = {b.key: b.label for b in ref.REQUIREMENT_BOXES}
     labels_js = {k: v for k, v in IQ_COLUMNS.items()}
     cb_args = dict(
         src_all=src_all,
         src_night=src_night,
         src_star=src_star,
         seg_all=seg_all,
-        box=box,
-        box_label=box_label,
+        boxes=boxes,
+        box_labels=box_labels,
+        box_names=box_names,
         star_label=star_label,
         rost=rost,
         rost_label=rost_label,
@@ -629,7 +639,6 @@ def build_figure(
         ylabels=labels_js,
         arrows_all=arrows_all,
         checks=checks,
-        box_x_min=ref.VISIT_RATE.box_x_min,
     )
     stat_js = CustomJS(
         args=cb_args,
@@ -656,9 +665,12 @@ def build_figure(
             seg.change.emit();
         }
         const r = yref[stat];
-        box.top = r['box_top'];
-        box_label.y = r['box_top'];
-        box_label.text = 'goal region: speed > ' + box_x_min.toFixed(2) + ', IQ < ' + r['box_top'].toFixed(2) + '\\u2033';
+        for (const key of Object.keys(boxes)) {
+            const top = r['box_tops'][key];
+            boxes[key].top = top;
+            box_labels[key].y = top;
+            box_labels[key].text = box_names[key] + ': speed > ' + boxes[key].left.toFixed(2) + ', IQ < ' + top.toFixed(2) + '\\u2033';
+        }
         src_star.data['y'] = [r['star']]; src_star.change.emit();
         star_label.y = r['star'];
         yaxis.axis_label = ylabels[stat];
