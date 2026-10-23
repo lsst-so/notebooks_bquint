@@ -43,6 +43,9 @@ The remaining folders are unrelated to this work.
 | [`nightly_survey_speed/`](nightly_survey_speed/) | On-sky utilization timeline (visits per night by program) reproduced from sp_notebooks, interactive version, downtime annotations (RASAB 2026 figure) | — | Done |
 | [`simonyi_time_loss/`](simonyi_time_loss/) | Simonyi night time lost to weather vs. faults per night (WEATHER bit, EFD weather criteria, ConsDB visit coverage; human tables as cross-check) | — | Step 0 done, accounting pending |
 | [`nightlog_weather_fault_loss/`](nightlog_weather_fault_loss/) | Simonyi night-report summaries exported verbatim per night (weather vs fault time loss) | — | Export done, classification pending |
+| [`efficiency_waterfall/`](efficiency_waterfall/) | Schematic efficiency waterfall: whole night → survey time → excluding faults → scheduler model → ideal (LSST@LATAM 2026 slide; inputs only, all `[VERIFY]`) | — | Illustrative |
+| [`visit_gap_anatomy/`](visit_gap_anatomy/) | Time between consecutive survey visits: histogram vs the 5 s requirement, weekly median, second-settle population (LSST@LATAM 2026 slide) | RSO-785 | Done |
+| [`engineering_time_budget/`](engineering_time_budget/) | On-sky hours per week by visit category against the 8 h/week engineering policy line (LSST@LATAM 2026 slide) | — | Done, policy numbers to verify |
 | [`observatory_high_level_performance/`](observatory_high_level_performance/) | Survey speed vs. delivered image quality, best two weeks of Early Ops vs. first two weeks of LSST, and by fiscal quarter (RASAB 2026 figure; interactive, talk, paper versions) | — | WIP |
 | [`zephyr_scale_analysis/`](zephyr_scale_analysis/) | Test cases per cycle, steps and versions per test case in Zephyr Scale (SPIE paper/poster) | — | Done |
 | [`dimm_data_quality/`](dimm_data_quality/) | DIMM seeing bias under low flux/wind; cross-check vs. ConsDB donut blur | RSO-656 | WIP |
