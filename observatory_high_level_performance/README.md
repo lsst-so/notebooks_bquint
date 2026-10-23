@@ -25,7 +25,7 @@ are counted, never removed (§5):
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
-| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary; titled, no direct label), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background) or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, optional star (`show_star`; `_nostar` file suffix, kept for the Early Ops and three-period figures), cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary for the RASAB slide; titled, window described in the legend at 8 pt with "w/ on sky data"; `_white` variant too), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background), `figures/speed_vs_iq_static_three_periods_20251024-20261022.png` (three points: Early Ops first three months in teal, LSST on sky and LSST to date in purple, the latter hollow; legend at 8 pt with "w/ on sky data"; `_white` variant too; §5 "Three periods") or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
@@ -86,7 +86,9 @@ airmass filter, no bad-visit exclusion. Columns kept are listed in `ohlp/data.py
 delivered image quality and does not (purports not to) include dome/tube seeing. *sDIQ* is the
 system contribution: everything except the atmosphere, so it does include dome/tube seeing. The
 y axis of the figure is iDIQ; the ROST band (§6) is sDIQ. Axis labels and annotations must not call
-the y axis "system" image quality. Note that RTN-093 labels its 0.45″ survey-start criterion
+the y axis "system" image quality. The static PNGs label it "Median iDIQ [arcsec]" (Bruno, 2026-10-22;
+`ohlp/static.py::Y_LABELS_SHORT`); the interactive version keeps the longer
+"Instr. Delivered Image Quality (iDIQ), arcsec" (`ohlp/binning.py::IQ_COLUMNS`). Note that RTN-093 labels its 0.45″ survey-start criterion
 "sDIQ" while stating that it "excludes the dome seeing", i.e. it is an iDIQ-like quantity in Phil's
 terminology; this README keeps RTN-093's name when quoting it.
 
@@ -118,21 +120,22 @@ agreed (ROSP-11 is on hold); 0.7 is what Lynne Jones uses, Erik Dennihy uses 0.8
 night can be flagged. The flag outlines the night in the nightly cloud and is counted per period
 (`n_nights_weather`); it never changes the speed.
 
-**Numbers for 20251024 to 20261014** (queried 2026-10-14 on the USDF Postgres replica): 356 calendar
+**Numbers for 20251024 to 20261022** (queried 2026-10-22 on the USDF Postgres replica; the 20261014 cache gave the same visits): 364 calendar
 nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all after 2026-03-20). No LSSTCam visit of any kind exists after `day_obs` 20260714 (storm, off sky).
 
 ## 5. Definitions of the binned points
 
 - **Period** = fiscal quarter (`ohlp.binning.period_key(day_obs, "quarter")`, key
   `FY*10 + Q`, e.g. 261 = FY26 Q1). FY26 Q1 starts at 20251024, the first survey night (69 calendar
-  nights, 45 with visits). FY27 Q1 runs to the query date and is empty. Months (`day_obs // 100`) are
+  nights, 45 with visits). FY27 Q1 runs to the query date (20261022) and is empty. Months (`day_obs // 100`) are
   available with `period="month"`.
 - **Single Early Ops summary** (`03_static_png.ipynb`, `PERIOD = "early_ops"`): one window
   20251024–20251130, the first survey night to the last night before the Dec 2025–Mar 2026 sequence
   of downtimes (water condensation, Dynalene loss, vacuum leak, earthquake; list in
   `nightly_survey_speed/plots/downtime_summary.md`). 38 calendar nights, 29 with visits, 4708 visits of
   28189 expected, speed 0.17 (nightly IQR 0.01–0.25), iDIQ median 0.459″ [0.418–0.517]. No weather
-  state exists for these nights. Saved to `data/window_early_ops_octnov_20251024_20251130.{parquet,csv}`.
+  state exists for these nights. Since 2026-10-22 the window is described in the legend
+  (`labels_in_legend=True`, 8 pt, "n of m nights w/ on sky data") to match the three-period figure. Saved to `data/window_early_ops_octnov_20251024_20251130.{parquet,csv}`.
 - **Early Ops vs. LSST** (`03_static_png.ipynb`, `PERIOD = "early_ops_vs_lsst"`, the talk figure):
   the Early Ops window above plus one window for the whole LSST on-sky stretch, 20260629–20260714.
   The end date is chosen to match Lynne Jones's `diq_vs_visit_rate` plot ("20260629 to 20260714") so
@@ -148,6 +151,21 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   whiskers in the same hue), passed to `build_static_figure(colors=...)`. Each window is described in
   the legend (`labels_in_legend=True`), so no direct labels are drawn. Saved to
   `data/windows_early_ops_vs_lsst_20251024_20260714.{parquet,csv}`.
+- **Three periods** (`03_static_png.ipynb`, `PERIOD = "three_periods"`, added 2026-10-22 for Bruno's
+  RASAB slide): three windows on one figure, every calendar night counted, all nights drawn once as
+  context, legend line "n of m nights w/ on sky data" (`build_static_figure(nights_suffix=...)`) at
+  8 pt (`legend_size`). The two LSST windows overlap, so no arrow joins them (`static.py` skips
+  overlapping windows). Saved to `data/windows_three_periods_20251024_20261022.{parquet,csv}`.
+
+  | Window | Colour, marker | Nights with visits / calendar | Visits / expected | Speed (nightly IQR) | iDIQ median [IQR] | Weather nights |
+  |---|---|---|---|---|---|---|
+  | Early Ops, 20251024–20260123 (first three months) | teal circle, `rp.TEAL` | 63 / 92 | 13 312 / 65 548 | 0.20 (0.00–0.38) | 0.494″ [0.452–0.539] | 0 (no state yet) |
+  | LSST on sky, 20260629–20260713 (`ref.DAY_OBS_LAST_SURVEY_VISIT`) | purple square, `rp.CATEGORICAL[2]` | 10 / 15 | 7267 / 16 201 | 0.45 (0.00–0.74) | 0.414″ [0.385–0.449] | 2 |
+  | LSST to date, 20260629–20261022 | hollow purple square (`hollow=[False, False, True]`) | 10 / 116 | 7267 / 112 384 | 0.07 (0.00–0.00) | 0.414″ [0.385–0.449] | 8 |
+
+  The on-sky window ends on 20260713 and so differs from the LSST window of the Early Ops vs. LSST
+  figure (ends 20260714 to match Lynne's range): speed 0.45 instead of 0.42. Early Ops keeps the brand
+  teal as in that figure (a brand "bright teal" cyan was tried on 2026-10-22 and rejected).
 - **Windows** (`ohlp.binning.window_table`, `period_kind = "window"`, `period` = window index) are
   named inclusive `day_obs` ranges with the same columns as a quarter. The two windows used:
   - *Best 2 weeks, Early Ops*, 20251116–20251129: the 14-night contiguous window of Oct–Dec 2025
@@ -215,7 +233,7 @@ to (0.63, 0.34″).
 | time (month order) | `teal_cmap()` from `SEQUENTIAL_TEAL`, light = Oct 2025, dark = latest; lightness carries order in grayscale |
 | Early Ops vs. LSST (two-point static) | `TEAL` for Early Ops, `CATEGORICAL[2]` purple for LSST (`colors=` override in `ohlp.static`) |
 | requirement regions | `CATEGORICAL[4]` green, each box at alpha 0.10 (`BOX_ALPHA`); overlap gives 0.10 / 0.19 / 0.27 for start / minimum / design |
-| LSST = 1 star | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
+| LSST = 1 star (static PNGs label it "LSST 10 year Average", Bruno 2026-10-22, and can omit it with `build_static_figure(show_star=False)`; the interactive version keeps "LSST = 1") | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
 | ROST band | `CATEGORICAL[2]` purple, alpha 0.10, dotted edge |
 | path, text, gap note | `NEUTRALS` |
 

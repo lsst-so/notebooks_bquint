@@ -38,8 +38,10 @@ DAY_OBS_EARLY_OPS_START: int = 20251024
 #: "2026-07-10 Early Operations Update: Start of LSST".
 DAY_OBS_LSST_START: int = 20260629
 
-#: Last night with LSSTCam visits in ConsDB before the storm (checked
-#: 2026-10-14 on the USDF Postgres replica). Nights after this are off sky.
+#: Last night with LSSTCam survey visits in ConsDB before the storm (checked
+#: 2026-10-14 on the USDF Postgres replica). 20260714 is a closed weather night
+#: with no survey visits; nights after it are off sky.
+DAY_OBS_LAST_SURVEY_VISIT: int = 20260713
 DAY_OBS_LAST_BEFORE_STORM: int = 20260714
 
 #: Label written on the plot across the gap. Source: Bruno Quint, 2026-10-14.

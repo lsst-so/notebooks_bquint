@@ -28,7 +28,7 @@ __all__ = ["build_static_figure", "save_png"]
 
 #: Shorter y-axis labels for the small static figure (same quantities as IQ_COLUMNS).
 Y_LABELS_SHORT = {
-    "idiq_aos_cam": "Instr. Delivered Image Quality (iDIQ), arcsec",
+    "idiq_aos_cam": "Median iDIQ [arcsec]",
     "fwhm_500_zenith": "Delivered FWHM, 500 nm zenith (arcsec)",
     "fwhm_geom": "Delivered FWHM, geometric (arcsec)",
 }
@@ -46,10 +46,13 @@ def _nights_in_periods(nightly, periods, kind):
     if kind == "window":
         n["t_index"] = np.nan
         for _, r in p_all.iterrows():
-            inside = (n["day_obs"] >= r["first_day_obs"]) & (
-                n["day_obs"] <= r["last_day_obs"]
+            inside = (
+                (n["day_obs"] >= r["first_day_obs"])
+                & (n["day_obs"] <= r["last_day_obs"])
+                & n["t_index"].isna()
             )
             n.loc[inside, "t_index"] = r["t_index"]
+        # Overlapping windows: a night is drawn once, in its first window.
         n = n[n["t_index"].notna()].copy()
     else:
         n["period"] = period_key(n["day_obs"], kind)
@@ -59,12 +62,15 @@ def _nights_in_periods(nightly, periods, kind):
     return n
 
 
-def _window_description(r: pd.Series) -> str:
-    """``"Early Ops, 24 Oct–30 Nov 2025\n4,708 visits on 29 of 38 nights"``."""
+def _window_description(r: pd.Series, nights_suffix: str = "") -> str:
+    """``"Early Ops, 24 Oct–30 Nov 2025\n4,708 visits on 29 of 38 nights"``.
+
+    ``nights_suffix`` is appended to the second line (e.g. ``" w/ on sky data"``).
+    """
     span = r["label_long"].split("(")[1].split(",")[0]
     return (
         f"{r['label']}, {span}\n{r['n_visits']:,} visits on"
-        f" {r['n_nights_with_visits']} of {r['n_nights_calendar']} nights"
+        f" {r['n_nights_with_visits']} of {r['n_nights_calendar']} nights{nights_suffix}"
     )
 
 
@@ -84,6 +90,10 @@ def build_static_figure(
     label_offsets: dict[int, tuple[float, float]] | None = None,
     labels_in_legend: bool = False,
     box_legend_loc: str | None = "lower left",
+    legend_size: float | None = None,
+    nights_suffix: str = "",
+    hollow: bool | list[bool] = False,
+    show_star: bool = True,
 ):
     """Return ``(fig, ax)``. Background is transparent unless ``transparent=False``.
 
@@ -109,6 +119,18 @@ def build_static_figure(
     ``box_legend_loc`` places the legend that names the three requirement
     regions (survey start, SRD minimum, SRD design) with their thresholds;
     ``None`` draws no such legend.
+
+    ``legend_size`` is the font size of the period legend (default
+    ``text_size``); ``nights_suffix`` is appended to the "n of m nights" line
+    of the legend entries when ``labels_in_legend`` is set.
+
+    ``hollow`` draws the period markers (and their legend handles) as outlines
+    with no fill, e.g. for a period that is still open or mostly off sky. A
+    bool applies to every period; a list gives one flag per period in
+    ``t_index`` order.
+
+    ``show_star=False`` omits the "LSST 10 year Average" star and its label;
+    the requirement boxes, whose left edges derive from the star x, stay.
     """
     kind = str(periods["period_kind"].iloc[0])
     if show_nightly is None:
@@ -121,6 +143,12 @@ def build_static_figure(
         colors = [rp.TEAL] if len(p_all) == 1 else time_colors(len(p_all))
     elif len(colors) < len(p_all):
         raise ValueError(f"colors has {len(colors)} entries for {len(p_all)} periods")
+    if legend_size is None:
+        legend_size = text_size
+    if isinstance(hollow, bool):
+        hollow = [hollow] * len(p_all)
+    elif len(hollow) < len(p_all):
+        raise ValueError(f"hollow has {len(hollow)} entries for {len(p_all)} periods")
     if labels_in_legend:
         show_labels = False
     elif show_labels is None:
@@ -193,25 +221,26 @@ def build_static_figure(
                 labelspacing=0.3,
             )
             ax.add_artist(box_legend)
-        ax.scatter(
-            [ref.VISIT_RATE.star_x],
-            [yref["star"]],
-            marker="*",
-            s=220,
-            facecolor=COLORS["star"],
-            edgecolor=COLORS["star_edge"],
-            lw=0.8,
-            zorder=4,
-        )
-        ax.annotate(
-            "LSST = 1",
-            (ref.VISIT_RATE.star_x, yref["star"]),
-            xytext=(10, 0),
-            textcoords="offset points",
-            fontsize=text_size,
-            color=COLORS["ink"],
-            va="center",
-        )
+        if show_star:
+            ax.scatter(
+                [ref.VISIT_RATE.star_x],
+                [yref["star"]],
+                marker="*",
+                s=220,
+                facecolor=COLORS["star"],
+                edgecolor=COLORS["star_edge"],
+                lw=0.8,
+                zorder=4,
+            )
+            ax.annotate(
+                "LSST 10 year Average",
+                (ref.VISIT_RATE.star_x, yref["star"]),
+                xytext=(10, 0),
+                textcoords="offset points",
+                fontsize=text_size,
+                color=COLORS["ink"],
+                va="center",
+            )
 
         # Nightly cloud ------------------------------------------------------ #
         if show_nightly:
@@ -236,6 +265,7 @@ def build_static_figure(
         y = p_all[f"{iq_col}_med"].to_numpy()
         for i, r in p_all.iterrows():
             c = colors[int(r["t_index"])]
+            h = hollow[int(r["t_index"])]
             m = MARKER_LSST if r["is_lsst"] else MARKER_EARLY
             a = 0.45 if r["low_n"] else 1.0
             ax.errorbar(
@@ -262,12 +292,17 @@ def build_static_figure(
                 r[f"{iq_col}_med"],
                 marker=m,
                 s=90,
-                facecolor=c,
+                facecolor="none" if h else c,
                 edgecolor=c,
+                lw=1.6 if h else 1.0,
                 alpha=a,
                 zorder=5,
             )
         for i in range(len(p_all) - 1):
+            if kind == "window" and (
+                p_all.loc[i + 1, "first_day_obs"] <= p_all.loc[i, "last_day_obs"]
+            ):
+                continue  # overlapping windows are not consecutive in time
             c = colors[int(p_all.loc[i + 1, "t_index"])]
             gap = int(p_all.loc[i + 1, "seq"] - p_all.loc[i, "seq"]) > 1
             ax.annotate(
@@ -336,32 +371,51 @@ def build_static_figure(
         # ramp carries time and the legend only tells circles from squares.
         few = len(p_all) <= 2
         handles = []
-        if len(early):
+        if labels_in_legend and kind == "window":
+            # One entry per window: its own colour, marker, fill and description.
+            for _, r in p_all.iterrows():
+                t = int(r["t_index"])
+                handles.append(
+                    Line2D(
+                        [],
+                        [],
+                        marker=MARKER_LSST if r["is_lsst"] else MARKER_EARLY,
+                        color=colors[t],
+                        markerfacecolor="none" if hollow[t] else None,
+                        markeredgewidth=1.6 if hollow[t] else 1.0,
+                        ls="",
+                        ms=7,
+                        label=_window_description(r, nights_suffix),
+                    )
+                )
+        if len(early) and not (labels_in_legend and kind == "window"):
+            t = int(early["t_index"].iloc[0])
             handles.append(
                 Line2D(
                     [],
                     [],
                     marker=MARKER_EARLY,
-                    color=colors[int(early["t_index"].iloc[0])] if few else mid,
+                    color=colors[t] if few else mid,
+                    markerfacecolor="none" if hollow[t] else None,
+                    markeredgewidth=1.6 if hollow[t] else 1.0,
                     ls="",
                     ms=7,
-                    label=_window_description(early.iloc[0])
-                    if labels_in_legend and kind == "window"
-                    else ("Early Ops, median" if few else "Early Ops"),
+                    label="Early Ops, median" if few else "Early Ops",
                 )
             )
-        if len(lsst):
+        if len(lsst) and not (labels_in_legend and kind == "window"):
+            t = int(lsst["t_index"].iloc[0])
             handles.append(
                 Line2D(
                     [],
                     [],
                     marker=MARKER_LSST,
-                    color=colors[int(lsst["t_index"].iloc[0])] if few else colors[-1],
+                    color=colors[t] if few else colors[-1],
+                    markerfacecolor="none" if hollow[t] else None,
+                    markeredgewidth=1.6 if hollow[t] else 1.0,
                     ls="",
                     ms=7,
-                    label=_window_description(lsst.iloc[0])
-                    if labels_in_legend and kind == "window"
-                    else ("LSST, median" if few else "LSST"),
+                    label="LSST, median" if few else "LSST",
                 )
             )
         if show_nightly:
@@ -370,7 +424,7 @@ def build_static_figure(
                     [],
                     [],
                     marker="o",
-                    color=COLORS["ink_secondary"] if few and len(p_all) > 1 else mid,
+                    color=COLORS["ink_secondary"] if len(p_all) > 1 else mid,
                     alpha=0.4,
                     ls="",
                     ms=5,
@@ -384,7 +438,7 @@ def build_static_figure(
             labelspacing=0.8 if labels_in_legend else 0.5,
             columnspacing=1.0,
             frameon=False,
-            fontsize=text_size,
+            fontsize=legend_size,
             labelcolor=COLORS["ink"],
             handletextpad=0.4,
             borderaxespad=0.2,
