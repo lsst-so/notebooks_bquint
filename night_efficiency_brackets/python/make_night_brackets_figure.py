@@ -177,7 +177,7 @@ def gaps_and_brackets(visits, night, weather):
     brackets = [
         ("Whole night (OSF)", whole),
         ("Survey time only", minus_weather),
-        ("Excluding faults (= on sky, B1/B3)", minus_faults),
+        ("Excluding faults (= on sky)", minus_faults),
         ("Exposing + readout", on_sky),
     ]
     return long_gaps, weather_blocks, fault_blocks, brackets

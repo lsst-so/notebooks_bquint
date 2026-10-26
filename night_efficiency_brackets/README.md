@@ -57,7 +57,7 @@ All computed by the script from the three data files; definitions are those of
 | WEATHER bit window | 23:15:36 → 00:20:50 UTC (1.087 h), of which 0.982 h inside the −18° night |
 | **Whole night (OSF)** bracket | 10.9 h |
 | **Survey time only** bracket (night − weather) | 9.9 h (9.893) |
-| **Excluding faults (= on sky, B1/B3)** bracket (night − weather − fault/idle) | 6.8 h (6.849), two segments: 03:07:00–03:36:21 and 03:52:49–10:14:24 |
+| **Excluding faults (= on sky)** bracket (night − weather − fault/idle) | 6.8 h (6.849), two segments: 03:07:00–03:36:21 and 03:52:49–10:14:24 |
 | **Exposing + readout** bracket | 4.5 h (4.538), sum of the 528 visit intervals inside the −18° night |
 | weather | 0.98 h (1.0 on the figure) |
 | fault + idle | 3.04 h: 2.77 h camera recovery + 0.27 h HV bias trip |
@@ -90,7 +90,7 @@ The 21 gaps between 60 s and 10 min (2–4 min each, slews/filter changes, 0.9 h
   script reproduces.
 - **Brackets 1–3** are the whole night, the night minus weather, and the night minus weather and
   fault/idle blocks. Bracket 3 equals B3's bridged `on_sky_hours` (6.85 h), the definition behind
-  the 55 % on-sky figure of B1/B3, and is labelled "Excluding faults (= on sky, B1/B3)".
+  the 55 % on-sky figure of B1/B3, and is labelled "Excluding faults (= on sky)" (no figure codes on the image; the B1/B3 link lives here).
 - **Bracket 4, "Exposing + readout".** The 2026-10-26 handoff first asked for "union of the visit
   blocks (what B1/B3 call on sky)"; with 10-min bridging that union *is* bracket 3, so the fourth
   bracket would be invisible. Decision (deck side, 2026-10-26): draw the **sum of the visit
