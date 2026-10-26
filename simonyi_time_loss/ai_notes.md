@@ -160,3 +160,24 @@ by the human tables; fault + idle reported together as "fault"; Q2 (per-OBS-tick
 - Wrote `HANDOFF_2026-10-18.md` (state, decisions, open items, how to resume) and README §3c "How the numbers are
   calculated" (method in words, rule table, per-night identity). Removed the interim `per_night_v1.csv` and
   `per_night_v0_with_human.csv`; `per_night.csv` is the deliverable, `per_night_v0.csv` the pre-cloud-step table.
+
+### 2026-10-26 (evening) — ROSP-24 precedence re-run (Claude, Fable 5.1)
+- Spec: `HANDOFF_rosp_precedence_2026-10-26.md` (saved in this folder). Step 0 reported first (allskycam coverage,
+  C1 topics, Dynalene ∩ C1, masked periods, 8 Jul values), then the pipeline was changed.
+- New modules: `intervals.py` (interval sets), `fallback.py` (allskycam `cloud_idx > 0.5` + C1 tower limits → windows,
+  merged < 10 min, kept ≥ 10 min), `classify.py` (the ordered classifier; partition asserted per night to 0.5 s).
+  Driver `python/run_rosp24_accounting.py` (5 s from the caches); `python/pull_allsky_cloud_1min.py` builds the
+  1-min cloud cache. `accounting.py` is kept but no longer run; the pre-ROSP-24 table is
+  `per_night_20261026_pre_rosp24.csv`.
+- Interpretation choices beyond the handoff (all in README §3c): weather takes precedence over visits (9.1 h);
+  fault-state minutes under a bridged survey window stay survey (D + E defined as the remainder); edge gaps ≤ 10 min
+  are bridged in the category of the first/last visit; start-up allowance only on nights with a survey visit; the
+  presentation label counts unattributed as loss; fallback windows need ≥ 10 min (sensitivity 1 h / 2.5 h).
+- Allskycam vs night reports: the index confirms only 4 of the 19 report-cloud nights; 7 Dec (rain/hail precaution,
+  clear night) and 13 Dec (chiller fault + humidity 60–70 %) are genuine disagreements with the ROSP-24 evidence
+  hierarchy; the rest are Dynalene nights. Flagged in README §3.7 and §5.
+- Tower RH `[check]`: ESS 301 RH reads 3–10 % on many winter nights; dew point 8 °C below the summit formula in winter.
+- Palette: fault + idle = brand blue `#1C81A4` (validator: worst CVD 12.3, normal 15.5, all pairs PASS against survey
+  green, engineering orange, weather grey). Python port of the dataviz validator used (`node` not on the login node).
+- B10/B10b regenerated and pixel-compared with HEAD: identical; committed PNGs kept.
+- Not done: gap_min sensitivity under the new classifier; B11 night re-selection under ROSP-24.

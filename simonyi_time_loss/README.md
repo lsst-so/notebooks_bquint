@@ -1,35 +1,45 @@
-# Simonyi time loss: weather vs. non-weather, Oct 2025 – Jul 2026
+# Simonyi time loss under the ROSP-24 precedence, Oct 2025 – Jul 2026
 
 Technical note for the `simonyi_time_loss` folder of `lsst-so/notebooks_bquint`.
-Status: **per-night table and figures done (2026-10-18); re-run on the −12° observable night (2026-10-26, ROSP-22)**;
-cross-check against the human tables done; Q2 (per-ticket fault accounting) deferred.
+Status: **per-night table and figures done (2026-10-18); re-run on the −12° observable night (2026-10-26, ROSP-22);
+re-run under the ROSP-24 loss-cause precedence (2026-10-26, evening)**; cross-check against the human tables done;
+Q2 (per-ticket fault accounting) deferred. ROSP-24 is a draft under debate ("Verifying", Brian Stalder; comments of
+2026-10-10, 10-19 precedence, 10-22, 10-25, 10-26 rules, all read 2026-10-26); the talk says so.
 Prepared for the RASAB 2026 talk (Natal, 25 Oct 2026), LSST@LATAM (São Paulo, Nov 2026) and a
 later paper figure.
 
 ## 1. Purpose
 
-Quantify, per night, how much Simonyi night time was lost to **weather** and how much to
-**everything else** (faults + idle, reported as "fault" for the talks) between the first night of
-Early Operations (`day_obs` 20251025) and the last night with the dome open before the winter
-storm (20260714). The specification is `handoff_usdf_time_loss_analysis.md` (received 2026-10-18);
-this README records what was actually done and the numbers it rests on.
+Quantify, per night, how Simonyi night time between the first night of Early Operations (`day_obs` 20251025) and
+the last night with the dome open before the winter storm (20260714) splits into the ROSP-24 loss-cause categories:
+**survey**, **engineering**, **weather**, **fault + idle**, plus the small start-up allowance and unattributed
+remainders. The original specification is `handoff_usdf_time_loss_analysis.md` (2026-10-18); the ROSP-24 re-run
+follows `HANDOFF_rosp_precedence_2026-10-26.md` (received 2026-10-26). This README records what was actually done
+and the numbers it rests on.
 
 **The night (ROSP-22, Done 2026-10-19).** The observable night is Sun altitude **−12° → −12°**, from
-`rubin_nights.dayobs_utils.day_obs_sunset_sunrise`; weather and downtime are not excluded from it. All
-accounting below uses this night (`NIGHT_SUN_ALT = -12` in `time_loss/__init__.py`, applied 2026-10-26).
-Until then the accounting used −18° → −18°; those values are kept as a secondary column in §3b for
-comparison and are no longer on the figures.
+`rubin_nights.dayobs_utils.day_obs_sunset_sunrise`; weather and downtime are not excluded from it
+(`NIGHT_SUN_ALT = -12` in `time_loss/__init__.py`). The −18° night is carried as `night_hours_18` for reference.
 
-The deliverable is a per-night table with three measured quantities and one derived label:
+**The precedence (ROSP-24, comment of 2026-10-19).** One ordered per-minute classifier over the −12° night
+(`time_loss/classify.py`) assigns every second of the night to the first category that applies; every figure and
+`per_night.csv` come from that one assignment, and the categories sum to the night exactly:
 
-| Column | Definition | Source |
-|---|---|---|
-| `night_hours` (= `night_hours_12`), `night_hours_18` | hours between sun altitude −12°/−12° (the accounting night) and −18°/−18° (reference) | ephemeris (`rubin_nights.dayobs_utils.day_obs_sunset_sunrise`) |
-| `weather_hours` (+ windows) | time inside the night when the observatory was closed because of weather | Observatory Status WEATHER bit (from 2026-02-25); EFD weather telemetry vs. the operating criteria before that and as a cross-check |
-| `nonweather_loss_hours` | `night_hours − weather_hours − on_sky_hours`, where `on_sky_hours` is time covered by ConsDB `visit1` visits with gaps > `gap_min` counted as loss | ConsDB |
-| `label` | CLOSED / WEATHER-DOMINATED / FAULT-DOMINATED / OPEN (presentation rule, handoff §1b) | derived |
+| # | ROSP-24 | here | column(s) | 2025-10-25 → 2026-07-14 |
+|---|---|---|---|---|
+| 1 | B1 planned maintenance | exists, zero (ROSP-28: the only planned block is 14 Sep → 5 Oct 2026) | `planned_maintenance_hours` | 0 h |
+| 2 | C weather | WEATHER bit (from 2026-02-25); where the bit is absent or **masked** (FAULT or DOWNTIME set, bit unset): allskycam cloud index > 0.5 or the C1 weather-tower limits (§3c) | `weather_hours`, `bit_weather_hours`, `fallback_weather_hours` (+ `_cloud_`, `_c1_`), `weather_masked_fault_hours` (shadow record) | 305.2 h, 11.8 % |
+| 3 | B2 engineering | on-sky visits that are not Survey Programs, bridged at gaps ≤ 10 min; Focus and Alignment (BLOCK-T539) included and reported as a sub-total | `engineering_hours`, `focus_alignment_hours` | 517.7 h, 20.0 % (focus 100.2 h) |
+| 4+5 | D technical fault + E operational idle | the remainder: unplanned DOWNTIME, faults, idle, closed-dome engineering; **merged** (ROSP-50 open); includes the Dynalene condensation closures (Bruno, 2026-10-26: not weather) | `nonweather_loss_hours`, `dynalene_hours`, `idle_bit_hours` | 875.3 h, 33.8 % (Dynalene 77.1 h) |
+| 6 | A science operations | A1 + A2 (+ D3, ROSP-49 open): Survey-Program visits with gaps ≤ 10 min bridged; A3: the first 10 min after evening −12° up to the first survey visit | `on_sky_hours`, `exp_time_survey_hours`, `startup_hours` | 846.7 h, 32.7 % (+ start-up 10.8 h, 0.4 %) |
+| 7 | F unattributed | UNKNOWN observatory state from 2026-02-25 where it would otherwise be fault + idle; not separable before | `unattributed_hours` | 34.5 h, 1.3 % |
 
-The two human-judged tables (morning tailgate notes, night logs) are cross-checks, not inputs.
+Deferred, with the current rule kept and stated: fault and idle merged (IDLE bit only from 2026-02-25, Q7/ROSP-50);
+the 10-min gap rule lumps A2 and D3 (minimum fault duration undecided, Q8/ROSP-49); closed-dome engineering stays in
+fault + idle (no source separates it from maintenance); F before 2026-02-25 stays inside fault + idle ("before 25 Feb,
+fault + idle includes any time that would be unattributed"). The two human-judged tables (tailgate notes, night
+reports) are **annotation only**: the night-report cloud hours used until this morning are kept as
+`report_cloud_hours` for the cross-check and are no longer in the accounting.
 
 ## 2. Contents
 
@@ -42,21 +52,27 @@ simonyi_time_loss/
 │   ├── __init__.py                        # DAY_OBS_MIN/MAX, NIGHT_SUN_ALT = -12, GAP_MIN_MINUTES = 10, DAY_OBS_WEATHER_BIT_START = 20260225
 │   ├── access.py                          # ConsDB / EFD / narrative-log clients (token or Postgres fallback)
 │   ├── nights.py                          # −12° and −18° limits per day_obs
-│   ├── weather.py                         # WEATHER-bit windows; EFD CLOSE criteria by validity window; closed_unexplained
-│   ├── visits.py                          # ConsDB on-sky coverage, gap bridging, loss windows
-│   ├── accounting.py                      # per-night arithmetic, label rule, pre-bit cloud reassignment
-│   ├── style.py                           # imports ../rubin_color_pallete; role → colour map
+│   ├── weather.py                         # WEATHER-bit windows; EFD CLOSE criteria by validity window (Dynalene rule still used, as a fault tag)
+│   ├── visits.py                          # ConsDB on-sky coverage, gap bridging
+│   ├── intervals.py                       # interval-set arithmetic (union / intersect / subtract) in UTC MJD
+│   ├── fallback.py                        # ROSP-24 §C weather fallback: allskycam cloud index > 0.5, C1 tower limits → windows
+│   ├── classify.py                        # the ROSP-24 ordered per-minute classifier (one assignment per night) + label rule
+│   ├── accounting.py                      # the pre-ROSP-24 arithmetic (kept for per_night_20261026_pre_rosp24.csv; no longer run)
+│   ├── style.py                           # imports ../rubin_color_pallete; the one talk palette (survey green, engineering orange, weather grey, fault blue)
 │   └── downtime.py                        # copy of nightly_survey_speed/downtime.py (outage spans → axes annotations)
 ├── python/pull_efd_weather_1min.py        # 15 EFD channels × 263 nights at 1-min cadence → data/cache/
-├── python/make_latam_figures.py           # LSST@LATAM 2026 talk figures (nightly with outage labels, monthly) from per_night.csv
+├── python/pull_allsky_cloud_1min.py       # Brian Stalder's allskycam cloud index → 1-min grid, data/cache/allsky_cloud_1min.parquet
+├── python/run_rosp24_accounting.py        # the whole accounting from the caches → per_night.csv, per_month.csv, classification.pkl (~5 s)
+├── python/make_latam_figures.py           # LSST@LATAM 2026 talk figures B1 (monthly) and B3 (nightly) from per_night.csv
 ├── notebooks/00 … 06                      # all executed in order (00 inventory → 06 figures)
 ├── data/
 │   ├── downtime_annotations.csv           # copy of nightly_survey_speed/downtime_annotations.csv (talk = 1 rows are labelled)
 │   ├── raw/                               # inputs as received (handoffs, human tables, criteria table, night-log CSV)
-│   ├── step0/                             # inventory + intermediate tables (parquet gitignored)
-│   ├── cache/                             # EFD 1-min cache, window pickles (gitignored)
-│   └── processed/                         # per_night.csv/.parquet (deliverable), per_night_v0.csv (before cloud step), per_month.csv, per_night_with_human.csv
-├── HANDOFF_2026-10-18.md                  # state of the work, open items, how to resume
+│   ├── step0/                             # inventory + intermediate tables (parquet gitignored); rosp24_step0_per_night.csv, fallback_windows_per_night.csv, allsky_cloud_coverage.csv
+│   ├── cache/                             # EFD + allsky 1-min caches, window pickles, classification.pkl (gitignored)
+│   └── processed/                         # per_night.csv/.parquet (deliverable), per_month.csv, per_night_with_human.csv, per_night_20261026_pre_rosp24.csv (the table before the ROSP-24 re-run), per_night_v0.csv (2026-10-18, historical)
+├── HANDOFF_2026-10-18.md                  # state of the work after the first build, how to resume
+├── HANDOFF_rosp_precedence_2026-10-26.md  # the ROSP-24 re-run specification, as received 2026-10-26
 └── figures/                               # time_loss_{nightly,monthly}_{talk,paper}_<tag>.png (+ _white variants of the talk versions)
 ```
 
@@ -186,155 +202,186 @@ Both parsed tables reproduce the cross-check file exactly: all 122 listed rows m
 and the recomputed status agreement is 171 of 263 nights, as the cross-check states. The parser keeps the first file's row
 when a night appears twice. The per-night evidence text and ticket lists are carried into the CSVs for notebook 05.
 
-## 3b. Results (2026-10-26, gap_min 10 min, −12° night; −18° values for reference)
+### 3.7 Allskycam cloud index and the C1 tower limits (ROSP-24 §C fallback; Step 0 of 2026-10-26, `allsky_cloud_coverage.csv`, `rosp24_step0_per_night.csv`)
 
-Per night in `data/processed/per_night.csv`; monthly in `per_month.csv`; figures in `figures/`.
-The talk versions (`*_talk_*.png`, transparent, and `*_talk_*_white.png`) are regenerated by
-`python python/make_latam_figures.py` (2026-10-23, LSST@LATAM; re-run 2026-10-26 on the −12° night):
-the nightly figure carries the three long outages the talk points at (camera vacuum leak 30 Jan – 15 Feb,
-TMA encoder 2 – 10 May, camera cryo 20 – 24 Jun; spans from `data/downtime_annotations.csv`) and dates the
-WEATHER-bit line; the monthly figure drops slice labels below 10 %. Notebook 06 still produces the
-`_paper` versions. The figures show the −12° numbers only.
+Brian Stalder's product, `/sdf/data/rubin/user/stalder/allsky/cloud/<day_obs>.parquet` (pipeline v5 of 2026-10-10,
+files dated 2026-10-18): one row per allskycam frame while the Sun is below −12°, `cloud_idx` = 1 − observed /
+expected bright stars under a per-unit-per-month clear-sky completeness model, clipped to [0, 1]. ROSP-24 §C names
+`cloud_idx > 0.5` as the weather evidence where the WEATHER bit is absent or masked.
 
-| | −12° → −12° (ROSP-22, on the figures) | | −18° → −18° (until 2026-10-26, reference) | |
+| | |
+|---|---|
+| nights with a file, 20251025 → 20260714 | **259 of 263**; missing 20260130–20260202 (camera vacuum leak, no Simonyi observing) |
+| cadence | 1 frame per minute; median 566 frames per night; largest intra-night gap 5 min |
+| minutes of the −12° night without a frame within 3 min | 87 h of 2590 (3.4 %), 34 h of it the four nights without a file |
+| frames flagged `geometry_ok = False` | kept (the running astrometric solution is applied; a failed gate usually means overcast) |
+| **validation, bit era** | WEATHER-bit minutes: cloud index > 0.5 in **66 %**, > 0.3 in 74 %; C1 limits met in 11 %; either in 71 %. OPERATIONAL-and-observing minutes: index > 0.5 in **3.5 %** |
+| validation, pre-bit era | minutes covered by visits: index > 0.5 in 0.8 %, C1 in 0.2 % |
+| pre-bit era, index > 0.5 inside the night (per minute) | 26.1 h on 15 nights (7 nights ≥ 1 h); 6.3 h of it on 4 nights overlaps the old EFD-criteria windows |
+| pre-bit era vs. the 19 night-report cloud nights (55.7 h) | the index agrees on **4** of them (31 Oct 3.7 h, 5 Dec 7.7 h, 21 Dec 5.2 h, 25 Jan 1.6 h; 18.5 h) and reads **clear all night on the other 15**. Two of those are explainable: 7 Dec (rain and hail in the afternoon, dome kept shut as a precaution, clear at night) and 13 Dec (chiller fault, "humidity > 70 %" with the tower reading 60 %); the rest are Dynalene nights where the report's "weather" is the condensation rule |
+| pre-bit era, ≥ 1 h cloud with no report cloud | 26 Oct (1.9 h; report: "cloudy in the last couple of hours"), 17 Nov (2.0 h), 3 Feb (1.2 h, camera down) |
+
+C1 tower limits (ROSP-24 §C, 2026-10-26), on the weather tower ESS `salIndex` 301 at 1-min cadence
+(`python/pull_efd_weather_1min.py`): RH > 80 % (`relativeHumidity.relativeHumidityItem`), dew-point depression
+`temperature.temperatureItem0 − dewPoint.dewPointItem` < 2.0 °C, wind `airFlow.speed` 1-min mean > 15 m/s or
+`airFlow.maxSpeed` 1-min max > 18 m/s. These are the sensors of `weather_criteria_table.md` rows 2, 3 and 5; the
+thresholds differ from the operating rules there (20 / 25 m/s, RH de-prioritised) because ROSP-24 C1 states 15 / 18
+and RH > 80 %. Precipitation and snow/ice on the dome have no usable EFD source (§3.5) and are not evaluated. Over
+the range the C1 limits are met 54.9 h per minute (RH 33.2, dew point 15.1, wind 21.9, overlapping), 21.9 h of it
+before 2026-02-25. `[check]` the tower RH reads a median of 3–4 % on the −12° night of 8 Jul and below 10 % on 32
+nights from January, and its dew point sits 8 °C below the T − (100 − RH)/5 summit formula in May–July; if the RH
+sensor reads low, RH and dew-point closures are under-detected in winter.
+
+Fallback windows are runs of fallback minutes merged across gaps < 10 min and kept only if ≥ 10 min, the resolution
+of the gap rule (`fallback.py`). The minimum-duration choice moves the pre-bit fallback by 1 h and the masked-period
+fallback by 2.5 h (5 / 10 / 20 min: 47.7 / 47.3 / 46.4 h and 37.2 / 35.7 / 32.1 h before clipping).
+
+**Masked periods (bit era).** Minutes with FAULT or DOWNTIME set and WEATHER unset: 338.4 h inside the −12° night
+(DOWNTIME 191.7 h, FAULT alone 146.7 h). The fallback says weather in 32.4 h of them per minute (28.4 h cloud), 37.7
+h as ≥ 10-min windows, on 39 nights; the largest: 6 May 8.4 h (camera glycol night; cloud index > 0.5 all night, the
+report says "bad weather prediction" and does not describe the sky), 5 May 4.4 h (wind 15–20 m/s, gusts to 23, no
+report), 4 Mar 4.2 h (closed engineering night, "thick clouds after 06:30 UTC"), 2 Jun 2.0 h, 7 May 1.8 h.
+
+## 3b. Results (2026-10-26 evening, ROSP-24 precedence, gap_min 10 min, −12° night)
+
+Per night in `data/processed/per_night.csv`; monthly in `per_month.csv`; figures in `figures/`, regenerated by
+`python python/run_rosp24_accounting.py && python python/make_latam_figures.py`. The talk versions
+(`*_talk_*.png`, transparent, and `*_talk_*_white.png`) are B1 (monthly) and B3 (nightly); notebook 06 produces the
+`_paper` versions with the same four categories. On the plots the start-up allowance is drawn inside survey and the
+unattributed hours inside fault + idle (one series, caveat spoken); the Dynalene closures are hatched inside fault +
+idle. Legend and title list the categories in precedence order.
+
+**What moved** (both columns on the −12° night; "26 Oct morning" is `per_night_20261026_pre_rosp24.csv`):
+
+| | 26 Oct morning (ROSP-22 only) | | **ROSP-24 (now)** | |
 |---|---|---|---|---|
 | | hours | share | hours | share |
-| night, 263 nights | **2590.2** | | 2319.6 | |
-| on sky | **1368.2** | **53 %** | 1267.6 | 55 % |
-| weather | **389.2** | **15 %** | 344.8 | 15 % |
-| non-weather loss (fault + idle) | **859.1** | **33 %** | 729.4 | 31 % |
+| night, 263 nights | 2590.2 | | **2590.2** | |
+| survey (on sky) | 1368.2 (survey + engineering) | 53 % | **846.7** (+ 10.8 start-up = 857.6 drawn) | **32.7 %** (33.1 % drawn) |
+| engineering (incl. Focus and Alignment 100.2 h) | — | — | **517.7** | **20.0 %** |
+| weather | 389.2 | 15 % | **305.2** | **11.8 %** |
+| fault + idle (incl. Dynalene 77.1 h) | 859.1 | 33 % | **875.3** (+ 34.5 unattributed = 909.7 drawn) | **33.8 %** (35.1 % drawn) |
+| start-up allowance (A3) | — | — | 10.8 | 0.4 % |
+| unattributed (F, from 25 Feb) | — | — | 34.5 | 1.3 % |
+| planned maintenance (B1) | — | — | 0 | 0 |
 
-The 270.6 h added by moving from −18° to −12° are twilight; 100.6 h of them were on sky (the
-survey already observes in nautical twilight), 44.4 h weather (4.1 h of it overlapping on-sky time) and
-129.7 h fault + idle (the dome is usually still shut, or a fault not yet cleared, in the first half-hour).
+The on-sky total is almost unchanged (1368.2 → 846.7 + 517.7 + 10.8 = 1375.2 h; the 7 h difference is weather
+precedence over visits, 9.1 h, less the edge bridging now applied to engineering): the big move is the **split of
+"on sky" into survey and engineering**, 38 % of the old on-sky hours being engineering. Weather falls by 84 h because
+the Dynalene windows (109 h) leave it and the night-report cloud hours (56 h) are no longer a source, offset by 48 h of
+allskycam/C1 fallback before the bit and 38 h of fallback inside masked FAULT/DOWNTIME periods after it.
 
-Weather source by period (−12° night): WEATHER bit on 140 nights from 2026-02-25 (219.7 h); EFD criteria on 123
-nights before (113.8 h, almost all Dynalene rule: 109.0 h Dynalene, 4.8 h dew-point spread, 0 h wind) plus 55.7 h of
-**night-report cloud** on 19 nights (Bruno's option 2: `closed_unexplained_hours` moved to weather only where Source 2
-gives P(weather) ≥ 0.5; flagged in `weather_source` and `cloud_reassigned_hours`). Weather∩on-sky overlap 26.3 h is
-reported, not double-subtracted. Labels (presentation rule): CLOSED 82, FAULT-DOMINATED 107, OPEN 46,
-WEATHER-DOMINATED 28 (−18°: 82 / 84 / 70 / 27; the longer night pushes 24 OPEN nights over the 10 % loss threshold).
-(−18° values: bit 203.2 h, EFD criteria 65.2 h, cloud 46.7 h on 18 nights, overlap 22.2 h.)
+Weather by source: WEATHER bit 219.7 h (140 nights, as before); fallback inside masked periods 37.7 h on 39 nights;
+fallback before the bit 47.8 h on 19 nights (as ≥ 10-min windows: cloud 26.6 h, C1 24.5 h, overlapping). Dynalene rule:
+109.2 h in total, 77.1 h now in fault + idle, 5.5 h stay weather (a C1 or cloud window overlaps), 26.5 h were observed
+through (the observers overrode the rule; survey or engineering). Shadow record: 101.5 h of weather fall inside FAULT
+or DOWNTIME (`weather_masked_fault_hours`). Weather ∩ visits: 9.1 h, assigned to weather by precedence.
 
-gap_min sensitivity: on-sky 1180 / 1306 / 1368 h at 2 / 5 / 10 min (−18°: 1093 / 1212 / 1268 h); non-weather loss
-moves by the same amounts.
+Labels (presentation rule, §3c): CLOSED 82, FAULT-DOMINATED 112, OPEN 54, WEATHER-DOMINATED 15 (26 Oct morning:
+82 / 107 / 46 / 28). Of the 28 WEATHER-DOMINATED nights 16 became FAULT-DOMINATED (Dynalene nights) and 1 OPEN;
+7 FAULT-DOMINATED became OPEN (engineering no longer counted as loss on the label side) and 4 WEATHER-DOMINATED
+(masked-period fallback). Nights with ≥ 0.5 h on sky but < 0.5 h of survey: 36 (engineering nights).
 
-Cross-check (notebook 05): code CLOSED agrees with Source 2 CLOSED on 75/75 nights and never contradicts an OPEN.
-Confidence per night: HIGH 192, MEDIUM 61, LOW 10 (−18°: 184 / 64 / 15). The LOW nights are mostly Dec–Jan nights where
-the Dynalene rule fires but observers judged no weather loss (12-16, 12-18, 12-20, 12-29, 01-18, 01-19), plus 12-24,
-03-17, 04-30 and 06-06. Against the narrative log's declared hours on 160 nights: code weather 204 h vs declared 88 h;
-code non-weather 394 h vs declared fault 350 h (excluding the whole-night camera-shutdown tallies), correlation 0.6
-for both.
+Monthly shares of the −12° night (%, as drawn; 26 Oct morning on-sky in brackets):
 
-Known limitations: cloud is invisible to the EFD criteria (hence the night-report step before 2026-02-25); the WEATHER
-bit was not set on some short cloud interruptions; the Dynalene rule is applied mechanically on 2026-01-19 although
-observers overrode it after inspection; non-weather loss bundles fault, idle, planned engineering off-sky and
-staffing (Q2 splits it per ticket).
+| | Oct | Nov | Dec | Jan | Feb | Mar | Apr | May | Jun | Jul |
+|---|---|---|---|---|---|---|---|---|---|---|
+| survey | 5 (41) | 26 (70) | 12 (57) | 37 (43) | 29 (32) | 22 (65) | 49 (72) | 44 (48) | 38 (41) | 42 (46) |
+| engineering | 34 | 44 | 45 | 7 | 3 | 44 | 24 | 5 | 3 | 4 |
+| weather | 10 (11) | 5 (1) | 6 (33) | 3 (25) | 2 (7) | 7 (6) | 3 (2) | 18 (13) | 31 (29) | 29 (26) |
+| fault + idle | 51 (48) | 26 (29) | 37 (15) | 52 (37) | 65 (61) | 28 (30) | 25 (26) | 33 (39) | 28 (30) | 25 (28) |
+
+Engineering vs. B10: B10 (`engineering_time_budget`) gives 378 + 107 = 485 h of non-survey on-sky time over
+20 Oct 2025 – 19 Jul 2026 with same-category bridging and the `img_type` filter acq/science/cwfs/focus; here 517.7 h
+over 25 Oct – 14 Jul because `engtest` and `indome` visits with airmass > 0 (1412) are kept, focus and engineering
+are bridged together, and edge gaps ≤ 10 min are bridged to the night limit. Same-category B10 bridging on this visit
+set gives 500.2 h inside the −12° night.
+
+Cross-check (notebook 05): code CLOSED (nothing on sky for 0.5 h) agrees with Source 2 CLOSED on 75/75 nights and
+never contradicts an OPEN. Confidence per night: HIGH 188, MEDIUM 60, LOW 15 (26 Oct morning 192 / 61 / 10). The LOW
+nights are the Dynalene nights the reports call weather (22, 24 Dec; 5, 6, 11, 12, 13 Jan) and five nights where the
+fallback calls 1–2 h of cloud or RH a weather closure on a night the reports call OPEN or fault (26 Oct, 5 Nov, 17 Nov,
+20 Dec, 4 Dec). Against the narrative log's declared hours on 160 nights: code weather 100 h vs declared 88 h
+(correlation 0.37, was 0.6 when the Dynalene nights counted as weather on both sides); code fault + idle 450 h vs
+declared fault 350 h excluding the whole-night camera-shutdown tallies, correlation 0.64.
+
+gap_min sensitivity was not recomputed for the ROSP-24 classifier; the 26 Oct morning values (on sky 1180 / 1306 /
+1368 h at 2 / 5 / 10 min) still indicate the scale.
+
+Known limitations: the allskycam index misses closures that were decided on forecast or afternoon weather (7 Dec)
+and cannot see humidity, so pre-bit weather is a lower bound (the 15 report-cloud nights it contradicts hold 37 h);
+the tower RH `[check]` above; closed-dome engineering sits in fault + idle; the WEATHER bit was not set on some
+short cloud interruptions and the masked-period fallback only recovers those inside FAULT/DOWNTIME; the five
+Dec–Jan nights where observers overrode the Dynalene rule are now simply observed time.
 
 ## 3c. How the numbers are calculated
 
-Every number in §3b is produced by `time_loss/` and the notebooks in order 00 → 06. This section states the
-definitions in words so that the method can be checked without reading code. All times are UTC; nights are
-bucketed by the integer `day_obs` (rolls over at 12:00 UTC), never by UTC calendar date. "The night" below is the
-−12° → −12° observable night (ROSP-22); every clipping step uses its limits (`NIGHT_START_COL` / `NIGHT_END_COL`).
+Every number in §3b is produced by `python/run_rosp24_accounting.py` from the cached inputs (notebooks 00–03 build the
+caches; notebook 04 runs the driver; 05 cross-checks; 06 draws the paper figures). All times are UTC; nights are
+bucketed by the integer `day_obs` (rolls over at 12:00 UTC). "The night" is the −12° → −12° observable night
+(ROSP-22). All categories are interval sets in UTC MJD (`intervals.py`); they partition the night to better than
+10 s, so the per-night columns sum to `night_hours`.
 
 ### Night length (`nights.py`, notebook 01)
 
-For each `day_obs`, the Sun's −12° evening crossing (nautical twilight) and the next −12° morning crossing
-are computed with `rubin_nights.dayobs_utils.day_obs_sunset_sunrise(day_obs, sun_alt=-12)`, which wraps
-`astroplan.Observer` at the Rubin site. `night_hours` (= `night_hours_12`) is their difference and is the
-accounting night. `night_hours_18` is the same with −18° (astronomical twilight) and is only reported. No
-data enters this step.
+`rubin_nights.dayobs_utils.day_obs_sunset_sunrise(day_obs, sun_alt=-12)` (and −18 for `night_hours_18`).
 
-### On-sky time (`visits.py`, notebook 03)
+### Inputs per night
 
-1. Query ConsDB `cdb_lsstcam.visit1` for `day_obs` in range and `airmass > 0`. The airmass cut keeps every
-   exposure taken through the open dome, including on-sky engineering (`engtest`, alignment, AOS triplets), and
-   drops bias, dark, flat and CBP exposures, whose airmass is NULL or 0. On-sky engineering counts as observing.
-2. Convert `obs_start_mjd` / `obs_end_mjd` from TAI to UTC (−37 s). Where `obs_end` is missing or earlier than
-   `obs_start`, use `obs_start + exp_time`.
-3. Sort the night's visits by start time and take the union of their `[start, end]` intervals, **bridging** any
-   gap between consecutive visits that is ≤ `gap_min` (10 min). A gap that short is readout, slew, filter change
-   or settling: normal overhead, counted as observing.
-4. Clip the result to the −12° night. `on_sky_hours` is the total length of these windows.
-5. Every stretch of the night not covered by an on-sky window and longer than `gap_min` is a **loss window**.
-   This includes the two edge gaps: from the −12° evening limit to the first visit, and from the last visit to
-   the −12° morning limit. The three `gap_min` values 2 / 5 / 10 min are all computed and saved; the accounting
-   uses 10 (Bruno, 2026-10-18).
+* **Visits** (`visits.py`, notebook 03): ConsDB `cdb_lsstcam.visit1` rows with `airmass > 0` (keeps on-sky
+  engineering, drops bias/dark/flat/CBP); TAI → UTC (−37 s); `obs_end` repaired from `exp_time` where missing.
+  Category by `science_program`: Survey Programs = BLOCK-407/408/416/417/419/421; everything else is engineering,
+  Focus and Alignment (BLOCK-T539) reported as a sub-total.
+* **WEATHER bit** (`weather.py`): `lsst.sal.Scheduler.logevent_observatoryStatus` periods via
+  `rubin_nights.observatory_status`, from 2026-02-25; also the FAULT, DOWNTIME, IDLE and UNKNOWN periods.
+* **Fallback weather** (`fallback.py`, §3.7): allskycam `cloud_idx > 0.5` (1-min grid, `pull_allsky_cloud_1min.py`)
+  or any C1 tower limit (RH > 80 %, T − Td < 2 °C, wind > 15 m/s or gust > 18 m/s) on the 1-min EFD cache; runs
+  merged across gaps < 10 min, runs < 10 min dropped.
+* **Dynalene rule** (`weather.py`, unchanged): Dynalene(Az1) − outside dew point against the threshold valid on the
+  date (≤ +2 °C 2025-12-15 → 12-29; < +2 °C 12-30 → 2026-01-18; ≤ +1 °C 01-19; < −2 °C from 01-20; 20-min
+  persistence); now a **tag inside fault + idle**, not a weather source.
 
-### Weather time (`weather.py`, notebook 02)
+### The ordered classifier (`classify.py`)
 
-Two independent sources; the first that exists on a night is the primary.
+With N = the night and R = what is still unassigned (starts as N):
 
-**A. Observatory Status WEATHER bit (from 2026-02-25).** `rubin_nights.observatory_status.get_observatory_state_times`
-turns `lsst.sal.Scheduler.logevent_observatoryStatus` messages into start/end periods per state. The WEATHER
-periods of the night are clipped to the −12° night; their total length is `bit_weather_hours`. The bit is set by
-the observers through the Scheduler CSC and so already encodes their judgement that the closure was weather.
+1. **B1 planned maintenance**: `PLANNED_MAINTENANCE` blocks (noon → noon UTC); empty in the range (ROSP-28).
+2. **C weather** = WEATHER-bit windows ∪ (fallback windows ∩ masked), where masked = (FAULT ∪ DOWNTIME) − WEATHER
+   in the bit era, and = fallback windows before 2026-02-25. Weather takes precedence over visits: minutes observed
+   while the bit was set are weather (`weather_and_onsky_hours`, 9.1 h). Shadow record `weather_masked_fault_hours`
+   = weather ∩ (FAULT ∪ DOWNTIME).
+3. **B2 engineering** = union of the non-survey visit intervals bridged at gaps ≤ 10 min (focus and engineering
+   together), an edge gap ≤ 10 min to the night limit bridged when the first/last visit is non-survey; ∩ R.
+4. **A1 + A2 survey** = union of all visit intervals bridged at ≤ 10 min (edge gaps ≤ 10 min bridged), minus the
+   engineering blocks; ∩ R. A bridged gap between a survey and an engineering visit is survey overhead.
+5. **A3 start-up allowance** = [evening −12°, min(+10 min, first survey visit)] ∩ R, only on nights with a survey
+   visit; 10.8 h on 74 nights (mean 8.8 min). The handoff's "overrun beyond 10 min is fault + idle" follows.
+6. **F unattributed** = UNKNOWN state ∩ R (bit era only); 34.5 h on 61 nights, 26 h of UNKNOWN fall on visits and
+   stay survey/engineering.
+7. **D + E fault + idle** = R. Tags inside it: `dynalene_hours` (Dynalene rule windows ∩ R), `idle_bit_hours`
+   (IDLE state ∩ R, bit era).
 
-**B. EFD operating criteria (whole range; primary before 2026-02-25).** `python/pull_efd_weather_1min.py` pulls
-15 channels at 1-minute cadence for each night from 2 h before the −18° evening limit to 1 h after the −18°
-morning limit (which covers the −12° night with margin on every night). The CLOSE rules from the Confluence "Weather Constraints" page (v29) and from
-`data/raw/handoff_dynalene_condensation_criteria_2025-12_2026-01.md` are evaluated per minute:
+`per_night.csv` columns, besides the category hours above: `bit_weather_hours`, `fallback_weather_hours` (used),
+`fallback_cloud_hours`, `fallback_c1_hours`, `fallback_any_hours` (all fallback windows of the night, whether used or
+not), `dynalene_total_hours`, `dynalene_weather_hours`, `on_sky_any_hours` (survey + engineering blocks),
+`exp_time_survey_hours` (shutter-open, A1), `n_*_visits`, `cloud_minutes_missing`, and the annotation-only
+`report_cloud_hours`, `closed_unexplained_hours`, `report_p_weather`, `report_p_fault`.
 
-| rule | channel(s) | CLOSE when | valid |
-|---|---|---|---|
-| wind | `ESS.airFlow.speed`, `.maxSpeed`, salIndex 301 (weather tower) | 10-min rolling mean > 20 m/s, or 10-min rolling minimum of the per-minute max ≥ 25 m/s ("sustained gusts"); stays CLOSE until 15 consecutive minutes with the 10-min mean below 20 | whole range |
-| dew-point spread | `ESS.temperature.temperatureItem0` − `ESS.dewPoint.dewPointItem`, salIndex 301 | < 2 °C for 20 consecutive minutes | whole range |
-| Dynalene condensation | `MTMount.dynaleneCooling.dynaleneTemperatureAzimuth0001` − outside dew point (fallback `MTCamera.utiltrunk_UT.coolPipeSplyTemp − 1.5`) | ≤ +2 °C (2025-12-15 → 12-29); < +2 °C (12-30 → 2026-01-18); ≤ +1 °C (01-19); < −2 °C (01-20 →); all for 20 consecutive minutes; no rule before 2025-12-15 | by window |
-
-A minute is CLOSE if any rule fires. Consecutive CLOSE minutes form windows; windows closer than 10 min are merged;
-the windows are clipped to the −12° night and summed into `efd_weather_hours` (per-rule hours are kept too).
-
-The Dynalene sensor choice: the 2025-12-21 night report quotes "Dynalene at Az −0.6 °C" at 03:01 UTC, and
-`dynaleneTemperatureAzimuth0001` reads −0.62 at that minute (Pier0102 +1.2, Azimuth0002 +1.3). Azimuth0001 is also
-within 0.3 °C of the handoff's predicted-TEA value over Dec–Jan, whereas Pier0102 is +1.5 °C warmer.
-
-**Cloud.** The EFD has no cloud product, so rule B cannot see cloud closures. Each minute is also classified as
-*physically closed* if the dome shutter (`MTDome.apertureShutter.positionActual0`) is below 50 %, or the telescope
-is at horizon (`MTMount.elevation.actualPosition` < 5°) with the mirror covers closed
-(`MTMount.mirrorCover.actualPosition0` > 60). Minutes physically closed inside the night with no rule firing are
-summed into `closed_unexplained_hours`.
-
-**C. Combination (`combine_weather`, then `reassign_unexplained_closures`).** From 2026-02-25, `weather_hours` =
-`bit_weather_hours` and `weather_source` = "WEATHER bit". Before that, `weather_hours` = `efd_weather_hours` and
-`weather_source` = "EFD criteria". Then, before 2026-02-25 only and only on nights where the night-report table
-(Source 2, `data/step0/nightlog_source2_per_night.csv`) gives P(weather) ≥ 0.5, `closed_unexplained_hours` is moved
-from `nonweather_loss_hours` into `weather_hours` (capped by the available loss), recorded in
-`cloud_reassigned_hours`, and `weather_source` becomes "EFD criteria + night report (cloud)". This is Bruno's
-option 2 (2026-10-18): the night reports are used exactly where telemetry is blind and nowhere else. 19 nights,
-55.7 h on the −12° night (18 nights, 46.7 h on the −18° night).
-
-### Per-night arithmetic (`accounting.py`, notebook 04)
-
-With N = the −12° night, W = the weather windows of the primary source, S = the on-sky windows:
-
-```
-weather_hours           = |W ∩ N|
-on_sky_hours            = |S ∩ N|
-weather_and_onsky_hours = |W ∩ S|          observing while the bit/criteria said closed; reported only
-nonweather_loss_hours   = |N| − |W ∪ S|    fault + idle + planned off-sky + staffing, bundled
-```
-
-Weather and non-weather loss cannot overlap because the loss is what remains after removing the union of both
-window sets from the night. The three categories plus the overlap therefore sum to the night:
-`on_sky + weather − weather_and_onsky + nonweather_loss = night_hours`. The cloud step then moves hours between
-`weather_hours` and `nonweather_loss_hours` without changing the sum.
-
-`label` is the handoff's presentation rule: CLOSED if `on_sky_hours` < 0.5 h; else OPEN if total loss is below
-10 % of the night; else WEATHER-DOMINATED or FAULT-DOMINATED by whichever loss is larger. It is not a definition.
+`label` is the presentation rule (handoff §1b), adapted: CLOSED if `on_sky_any_hours` < 0.5 h; else OPEN if
+weather + fault/idle + unattributed is below 10 % of the night; else WEATHER-DOMINATED or FAULT-DOMINATED by whichever
+of weather and fault/idle is larger. It is not a definition.
 
 ### Cross-check (notebook 05)
 
-The two human tables and the narrative log are joined on `day_obs` and compared with the code table; disagreement
-classes are listed, never averaged. `confidence` per night is HIGH when the code label is consistent with both
-human sources, MEDIUM with one, LOW when it contradicts both or no source exists.
+As before: the two human tables and the narrative log are joined on `day_obs`; disagreement classes are listed, never
+averaged; `confidence` per night is HIGH / MEDIUM / LOW by consistency with both, one or neither human source.
+"Code CLOSED" now means no survey *or* engineering visit for 0.5 h.
 
 ### Not in these numbers
 
-Cloud before 2026-02-25 on nights where Source 2 gives P(weather) < 0.5 (stays in non-weather loss); the five
-Dec–Jan nights where the Dynalene rule fires but the observers judged no weather loss (stay in weather);
-image-quality-only losses (telescope on sky, data unusable, e.g. 2026-04-24); the 2026-07-15 → Oct storm DOWNTIME
-(outside the range); AuxTel.
+Cloud the allskycam does not see (closures decided on forecast or afternoon weather, humidity without cloud);
+closed-dome engineering (inside fault + idle); image-quality-only losses (telescope on sky, data unusable, e.g.
+2026-04-24); the 2026-07-15 → Oct storm DOWNTIME (outside the range); AuxTel.
 
 ## 4. Environment and access
 
@@ -353,11 +400,14 @@ The EFD client is `rubin_nights.influx_query.InfluxQueryClient` (synchronous Inf
 
 ## 5. Open items (for Bruno)
 
-1. Folder name: created as `simonyi_time_loss/` at the repo top level (the repo has no
-   `investigations/` prefix and no `summit_performance/`; the siblings are
-   `observatory_high_level_performance/` and `nightly_survey_speed/`). Rename if preferred.
-2. (done — all human-table files received 2026-10-18.)
-3. Decided 2026-10-18: `gap_min` = 10 min; pre-bit cloud via night reports (option 2); Dynalene sensor
-   `dynaleneTemperatureAzimuth0001`. Still open: the weather-night label threshold (figure uses the §1b rule).
-4. Whether the five Dynalene-rule nights the observers judged as non-weather (README §3b) should keep the
-   EFD attribution or be overridden from the reports, as was done for cloud.
+1. **Focus and Alignment = engineering** (default yes, applied): 100.2 h over the season, 7 min on 8 Jul. If no, move
+   `focus_alignment_hours` from engineering to survey; B1/B3 shares change by up to 11 points in November.
+2. **B11 bracket 4 = shutter-open only "Exposing"** (default yes, applied): 4.7 h; "exposing + readout" 4.8 h is in
+   the B11 README.
+3. Tower RH sanity `[check]` (§3.7): the ESS 301 relative humidity reads 3–10 % on many winter nights.
+4. The 15 pre-bit nights the night reports call cloud but the allskycam calls clear (§3.7): 37 h now in fault + idle;
+   7 Dec (rain/hail precaution) is the clearest case where the ROSP-24 evidence hierarchy and the observers disagree.
+5. Masked-period fallback on nights nobody would call weather nights (6 May camera glycol, 8.4 h cloudy): ROSP-24
+   says weather masks the fault; the shadow record keeps the fault hours.
+6. Deferred by ROSP: fault/idle split (ROSP-50), gap rule and minimum fault duration (ROSP-49), dome closed by
+   policy (ROSP-47), closed-dome engineering (ROSP-28).

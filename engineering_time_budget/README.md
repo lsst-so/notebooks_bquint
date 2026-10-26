@@ -6,6 +6,13 @@ Jul 2026, against the LSST on-sky engineering-time policy. Built for the LSST@LA
 
 **Status:** figure B10 done (2026-10-23), policy variant B10b done (2026-10-26; label positions
 adjusted the same day); policy numbers still `[VERIFY]` against the Confluence page. Ticket: none (talk material).
+**ROSP-24 re-check (2026-10-26 evening):** the categories here are already the ROSP-24 B2 definition (every
+non-survey on-sky visit is engineering; Focus and Alignment is a tracked sub-category), so nothing changed. Both
+figures were regenerated and compared pixel by pixel with the committed files: identical (only the matplotlib
+version string in the PNG metadata differs), so the committed PNGs were kept. Note that the ROSP-24 accounting in
+`simonyi_time_loss` counts 518 h of engineering over 25 Oct – 14 Jul against 485 h here (378 + 107 over
+20 Oct – 19 Jul): it keeps `engtest`/`indome` visits with airmass > 0, bridges focus and engineering together, and
+bridges edge gaps ≤ 10 min to the −12° night limit; its README §3b states the reconciliation.
 
 ## Contents
 
