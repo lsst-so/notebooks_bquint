@@ -18,9 +18,9 @@ Definitions (same as simonyi_time_loss, gap_min = 10 min, −18° night):
 * gaps between consecutive visits (and the two night edges) longer than 10 min are loss;
   the part inside a WEATHER-bit window is weather, the rest is fault + idle;
 * brackets: whole night (−18° → −18°); minus weather; minus weather and fault/idle;
-  on sky = sum of the visit intervals (obs_start → obs_end, shutter + readout) inside the night.
-  NB: "minus weather and fault/idle" equals B3's bridged ``on_sky_hours`` by construction, so
-  the fourth bracket is the un-bridged visit coverage (see README).
+  exposing + readout = sum of the visit intervals (obs_start → obs_end) inside the night.
+  NB: "minus weather and fault/idle" equals B3's bridged ``on_sky_hours`` by construction and is
+  labelled so; the fourth bracket is never called "on sky" (deck decision 2026-10-26).
 
 Outputs ``../figures/night_brackets_<day_obs>.png`` and ``_white.png`` (16:5).
 """
@@ -177,8 +177,8 @@ def gaps_and_brackets(visits, night, weather):
     brackets = [
         ("Whole night (OSF)", whole),
         ("Survey time only", minus_weather),
-        ("Excluding faults", minus_faults),
-        ("On sky (exposing + readout)", on_sky),
+        ("Excluding faults (= on sky, B1/B3)", minus_faults),
+        ("Exposing + readout", on_sky),
     ]
     return long_gaps, weather_blocks, fault_blocks, brackets
 

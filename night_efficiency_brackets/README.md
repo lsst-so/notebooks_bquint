@@ -5,7 +5,8 @@ as brackets above it. Built for the LSST@LATAM 2026 talk (figure B11, replaces t
 efficiency waterfall in `efficiency_waterfall/`). Rule for the deck: the definitions are drawn
 inside the plot, not written in a table.
 
-**Status:** done (2026-10-26). Ticket: none (talk material).
+**Status:** done (2026-10-26); bracket labels and night choice confirmed by the deck side the same
+day. Ticket: none (talk material).
 
 ## Contents
 
@@ -56,8 +57,8 @@ All computed by the script from the three data files; definitions are those of
 | WEATHER bit window | 23:15:36 → 00:20:50 UTC (1.087 h), of which 0.982 h inside the −18° night |
 | **Whole night (OSF)** bracket | 10.9 h |
 | **Survey time only** bracket (night − weather) | 9.9 h (9.893) |
-| **Excluding faults** bracket (night − weather − fault/idle) | 6.8 h (6.849), two segments: 03:07:00–03:36:21 and 03:52:49–10:14:24 |
-| **On sky (exposing + readout)** bracket | 4.5 h (4.538), sum of the 528 visit intervals inside the −18° night |
+| **Excluding faults (= on sky, B1/B3)** bracket (night − weather − fault/idle) | 6.8 h (6.849), two segments: 03:07:00–03:36:21 and 03:52:49–10:14:24 |
+| **Exposing + readout** bracket | 4.5 h (4.538), sum of the 528 visit intervals inside the −18° night |
 | weather | 0.98 h (1.0 on the figure) |
 | fault + idle | 3.04 h: 2.77 h camera recovery + 0.27 h HV bias trip |
 
@@ -77,7 +78,7 @@ Gaps longer than 10 min inside the −18° night (start, end, length, bin, attri
 The 21 gaps between 60 s and 10 min (2–4 min each, slews/filter changes, 0.9 h in total) and the
 546 gaps ≤ 60 s (median 9 s) are the white slivers in the strip and are not coloured.
 
-## Definitions, and one deviation from the handoff
+## Definitions, and the bracket-4 decision
 
 - **Categories** as in B10 / the on-sky utilization timeline: Survey Programs =
   BLOCK-407/408/416/417/419/421, Focus and Alignment = BLOCK-T539, Engineering = every other
@@ -88,15 +89,16 @@ The 21 gaps between 60 s and 10 min (2–4 min each, slews/filter changes, 0.9 h
   gives weather 0.982 h, non-weather loss 3.044 h, on sky 6.849 h for this night, which the
   script reproduces.
 - **Brackets 1–3** are the whole night, the night minus weather, and the night minus weather and
-  fault/idle blocks. Bracket 3 is the OSF "survey time" idea with faults also removed and equals
-  B3's bridged `on_sky_hours` (6.85 h).
-- **Bracket 4, deviation.** The handoff asked for "union of the visit blocks (what B1/B3 call on
-  sky)". With 10-min bridging that union *is* bracket 3, so the fourth bracket would be
-  invisible. It is drawn instead as the **sum of the visit intervals** (obs_start → obs_end, i.e.
-  shutter open plus readout, 4.54 h), packed against the morning −18° limit and dotted to say
-  "packed, not a time span". The 2.31 h difference to bracket 3 is slew, settle and filter-change
-  overhead between visits. Shutter-open time alone would be 4.75 h × (30/31) ≈ 4.4 h
-  (sum of `exp_time` inside the night, not drawn).
+  fault/idle blocks. Bracket 3 equals B3's bridged `on_sky_hours` (6.85 h), the definition behind
+  the 55 % on-sky figure of B1/B3, and is labelled "Excluding faults (= on sky, B1/B3)".
+- **Bracket 4, "Exposing + readout".** The 2026-10-26 handoff first asked for "union of the visit
+  blocks (what B1/B3 call on sky)"; with 10-min bridging that union *is* bracket 3, so the fourth
+  bracket would be invisible. Decision (deck side, 2026-10-26): draw the **sum of the visit
+  intervals** (obs_start → obs_end, 4.54 h), packed against the morning −18° limit and dotted to
+  say "packed, not a time span", and never call it "on sky". The 2.31 h gap to bracket 3 is the
+  visit-scale overhead (slew, settle, filter change) that the next slide is about. Shutter-open
+  only (sum of `exp_time`, ≈ 4.4 h) would be the OSF numerator; deferred until Lynne Jones's
+  waterfall arrives.
 - Thin −12° ticks are drawn either side of the −18° limits so the OSF denominator (11.8 h) can be
   compared with the 10.9 h bracket without a caveat.
 
