@@ -19,7 +19,11 @@ Policy numbers (Confluence 1802141753, "On-sky engineering time during LSST") ar
 ``[VERIFY]``: 8 h/week pre-authorised, 16 h in any 4 weeks, <= 52 engineering nights in
 the first six months (simulations assumed 26).
 
-Outputs ``../figures/engineering_hours_weekly_talk_<min>-<max>.png`` and ``_white``.
+Outputs ``../figures/engineering_hours_weekly_talk_<min>-<max>.png`` and ``_white``
+(figure B10) and ``engineering_hours_weekly_policy_<min>-<max>[_white].png`` (figure B10b:
+same bars, the policy drawn on the plot — 8 h line solid only from the LSST start,
+"LSST start · policy applies" marker, 16 h / 4 weeks and the 52-night envelope as text,
+engineering hours labelled on the three LSST weeks and the 9 Mar peak).
 """
 
 from __future__ import annotations
@@ -75,6 +79,7 @@ C = {
     "policy": rp.CATEGORICAL[3],
     "ink": rp.NEUTRALS["ink"],
     "ink2": rp.NEUTRALS["ink_secondary"],
+    "muted": rp.NEUTRALS["muted"],
     "grid": rp.NEUTRALS["grid"],
 }
 TALK_RC = {
@@ -240,11 +245,147 @@ def make_figure(w: pd.DataFrame):
         print("wrote", stem, "[_white].png")
 
 
+def make_policy_figure(w: pd.DataFrame):
+    """B10b: the B10 bars with the policy drawn on the figure (LSST@LATAM 2026-10-26)."""
+    weeks = pd.date_range(w.index.min(), w.index.max(), freq="7D")
+    w = w.reindex(weeks, fill_value=0.0)
+    x = weeks + pd.Timedelta(days=3.5)
+    cols = [f"on_sky_h_{c}" for c in CATS]
+    xl = pd.Timestamp(str(LSST_START))
+    x0 = x.min() - pd.Timedelta(days=5)
+    x1 = x.max() + pd.Timedelta(days=5)
+    with mpl.rc_context(TALK_RC):
+        fig, ax = plt.subplots()
+        bottom = np.zeros(len(w))
+        for c, col in zip(CATS, cols):
+            ax.bar(
+                x, w[col], bottom=bottom, width=6.2, color=C[c], label=c, linewidth=0
+            )
+            bottom += w[col].to_numpy()
+        ymax = bottom.max() * 1.18
+        ax.set_ylim(0, ymax)
+        ax.set_xlim(x0, x1)
+        # 8 h/week: reference (light grey dashed) before the LSST start, policy (solid) after
+        ax.plot(
+            [x0, xl],
+            [POLICY_WEEKLY_H] * 2,
+            color=C["muted"],
+            lw=1.8,
+            ls=(0, (6, 3)),
+            zorder=5,
+        )
+        ax.plot([xl, x1], [POLICY_WEEKLY_H] * 2, color=C["policy"], lw=3.0, zorder=5)
+        ax.annotate(
+            f"{POLICY_WEEKLY_H:.0f} h/week\npre-authorized (RSO)\n{POLICY_4WEEK_H:.0f} h per 4 weeks",
+            xy=(x1, POLICY_WEEKLY_H),
+            xytext=(6, 4),
+            textcoords="offset points",
+            ha="left",
+            va="top",
+            color=C["policy"],
+            fontsize=15,
+            linespacing=1.15,
+            annotation_clip=False,
+        )
+        # LSST start marker
+        ax.axvline(xl, color=C["ink2"], lw=1.2, ls="--")
+        ax.text(
+            xl - pd.Timedelta(days=2),
+            ymax * 0.98,
+            "LSST start\npolicy applies\n29 Jun 2026",
+            ha="right",
+            va="top",
+            color=C["ink2"],
+            fontsize=15,
+            linespacing=1.1,
+        )
+        # envelope box, top left
+        ax.text(
+            0.01,
+            0.98,
+            f"Envelope: {POLICY_NIGHTS[0]} full-night equivalents\nin the first 6 months of LSST\n"
+            f"(simulations assumed {POLICY_NIGHTS[1]})",
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=14,
+            color=C["ink"],
+            linespacing=1.15,
+            bbox=dict(facecolor="white", edgecolor=C["grid"], boxstyle="round,pad=0.4"),
+        )
+        # direct labels: engineering hours on the LSST weeks and on the 9 Mar peak
+        eng = w["on_sky_h_Engineering"]
+        tot = w[cols].sum(axis=1)
+        for i in w.index[w.index >= xl - pd.Timedelta(days=6)]:
+            ax.annotate(
+                f"{eng[i]:.1f} h",
+                (i + pd.Timedelta(days=3.5), tot[i]),
+                xytext=(0, 5),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                color=C["Engineering"],
+                fontsize=14,
+            )
+        i = eng.idxmax()
+        ax.annotate(
+            f"AOS stability tests\n{eng[i]:.0f} h engineering",
+            (i + pd.Timedelta(days=3.5), tot[i]),
+            xytext=(0, 8),
+            textcoords="offset points",
+            ha="center",
+            va="bottom",
+            color=C["Engineering"],
+            fontsize=15,
+            linespacing=1.1,
+        )
+        ax.set_ylabel("telescope hours on sky per week")
+        ax.xaxis.set_major_locator(mpl.dates.MonthLocator())
+        ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%b\n%Y"))
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.grid(axis="y", alpha=0.6)
+        ax.legend(
+            frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, -0.16)
+        )
+        ax.set_title(
+            f"On-sky time by visit category, week by week, {weeks.min():%-d %b %Y} – {(weeks.max() + pd.Timedelta(days=6)):%-d %b %Y}",
+            loc="left",
+        )
+        fig.text(
+            0.01,
+            0.01,
+            "ConsDB visit1 on-sky visits; hours = first-to-last visit of consecutive same-category visits "
+            f"(gaps under {BLOCK_GAP_S / 60:.0f} min bridged). Dashed grey: the 8 h line before LSST is a reference, "
+            'not a rule. Policy: Confluence 1802141753 v6 (2026-07-28), still titled "Proposed".',
+            ha="left",
+            va="bottom",
+            color=C["ink2"],
+            fontsize=12,
+            wrap=True,
+        )
+        fig.subplots_adjust(left=0.07, right=0.80, bottom=0.25, top=0.9)
+        stem = FIG / f"engineering_hours_weekly_policy_{TAG}"
+        fig.savefig(f"{stem}.png", dpi=200, transparent=True)
+        fig.savefig(f"{stem}_white.png", dpi=200, facecolor="white")
+        print("wrote", stem, "[_white].png")
+        print(
+            "labelled engineering hours:",
+            {
+                str(i.date()): round(eng[i], 1)
+                for i in w.index[w.index >= xl - pd.Timedelta(days=6)]
+            },
+            "peak",
+            str(i.date()),
+            round(eng.max(), 1),
+        )
+
+
 def main():
     v = categorize(pd.read_parquet(DATA))
     w = weekly_hours(v)
     w.round(2).to_csv(ROOT / "data" / f"weekly_hours_by_category_{TAG}.csv")
     make_figure(w)
+    make_policy_figure(w)
     tot = w[[f"on_sky_h_{c}" for c in CATS]].sum().round(1)
     print("on-sky hours by category:", tot.to_dict())
     print(

@@ -4,7 +4,8 @@ Schematic "efficiency waterfall" for the LSST@LATAM 2026 talk (slide 8, "Efficie
 several definitions"). Message: the efficiency numbers people quote differ mainly in what they
 exclude from the denominator.
 
-**Status:** illustrative placeholder (2026-10-23). Every number is an input copied from a named
+**Status:** superseded on 2026-10-26 by `night_efficiency_brackets/` (one real night, the same
+four denominators drawn as brackets; the schematic is kept for reference). Illustrative placeholder (2026-10-23). Every number is an input copied from a named
 source and tagged `[VERIFY]` in the talk notes; nothing is computed from telemetry. To be replaced
 by Lynne Jones's OSF-waterfall figure if it arrives. Ticket: none (talk material).
 
