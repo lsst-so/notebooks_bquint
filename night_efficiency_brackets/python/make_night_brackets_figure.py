@@ -11,13 +11,16 @@ Night: ``DAY_OBS`` (8 Jul 2026). Inputs are copies of the B1/B3/B10 pipeline out
 * ``observatory_state_<day_obs>.csv`` — Scheduler observatoryStatus periods (WEATHER bit etc.)
   from ``simonyi_time_loss/data/step0/obs_state_periods.parquet``.
 
-Definitions (same as simonyi_time_loss, gap_min = 10 min, −18° night):
+Definitions (same as simonyi_time_loss, gap_min = 10 min, −12° night):
 
+* the night is the ROSP-22 observable night, Sun altitude −12° → −12° (``NIGHT_SUN_ALT``;
+  rubin_nights ``day_obs_sunset_sunrise``), weather and downtime not excluded. Until
+  2026-10-26 the figure used −18°; the −18° limits are still drawn as thin ticks;
 * visit categories as in B10: Survey Programs (BLOCK-407/408/416/417/419/421), Focus and
   Alignment (BLOCK-T539), Engineering (everything else on sky);
 * gaps between consecutive visits (and the two night edges) longer than 10 min are loss;
   the part inside a WEATHER-bit window is weather, the rest is fault + idle;
-* brackets: whole night (−18° → −18°); minus weather; minus weather and fault/idle;
+* brackets: observable night (−12° → −12°); minus weather; minus weather and fault/idle;
   exposing + readout = sum of the visit intervals (obs_start → obs_end) inside the night.
   NB: "minus weather and fault/idle" equals B3's bridged ``on_sky_hours`` by construction and is
   labelled so; the fourth bracket is never called "on sky" (deck decision 2026-10-26).
@@ -42,6 +45,9 @@ sys.path.insert(
 import rubin_palette as rp  # noqa: E402
 
 DAY_OBS = 20260708
+NIGHT_SUN_ALT = (
+    -12
+)  # ROSP-22 observable night; the other limit (−18°) is drawn as thin ticks
 GAP_MIN_S = 600.0
 TAI_MINUS_UTC_S = 37.0
 SURVEY_PROGRAMS = (
@@ -55,6 +61,7 @@ SURVEY_PROGRAMS = (
 FOCUS_PROGRAMS = ("BLOCK-T539",)
 #: Night-report / FRACAS attribution of the fault + idle gaps, keyed by gap start (UTC, HH:MM).
 GAP_LABELS = {
+    "22:52": "camera recovery\n(FRACAS-404)",
     "00:20": "camera recovery\nafter REB trip (FRACAS-404)",
     "03:36": "HV bias trip\n(OBS-2010)",
 }
@@ -67,8 +74,13 @@ C = {
     "Survey Programs": rp.CATEGORICAL[0],
     "Focus and Alignment": rp.CATEGORICAL[2],
     "Engineering": rp.CATEGORICAL[1],
-    "weather": rp.CATEGORICAL[0],
+    # weather = neutral grey (sky shut), not a visit category: distinct from the Survey
+    # teal, and the only free slot that passes the palette checks against teal/orange/purple
+    # besides green, which B1/B3 use for "on sky". Its label uses ink2 for contrast.
+    "weather": rp.NEUTRALS["muted"],
+    "weather_text": rp.NEUTRALS["ink_secondary"],
     "fault": rp.CATEGORICAL[1],
+    "fault_text": rp.CATEGORICAL[1],
     "ink": rp.NEUTRALS["ink"],
     "ink2": rp.NEUTRALS["ink_secondary"],
     "muted": rp.NEUTRALS["muted"],
@@ -108,7 +120,10 @@ def load():
         {"start": start, "end": end, "category": cat, "program": prog}
     )
     nl = pd.read_csv(DATA / f"night_limits_{DAY_OBS}.csv").iloc[0]
+    a = -NIGHT_SUN_ALT
     night = {
+        "set": nl[f"sunset{a}_mjd"],  # the accounting night (NIGHT_SUN_ALT)
+        "rise": nl[f"sunrise{a}_mjd"],
         "set18": nl.sunset18_mjd,
         "rise18": nl.sunrise18_mjd,
         "set12": nl.sunset12_mjd,
@@ -154,7 +169,7 @@ def hours(segments):
 
 
 def gaps_and_brackets(visits, night, weather):
-    n0, n1 = night["set18"], night["rise18"]
+    n0, n1 = night["set"], night["rise"]
     s, e = visits.start.to_numpy(), visits.end.to_numpy()
     edges = [(n0, s[0])] + [(e[i], s[i + 1]) for i in range(len(s) - 1)] + [(e[-1], n1)]
     long_gaps = [clip(a, b, n0, n1) for a, b in edges if (b - a) * 86400.0 > GAP_MIN_S]
@@ -175,7 +190,7 @@ def gaps_and_brackets(visits, night, weather):
     on_sky = [clip(a, b, n0, n1) for a, b in zip(s, e)]
     on_sky = [(a, b) for a, b in on_sky if b > a]
     brackets = [
-        ("Whole night (OSF)", whole),
+        ("Observable night", whole),
         ("Survey time only", minus_weather),
         ("Excluding faults (= on sky)", minus_faults),
         ("Exposing + readout", on_sky),
@@ -187,8 +202,8 @@ def make_figure(visits, night, weather):
     long_gaps, weather_blocks, fault_blocks, brackets = gaps_and_brackets(
         visits, night, weather
     )
-    n0, n1 = night["set18"], night["rise18"]
-    t0 = night["set12"]  # axis origin: evening −12° twilight
+    n0, n1 = night["set"], night["rise"]
+    t0 = night["set"]  # axis origin: evening twilight of the accounting night
 
     def h(mjd):
         return (np.asarray(mjd) - t0) * 24.0
@@ -196,7 +211,7 @@ def make_figure(visits, night, weather):
     with mpl.rc_context(RC):
         fig, ax = plt.subplots()
         y0, y1 = 0.0, 1.0  # strip
-        # strip background (the −18° night)
+        # strip background (the accounting night)
         ax.add_patch(
             mpl.patches.Rectangle(
                 (h(n0), y0),
@@ -220,7 +235,7 @@ def make_figure(visits, night, weather):
                         h(b) - h(a),
                         y1 - y0,
                         facecolor=C[key],
-                        alpha=0.18,
+                        alpha=0.30 if key == "weather" else 0.18,
                         edgecolor="none",
                         zorder=1,
                     )
@@ -250,11 +265,11 @@ def make_figure(visits, night, weather):
                         ha="center",
                         va="center",
                         fontsize=14,
-                        color=C[key],
+                        color=C[f"{key}_text"],
                         linespacing=1.15,
                         zorder=3,
                     )
-                else:  # too narrow: label below the strip with a leader
+                else:  # too narrow: label above the strip with a leader
                     ax.annotate(
                         f"{name} {hrs:.1f} h"
                         + (f", {why.replace(chr(10), ' ')}" if why else ""),
@@ -263,13 +278,17 @@ def make_figure(visits, night, weather):
                         ha="left",
                         va="center",
                         fontsize=12,
-                        color=C[key],
+                        color=C[f"{key}_text"],
                         arrowprops=dict(
-                            arrowstyle="-", color=C[key], lw=0.8, shrinkA=0, shrinkB=0
+                            arrowstyle="-",
+                            color=C[f"{key}_text"],
+                            lw=0.8,
+                            shrinkA=0,
+                            shrinkB=0,
                         ),
                         zorder=3,
                     )
-        # visits (inside the −18° night solid; in twilight lighter)
+        # visits (inside the night solid; outside it lighter)
         for a, b, cat in zip(visits.start, visits.end, visits.category):
             inside = a < n1 and b > n0
             ax.add_patch(
@@ -283,12 +302,13 @@ def make_figure(visits, night, weather):
                     zorder=2,
                 )
             )
-        # twilight marks
+        # twilight marks: the accounting night thick, the other definition as thin ticks
+        thick, thin = ("12", "18") if NIGHT_SUN_ALT == -12 else ("18", "12")
         for mjd, lab, lw in (
-            (n0, "−18°", 1.4),
-            (n1, "−18°", 1.4),
-            (night["set12"], "−12°", 0.9),
-            (night["rise12"], "−12°", 0.9),
+            (night[f"set{thick}"], f"−{thick}°", 1.4),
+            (night[f"rise{thick}"], f"−{thick}°", 1.4),
+            (night[f"set{thin}"], f"−{thin}°", 0.9),
+            (night[f"rise{thin}"], f"−{thin}°", 0.9),
         ):
             ax.plot(
                 [h(mjd), h(mjd)],
@@ -312,9 +332,9 @@ def make_figure(visits, night, weather):
         for i, (name, segs) in enumerate(brackets):
             y = base + (len(brackets) - 1 - i) * step
             if i == len(brackets) - 1:
-                # hundreds of 31 s visits: draw their summed length packed from the first visit
-                # (dotted, to say "packed"), not 500 tiny brackets
-                b1 = segs[-1][1]  # packed against the morning −18° limit
+                # hundreds of 31 s visits: draw their summed length packed against the last
+                # visit (dotted, to say "packed"), not 500 tiny brackets
+                b1 = segs[-1][1]
                 segs_draw = [(b1 - hours(segs) / 24.0, b1)]
                 ls = (0, (1.5, 1.5))
             else:
@@ -362,7 +382,10 @@ def make_figure(visits, night, weather):
             style="italic",
         )
         # axes
-        ax.set_xlim(h(night["set12"]) - 2.3, h(night["rise12"]) + 1.2)
+        ax.set_xlim(
+            h(min(night["set12"], night["set18"])) - 2.3,
+            h(max(night["rise12"], night["rise18"])) + 1.2,
+        )
         ax.set_ylim(y0 - 0.95, base + (len(brackets) - 1) * step + 0.25)
         ax.set_yticks([])
         for sp in ("left", "right", "top"):
@@ -370,8 +393,8 @@ def make_figure(visits, night, weather):
         ax.spines["bottom"].set_position(("data", y0 - 0.32))
         ax.spines["bottom"].set_visible(False)
         # ticks at whole UTC hours
-        first_hour = np.ceil(night["set12"] * 24.0) / 24.0
-        last_hour = np.floor(night["rise12"] * 24.0) / 24.0
+        first_hour = np.ceil(min(night["set12"], night["set18"]) * 24.0) / 24.0
+        last_hour = np.floor(max(night["rise12"], night["rise18"]) * 24.0) / 24.0
         hour_mjd = np.arange(first_hour, last_hour + 1e-9, 1.0 / 24.0)
         ax.set_xticks(h(hour_mjd))
         ax.set_xticklabels(
@@ -414,9 +437,14 @@ def make_figure(visits, night, weather):
 
 
 def report(visits, night, weather, long_gaps, weather_blocks, fault_blocks, brackets):
-    n0, n1 = night["set18"], night["rise18"]
+    n0, n1 = night["set"], night["rise"]
     f = lambda m: mjd_to_ts(m).strftime("%Y-%m-%d %H:%M:%S")  # noqa: E731
-    print(f"night −18°: {f(n0)} → {f(n1)}  {(n1 - n0) * 24:.3f} h")
+    print(
+        f"accounting night ({NIGHT_SUN_ALT}°): {f(n0)} → {f(n1)}  {(n1 - n0) * 24:.3f} h"
+    )
+    print(
+        f"night −18°: {f(night['set18'])} → {f(night['rise18'])}  {(night['rise18'] - night['set18']) * 24:.3f} h"
+    )
     print(
         f"night −12°: {f(night['set12'])} → {f(night['rise12'])}  {(night['rise12'] - night['set12']) * 24:.3f} h"
     )
@@ -424,7 +452,7 @@ def report(visits, night, weather, long_gaps, weather_blocks, fault_blocks, brac
         "WEATHER bit windows:",
         [(f(a), f(b), round((b - a) * 24, 3)) for a, b in weather],
     )
-    print("gaps > 10 min inside the −18° night:")
+    print(f"gaps > 10 min inside the {NIGHT_SUN_ALT}° night:")
     for a, b in long_gaps:
         w = hours(
             [clip(a, b, wa, wb) for wa, wb in weather_blocks if min(b, wb) > max(a, wa)]
@@ -447,7 +475,7 @@ def report(visits, night, weather, long_gaps, weather_blocks, fault_blocks, brac
         print(f"bracket {name!r}: {hours(segs):.3f} h, segments", shown)
     inside = visits[(visits.start < n1) & (visits.end > n0)]
     print(
-        "visits per category inside −18° night:",
+        f"visits per category inside the {NIGHT_SUN_ALT}° night:",
         inside.category.value_counts().to_dict(),
     )
     print(
@@ -457,7 +485,8 @@ def report(visits, night, weather, long_gaps, weather_blocks, fault_blocks, brac
         visits.program.value_counts().to_dict(),
     )
     print(
-        f"visits after morning −18°: {(visits.start >= n1).sum()}, covering {hours([clip(a, b, n1, 1e9) for a, b in zip(visits.start, visits.end) if b > n1]):.3f} h"
+        f"visits after the morning limit: {(visits.start >= n1).sum()}, covering {hours([clip(a, b, n1, 1e9) for a, b in zip(visits.start, visits.end) if b > n1]):.3f} h; "
+        f"last visit end → morning limit: {(n1 - visits.end.max()) * 1440:.1f} min"
     )
     g = (visits.start.to_numpy()[1:] - visits.end.to_numpy()[:-1]) * 86400.0
     print(

@@ -4,8 +4,8 @@ On-sky hours per week by visit category (survey, focus and alignment, engineerin
 Jul 2026, against the LSST on-sky engineering-time policy. Built for the LSST@LATAM 2026 talk
 (slide 11, "Engineering time is now budgeted, not improvised").
 
-**Status:** figure B10 done (2026-10-23), policy variant B10b done (2026-10-26); policy numbers
-still `[VERIFY]` against the Confluence page. Ticket: none (talk material).
+**Status:** figure B10 done (2026-10-23), policy variant B10b done (2026-10-26; label positions
+adjusted the same day); policy numbers still `[VERIFY]` against the Confluence page. Ticket: none (talk material).
 
 ## Contents
 
@@ -52,7 +52,10 @@ Source: Rubin Confluence page 1802141753, "On-sky engineering time during LSST",
 - Corner box, top left: "Envelope: 52 full-night equivalents in the first 6 months of LSST
   (simulations assumed 26)".
 - Direct labels: engineering hours on the three LSST weeks (0.8, 1.6, 2.2 h) and on the
-  9 Mar 2026 peak (44 h, AOS stability tests).
+  9 Mar 2026 peak (44 h, AOS stability tests). The 0.8 h label is left-aligned just right of the
+  LSST-start line so it sits on the week-of-29-Jun bar instead of across the marker. The AOS
+  label sits above the neighbouring (taller) bars at 87 % of the y range, with a short vertical
+  leader down to the week-of-9-Mar bar, so it crosses neither the 2 Mar nor the 16 Mar bar.
 - Categories and legend unchanged from B10.
 
 Caveat (applies to both figures): the policy counts *dedicated* engineering between the −12°

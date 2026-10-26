@@ -1,10 +1,12 @@
 """Per-night table: night hours, weather hours, on-sky hours, non-weather loss.
 
-Arithmetic (handoff §1b), all on the −18° → −18° night in UTC MJD:
+Arithmetic (handoff §1b), all on the accounting night in UTC MJD. Since ROSP-22
+(Done 2026-10-19; applied here 2026-10-26) that night is −12° → −12° (``NIGHT_SUN_ALT``);
+the −18° night is still carried as ``night_hours_18`` for reference.
 
     weather windows   W  = WEATHER-bit windows (from 2026-02-25) or EFD-criteria windows (before)
     on-sky windows    S  = visit coverage after bridging gaps ≤ gap_min
-    night             N  = [sunset18, sunrise18]
+    night             N  = [sunset12, sunrise12]
 
     weather_hours         = |W ∩ N|
     on_sky_hours          = |S ∩ N|
@@ -21,7 +23,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from . import GAP_MIN_MINUTES
+from . import GAP_MIN_MINUTES, NIGHT_END_COL, NIGHT_START_COL
 
 __all__ = ["union", "intersect_hours", "per_night_table", "label_night"]
 
@@ -62,7 +64,7 @@ def label_night(row: pd.Series) -> str:
     if row["on_sky_hours"] < 0.5:
         return "CLOSED"
     loss = row["weather_hours"] + row["nonweather_loss_hours"]
-    if loss < 0.10 * row["night_hours_18"]:
+    if loss < 0.10 * row["night_hours"]:
         return "OPEN"
     return (
         "WEATHER-DOMINATED"
@@ -78,11 +80,15 @@ def per_night_table(
     weather_source: dict[int, str],
     gap_min: float = GAP_MIN_MINUTES,
 ) -> pd.DataFrame:
-    """Build the deliverable table. ``coverage`` is the dict from ``visits.coverage_table``."""
+    """Build the deliverable table. ``coverage`` is the dict from ``visits.coverage_table``.
+
+    ``night_hours`` is the accounting night (``NIGHT_SUN_ALT``); ``night_hours_18`` and
+    ``night_hours_12`` are both kept so either definition can be quoted.
+    """
     rows = []
     for r in limits.itertuples(index=False):
         d = int(r.day_obs)
-        N = np.array([[r.sunset18_mjd, r.sunrise18_mjd]])
+        N = np.array([[getattr(r, NIGHT_START_COL), getattr(r, NIGHT_END_COL)]])
         c = coverage[d]
         S = c.on_sky_windows
         W = weather_windows.get(d, np.empty((0, 2)))
@@ -95,7 +101,8 @@ def per_night_table(
         rows.append(
             dict(
                 day_obs=d,
-                night_hours_18=round(night_h, 3),
+                night_hours=round(night_h, 3),  # the accounting night (NIGHT_SUN_ALT)
+                night_hours_18=round(float(r.night_hours_18), 3),
                 night_hours_12=round(float(r.night_hours_12), 3),
                 weather_hours=round(w_h, 3),
                 weather_source=weather_source.get(d, ""),

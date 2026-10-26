@@ -3,7 +3,7 @@
 Two figures, each saved transparent and as a ``_white`` variant (16:9, large type):
 
 * ``time_loss_nightly_talk_<tag>.png`` — hours per night on sky / weather / fault + idle,
-  the −18° night-length curve, the WEATHER-bit date, and three long-outage annotations
+  the −12° night-length curve (ROSP-22 observable night, ``NIGHT_SUN_ALT``), the WEATHER-bit date, and three long-outage annotations
   read from ``data/downtime_annotations.csv`` (copied from ``nightly_survey_speed/``;
   no imports across investigation folders).
 * ``time_loss_monthly_talk_<tag>.png`` — monthly fractions; slice labels are dropped
@@ -24,7 +24,12 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from time_loss import DAY_OBS_MAX, DAY_OBS_MIN, DAY_OBS_WEATHER_BIT_START  # noqa: E402
+from time_loss import (  # noqa: E402
+    DAY_OBS_MAX,
+    DAY_OBS_MIN,
+    DAY_OBS_WEATHER_BIT_START,
+    NIGHT_SUN_ALT,
+)
 from time_loss.downtime import load_downtime, select_spans  # noqa: E402
 from time_loss.style import COLORS  # noqa: E402
 
@@ -32,6 +37,7 @@ PROC = ROOT / "data" / "processed"
 FIG = ROOT / "figures"
 FIG.mkdir(exist_ok=True)
 TAG = f"{DAY_OBS_MIN}-{DAY_OBS_MAX}"
+NIGHT = f"{NIGHT_SUN_ALT}°".replace("-", "−")  # "−12°"
 
 #: The three long faults the talk points at (slide 9). Keys are the CSV ``start_date``.
 LATAM_OUTAGES = {
@@ -137,7 +143,7 @@ def nightly(t: pd.DataFrame, tot: pd.Series):
             )
             bottom += t[col].to_numpy()
         ax.plot(
-            t.date, t.night_hours_18, color=COLORS["ink"], lw=1.0, label="night (−18°)"
+            t.date, t.night_hours, color=COLORS["ink"], lw=1.0, label=f"night ({NIGHT})"
         )
         xb = pd.Timestamp(str(DAY_OBS_WEATHER_BIT_START))
         ax.axvline(xb, ymax=11.8 / ymax, color=COLORS["ink_secondary"], lw=1.2, ls="--")
@@ -161,11 +167,11 @@ def nightly(t: pd.DataFrame, tot: pd.Series):
         )
         ax.spines[["top", "right"]].set_visible(False)
         ax.grid(axis="y", alpha=0.6)
-        share = {lab: t[col].sum() / tot.night_hours_18 for col, lab, _ in CAT}
+        share = {lab: t[col].sum() / tot.night_hours for col, lab, _ in CAT}
         ax.set_title(
             f"Simonyi night time, {t.date.min():%-d %b %Y} – {t.date.max():%-d %b %Y}\n"
             + ", ".join(f"{v:.0%} {k}" for k, v in share.items())
-            + f" (of {tot.night_hours_18:.0f} h between −18° twilights)",
+            + f" (of {tot.night_hours:.0f} h between {NIGHT} twilights)",
             loc="left",
         )
         fig.tight_layout()
@@ -175,7 +181,7 @@ def nightly(t: pd.DataFrame, tot: pd.Series):
 
 def monthly(t: pd.DataFrame, min_label: float = 0.10):
     mo = t.groupby("month")[
-        ["night_hours_18", "on_sky_hours", "weather_hours", "nonweather_loss_hours"]
+        ["night_hours", "on_sky_hours", "weather_hours", "nonweather_loss_hours"]
     ].sum()
     mo_n = t.groupby("month").size()
     with mpl.rc_context(TALK_RC):
@@ -183,7 +189,7 @@ def monthly(t: pd.DataFrame, min_label: float = 0.10):
         x = np.arange(len(mo))
         bottom = np.zeros(len(mo))
         for col, lab, c in CAT:
-            frac = (mo[col] / mo.night_hours_18).to_numpy()
+            frac = (mo[col] / mo.night_hours).to_numpy()
             ax.bar(x, frac, bottom=bottom, color=c, label=lab, width=0.8, linewidth=0)
             for xi, f, b in zip(x, frac, bottom):
                 if f >= min_label:
@@ -206,7 +212,7 @@ def monthly(t: pd.DataFrame, min_label: float = 0.10):
             ]
         )
         ax.set_ylim(0, 1)
-        ax.set_ylabel("fraction of −18° night")
+        ax.set_ylabel(f"fraction of {NIGHT} night")
         ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter(1.0))
         ax.legend(frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, -0.2))
         ax.spines[["top", "right"]].set_visible(False)
@@ -219,15 +225,11 @@ def monthly(t: pd.DataFrame, min_label: float = 0.10):
 def main():
     t = load_per_night()
     tot = t[
-        ["night_hours_18", "on_sky_hours", "weather_hours", "nonweather_loss_hours"]
+        ["night_hours", "on_sky_hours", "weather_hours", "nonweather_loss_hours"]
     ].sum()
     print(tot.round(1).to_dict())
     print(
-        {
-            k: f"{v / tot.night_hours_18:.1%}"
-            for k, v in tot.items()
-            if k != "night_hours_18"
-        }
+        {k: f"{v / tot.night_hours:.1%}" for k, v in tot.items() if k != "night_hours"}
     )
     _, spans = nightly(t, tot)
     print(spans[["start_date", "end_date", "short", "fracas"]].to_string(index=False))

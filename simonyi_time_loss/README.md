@@ -1,8 +1,8 @@
 # Simonyi time loss: weather vs. non-weather, Oct 2025 – Jul 2026
 
 Technical note for the `simonyi_time_loss` folder of `lsst-so/notebooks_bquint`.
-Status: **per-night table and first figures done (2026-10-18)**; cross-check against the human tables done;
-Q2 (per-ticket fault accounting) deferred. Nothing committed yet.
+Status: **per-night table and figures done (2026-10-18); re-run on the −12° observable night (2026-10-26, ROSP-22)**;
+cross-check against the human tables done; Q2 (per-ticket fault accounting) deferred.
 Prepared for the RASAB 2026 talk (Natal, 25 Oct 2026), LSST@LATAM (São Paulo, Nov 2026) and a
 later paper figure.
 
@@ -14,13 +14,19 @@ Early Operations (`day_obs` 20251025) and the last night with the dome open befo
 storm (20260714). The specification is `handoff_usdf_time_loss_analysis.md` (received 2026-10-18);
 this README records what was actually done and the numbers it rests on.
 
+**The night (ROSP-22, Done 2026-10-19).** The observable night is Sun altitude **−12° → −12°**, from
+`rubin_nights.dayobs_utils.day_obs_sunset_sunrise`; weather and downtime are not excluded from it. All
+accounting below uses this night (`NIGHT_SUN_ALT = -12` in `time_loss/__init__.py`, applied 2026-10-26).
+Until then the accounting used −18° → −18°; those values are kept as a secondary column in §3b for
+comparison and are no longer on the figures.
+
 The deliverable is a per-night table with three measured quantities and one derived label:
 
 | Column | Definition | Source |
 |---|---|---|
-| `night_hours_18`, `night_hours_12` | hours between sun altitude −18°/−18° and −12°/−12° | ephemeris (`rubin_nights.dayobs_utils.day_obs_sunset_sunrise`) |
+| `night_hours` (= `night_hours_12`), `night_hours_18` | hours between sun altitude −12°/−12° (the accounting night) and −18°/−18° (reference) | ephemeris (`rubin_nights.dayobs_utils.day_obs_sunset_sunrise`) |
 | `weather_hours` (+ windows) | time inside the night when the observatory was closed because of weather | Observatory Status WEATHER bit (from 2026-02-25); EFD weather telemetry vs. the operating criteria before that and as a cross-check |
-| `nonweather_loss_hours` | `night_hours_18 − weather_hours − on_sky_hours`, where `on_sky_hours` is time covered by ConsDB `visit1` visits with gaps > `gap_min` counted as loss | ConsDB |
+| `nonweather_loss_hours` | `night_hours − weather_hours − on_sky_hours`, where `on_sky_hours` is time covered by ConsDB `visit1` visits with gaps > `gap_min` counted as loss | ConsDB |
 | `label` | CLOSED / WEATHER-DOMINATED / FAULT-DOMINATED / OPEN (presentation rule, handoff §1b) | derived |
 
 The two human-judged tables (morning tailgate notes, night logs) are cross-checks, not inputs.
@@ -33,9 +39,9 @@ simonyi_time_loss/
 ├── ai_notes.md                            # session log, decisions, open items (handoff for the next session)
 ├── handoff_usdf_time_loss_analysis.md     # the specification, as received 2026-10-18
 ├── time_loss/                             # shared package (notebooks run from notebooks/ with sys.path.insert(0, ".."))
-│   ├── __init__.py                        # DAY_OBS_MIN/MAX, GAP_MIN_MINUTES = 10, DAY_OBS_WEATHER_BIT_START = 20260225
+│   ├── __init__.py                        # DAY_OBS_MIN/MAX, NIGHT_SUN_ALT = -12, GAP_MIN_MINUTES = 10, DAY_OBS_WEATHER_BIT_START = 20260225
 │   ├── access.py                          # ConsDB / EFD / narrative-log clients (token or Postgres fallback)
-│   ├── nights.py                          # −18° and −12° limits per day_obs
+│   ├── nights.py                          # −12° and −18° limits per day_obs
 │   ├── weather.py                         # WEATHER-bit windows; EFD CLOSE criteria by validity window; closed_unexplained
 │   ├── visits.py                          # ConsDB on-sky coverage, gap bridging, loss windows
 │   ├── accounting.py                      # per-night arithmetic, label rule, pre-bit cloud reassignment
@@ -68,7 +74,8 @@ Range: 263 calendar nights, `day_obs` 20251025 → 20260714.
 | total, 263 nights | 2319.6 h | 2590.2 h |
 
 Confirmed by reading the source: `rubin_nights.dayobs_utils.estimated_baseline_visit_range`
-(Lynne's expected-visits model) uses `sun_alt=-12` (handoff §8 item 4).
+(Lynne's expected-visits model) uses `sun_alt=-12` (handoff §8 item 4). ROSP-22 (Done 2026-10-19)
+made −12° → −12° the observable-night definition; this accounting follows it from 2026-10-26.
 
 ### 3.2 ConsDB `cdb_lsstcam.visit1` (`consdb_visit1_coverage.csv`, `calendar_coverage.csv`, `zero_visit_nights.csv`)
 
@@ -179,36 +186,45 @@ Both parsed tables reproduce the cross-check file exactly: all 122 listed rows m
 and the recomputed status agreement is 171 of 263 nights, as the cross-check states. The parser keeps the first file's row
 when a night appears twice. The per-night evidence text and ticket lists are carried into the CSVs for notebook 05.
 
-## 3b. Results (2026-10-18, gap_min 10 min, −18° night)
+## 3b. Results (2026-10-26, gap_min 10 min, −12° night; −18° values for reference)
 
 Per night in `data/processed/per_night.csv`; monthly in `per_month.csv`; figures in `figures/`.
 The talk versions (`*_talk_*.png`, transparent, and `*_talk_*_white.png`) are regenerated by
-`python python/make_latam_figures.py` (2026-10-23, LSST@LATAM): the nightly figure carries the three
-long outages the talk points at (camera vacuum leak 30 Jan – 15 Feb, TMA encoder 2 – 10 May, camera
-cryo 20 – 24 Jun; spans from `data/downtime_annotations.csv`) and dates the WEATHER-bit line; the
-monthly figure drops slice labels below 10 %. Notebook 06 still produces the `_paper` versions.
+`python python/make_latam_figures.py` (2026-10-23, LSST@LATAM; re-run 2026-10-26 on the −12° night):
+the nightly figure carries the three long outages the talk points at (camera vacuum leak 30 Jan – 15 Feb,
+TMA encoder 2 – 10 May, camera cryo 20 – 24 Jun; spans from `data/downtime_annotations.csv`) and dates the
+WEATHER-bit line; the monthly figure drops slice labels below 10 %. Notebook 06 still produces the
+`_paper` versions. The figures show the −12° numbers only.
 
-| | hours | share of night |
-|---|---|---|
-| night (−18° → −18°), 263 nights | 2319.6 | |
-| on sky | 1267.6 | 55 % |
-| weather | 344.8 | 15 % |
-| non-weather loss (fault + idle) | 729.4 | 31 % |
+| | −12° → −12° (ROSP-22, on the figures) | | −18° → −18° (until 2026-10-26, reference) | |
+|---|---|---|---|---|
+| | hours | share | hours | share |
+| night, 263 nights | **2590.2** | | 2319.6 | |
+| on sky | **1368.2** | **53 %** | 1267.6 | 55 % |
+| weather | **389.2** | **15 %** | 344.8 | 15 % |
+| non-weather loss (fault + idle) | **859.1** | **33 %** | 729.4 | 31 % |
 
-Weather source by period: WEATHER bit on 140 nights from 2026-02-25 (203.2 h); EFD criteria on 123 nights before
-(65.2 h from wind / dew-point spread / Dynalene rule) plus 46.7 h of **night-report cloud** on 18 nights
-(Bruno's option 2: `closed_unexplained_hours` moved to weather only where Source 2 gives P(weather) ≥ 0.5; flagged in
-`weather_source` and `cloud_reassigned_hours`). Weather∩on-sky overlap 22.2 h is reported, not double-subtracted.
-Labels (presentation rule): CLOSED 82, FAULT-DOMINATED 84, OPEN 70, WEATHER-DOMINATED 27.
+The 270.6 h added by moving from −18° to −12° are twilight; 100.6 h of them were on sky (the
+survey already observes in nautical twilight), 44.4 h weather (4.1 h of it overlapping on-sky time) and
+129.7 h fault + idle (the dome is usually still shut, or a fault not yet cleared, in the first half-hour).
 
-gap_min sensitivity: on-sky 1093 / 1212 / 1268 h at 2 / 5 / 10 min; non-weather loss moves by the same amounts.
+Weather source by period (−12° night): WEATHER bit on 140 nights from 2026-02-25 (219.7 h); EFD criteria on 123
+nights before (113.8 h, almost all Dynalene rule: 109.0 h Dynalene, 4.8 h dew-point spread, 0 h wind) plus 55.7 h of
+**night-report cloud** on 19 nights (Bruno's option 2: `closed_unexplained_hours` moved to weather only where Source 2
+gives P(weather) ≥ 0.5; flagged in `weather_source` and `cloud_reassigned_hours`). Weather∩on-sky overlap 26.3 h is
+reported, not double-subtracted. Labels (presentation rule): CLOSED 82, FAULT-DOMINATED 107, OPEN 46,
+WEATHER-DOMINATED 28 (−18°: 82 / 84 / 70 / 27; the longer night pushes 24 OPEN nights over the 10 % loss threshold).
+(−18° values: bit 203.2 h, EFD criteria 65.2 h, cloud 46.7 h on 18 nights, overlap 22.2 h.)
+
+gap_min sensitivity: on-sky 1180 / 1306 / 1368 h at 2 / 5 / 10 min (−18°: 1093 / 1212 / 1268 h); non-weather loss
+moves by the same amounts.
 
 Cross-check (notebook 05): code CLOSED agrees with Source 2 CLOSED on 75/75 nights and never contradicts an OPEN.
-Confidence per night: HIGH 184, MEDIUM 64, LOW 15. The LOW nights are mostly Dec–Jan nights where the Dynalene rule
-fires but observers judged no weather loss (12-18, 12-20, 12-29, 01-18, 01-19), and nights where the WEATHER bit was not
-set for a short cloud closure the report mentions (03-16, 04-12, 06-06, 06-13). Against the narrative log's declared
-hours on 160 nights: code weather 176 h vs declared 88 h; code non-weather 327 h vs declared fault 350 h (excluding the
-whole-night camera-shutdown tallies), correlation 0.6 for both.
+Confidence per night: HIGH 192, MEDIUM 61, LOW 10 (−18°: 184 / 64 / 15). The LOW nights are mostly Dec–Jan nights where
+the Dynalene rule fires but observers judged no weather loss (12-16, 12-18, 12-20, 12-29, 01-18, 01-19), plus 12-24,
+03-17, 04-30 and 06-06. Against the narrative log's declared hours on 160 nights: code weather 204 h vs declared 88 h;
+code non-weather 394 h vs declared fault 350 h (excluding the whole-night camera-shutdown tallies), correlation 0.6
+for both.
 
 Known limitations: cloud is invisible to the EFD criteria (hence the night-report step before 2026-02-25); the WEATHER
 bit was not set on some short cloud interruptions; the Dynalene rule is applied mechanically on 2026-01-19 although
@@ -219,14 +235,16 @@ staffing (Q2 splits it per ticket).
 
 Every number in §3b is produced by `time_loss/` and the notebooks in order 00 → 06. This section states the
 definitions in words so that the method can be checked without reading code. All times are UTC; nights are
-bucketed by the integer `day_obs` (rolls over at 12:00 UTC), never by UTC calendar date.
+bucketed by the integer `day_obs` (rolls over at 12:00 UTC), never by UTC calendar date. "The night" below is the
+−12° → −12° observable night (ROSP-22); every clipping step uses its limits (`NIGHT_START_COL` / `NIGHT_END_COL`).
 
 ### Night length (`nights.py`, notebook 01)
 
-For each `day_obs`, the Sun's −18° evening crossing (astronomical twilight) and the next −18° morning crossing
-are computed with `rubin_nights.dayobs_utils.day_obs_sunset_sunrise(day_obs, sun_alt=-18)`, which wraps
-`astroplan.Observer` at the Rubin site. `night_hours_18` is their difference. `night_hours_12` is the same with
-−12° (nautical twilight) and is only reported, not used in the accounting. No data enters this step.
+For each `day_obs`, the Sun's −12° evening crossing (nautical twilight) and the next −12° morning crossing
+are computed with `rubin_nights.dayobs_utils.day_obs_sunset_sunrise(day_obs, sun_alt=-12)`, which wraps
+`astroplan.Observer` at the Rubin site. `night_hours` (= `night_hours_12`) is their difference and is the
+accounting night. `night_hours_18` is the same with −18° (astronomical twilight) and is only reported. No
+data enters this step.
 
 ### On-sky time (`visits.py`, notebook 03)
 
@@ -238,10 +256,10 @@ are computed with `rubin_nights.dayobs_utils.day_obs_sunset_sunrise(day_obs, sun
 3. Sort the night's visits by start time and take the union of their `[start, end]` intervals, **bridging** any
    gap between consecutive visits that is ≤ `gap_min` (10 min). A gap that short is readout, slew, filter change
    or settling: normal overhead, counted as observing.
-4. Clip the result to the −18° night. `on_sky_hours` is the total length of these windows.
+4. Clip the result to the −12° night. `on_sky_hours` is the total length of these windows.
 5. Every stretch of the night not covered by an on-sky window and longer than `gap_min` is a **loss window**.
-   This includes the two edge gaps: from the −18° evening limit to the first visit, and from the last visit to
-   the −18° morning limit. The three `gap_min` values 2 / 5 / 10 min are all computed and saved; the accounting
+   This includes the two edge gaps: from the −12° evening limit to the first visit, and from the last visit to
+   the −12° morning limit. The three `gap_min` values 2 / 5 / 10 min are all computed and saved; the accounting
    uses 10 (Bruno, 2026-10-18).
 
 ### Weather time (`weather.py`, notebook 02)
@@ -250,12 +268,12 @@ Two independent sources; the first that exists on a night is the primary.
 
 **A. Observatory Status WEATHER bit (from 2026-02-25).** `rubin_nights.observatory_status.get_observatory_state_times`
 turns `lsst.sal.Scheduler.logevent_observatoryStatus` messages into start/end periods per state. The WEATHER
-periods of the night are clipped to the −18° night; their total length is `bit_weather_hours`. The bit is set by
+periods of the night are clipped to the −12° night; their total length is `bit_weather_hours`. The bit is set by
 the observers through the Scheduler CSC and so already encodes their judgement that the closure was weather.
 
 **B. EFD operating criteria (whole range; primary before 2026-02-25).** `python/pull_efd_weather_1min.py` pulls
-15 channels at 1-minute cadence for each night from 2 h before the −18° evening limit to 1 h after the morning
-limit. The CLOSE rules from the Confluence "Weather Constraints" page (v29) and from
+15 channels at 1-minute cadence for each night from 2 h before the −18° evening limit to 1 h after the −18°
+morning limit (which covers the −12° night with margin on every night). The CLOSE rules from the Confluence "Weather Constraints" page (v29) and from
 `data/raw/handoff_dynalene_condensation_criteria_2025-12_2026-01.md` are evaluated per minute:
 
 | rule | channel(s) | CLOSE when | valid |
@@ -265,7 +283,7 @@ limit. The CLOSE rules from the Confluence "Weather Constraints" page (v29) and 
 | Dynalene condensation | `MTMount.dynaleneCooling.dynaleneTemperatureAzimuth0001` − outside dew point (fallback `MTCamera.utiltrunk_UT.coolPipeSplyTemp − 1.5`) | ≤ +2 °C (2025-12-15 → 12-29); < +2 °C (12-30 → 2026-01-18); ≤ +1 °C (01-19); < −2 °C (01-20 →); all for 20 consecutive minutes; no rule before 2025-12-15 | by window |
 
 A minute is CLOSE if any rule fires. Consecutive CLOSE minutes form windows; windows closer than 10 min are merged;
-the windows are clipped to the −18° night and summed into `efd_weather_hours` (per-rule hours are kept too).
+the windows are clipped to the −12° night and summed into `efd_weather_hours` (per-rule hours are kept too).
 
 The Dynalene sensor choice: the 2025-12-21 night report quotes "Dynalene at Az −0.6 °C" at 03:01 UTC, and
 `dynaleneTemperatureAzimuth0001` reads −0.62 at that minute (Pier0102 +1.2, Azimuth0002 +1.3). Azimuth0001 is also
@@ -283,12 +301,12 @@ summed into `closed_unexplained_hours`.
 (Source 2, `data/step0/nightlog_source2_per_night.csv`) gives P(weather) ≥ 0.5, `closed_unexplained_hours` is moved
 from `nonweather_loss_hours` into `weather_hours` (capped by the available loss), recorded in
 `cloud_reassigned_hours`, and `weather_source` becomes "EFD criteria + night report (cloud)". This is Bruno's
-option 2 (2026-10-18): the night reports are used exactly where telemetry is blind and nowhere else. 18 nights,
-46.7 h.
+option 2 (2026-10-18): the night reports are used exactly where telemetry is blind and nowhere else. 19 nights,
+55.7 h on the −12° night (18 nights, 46.7 h on the −18° night).
 
 ### Per-night arithmetic (`accounting.py`, notebook 04)
 
-With N = the −18° night, W = the weather windows of the primary source, S = the on-sky windows:
+With N = the −12° night, W = the weather windows of the primary source, S = the on-sky windows:
 
 ```
 weather_hours           = |W ∩ N|
@@ -299,7 +317,7 @@ nonweather_loss_hours   = |N| − |W ∪ S|    fault + idle + planned off-sky + 
 
 Weather and non-weather loss cannot overlap because the loss is what remains after removing the union of both
 window sets from the night. The three categories plus the overlap therefore sum to the night:
-`on_sky + weather − weather_and_onsky + nonweather_loss = night_hours_18`. The cloud step then moves hours between
+`on_sky + weather − weather_and_onsky + nonweather_loss = night_hours`. The cloud step then moves hours between
 `weather_hours` and `nonweather_loss_hours` without changing the sum.
 
 `label` is the handoff's presentation rule: CLOSED if `on_sky_hours` < 0.5 h; else OPEN if total loss is below

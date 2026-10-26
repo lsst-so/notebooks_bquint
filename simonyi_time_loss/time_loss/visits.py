@@ -9,8 +9,8 @@ Definitions (handoff §1b):
   ``[obs_start, obs_end]`` after *bridging* every gap shorter than ``gap_min``
   (a gap that short is readout, slew, filter change: normal overhead).
 * Gaps longer than ``gap_min`` are **loss intervals**. The two edge gaps (from
-  the −18° evening limit to the first visit, and from the last visit to the −18°
-  morning limit) are treated the same way. Loss intervals are returned as
+  the evening night limit to the first visit, and from the last visit to the
+  morning limit; −12° since ROSP-22, see ``NIGHT_SUN_ALT``) are treated the same way. Loss intervals are returned as
   windows so that ``accounting.py`` can subtract the weather windows before
   summing them into ``nonweather_loss_hours``.
 
@@ -26,7 +26,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from . import DAY_OBS_MAX, DAY_OBS_MIN, GAP_MIN_MINUTES
+from . import DAY_OBS_MAX, DAY_OBS_MIN, GAP_MIN_MINUTES, NIGHT_END_COL, NIGHT_START_COL
 
 __all__ = [
     "fetch_visits",
@@ -154,8 +154,8 @@ def coverage_table(
     visits: pd.DataFrame,
     limits: pd.DataFrame,
     gap_min: float = GAP_MIN_MINUTES,
-    start_col: str = "sunset18_mjd",
-    end_col: str = "sunrise18_mjd",
+    start_col: str = NIGHT_START_COL,
+    end_col: str = NIGHT_END_COL,
 ) -> tuple[pd.DataFrame, dict[int, NightCoverage]]:
     """One row per night in ``limits`` (from ``nights.night_limits``).
 

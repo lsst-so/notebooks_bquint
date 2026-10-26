@@ -317,27 +317,35 @@ def make_policy_figure(w: pd.DataFrame):
         eng = w["on_sky_h_Engineering"]
         tot = w[cols].sum(axis=1)
         for i in w.index[w.index >= xl - pd.Timedelta(days=6)]:
+            first_lsst_week = i == xl
             ax.annotate(
                 f"{eng[i]:.1f} h",
                 (i + pd.Timedelta(days=3.5), tot[i]),
-                xytext=(0, 5),
+                # the week of 29 Jun starts at the LSST line: left-align its label just
+                # right of the line so the text sits on that bar, not across the marker
+                xytext=(5 if first_lsst_week else 0, 5),
                 textcoords="offset points",
-                ha="center",
+                ha="left" if first_lsst_week else "center",
                 va="bottom",
                 color=C["Engineering"],
                 fontsize=14,
             )
         i = eng.idxmax()
+        # the 9 Mar peak label goes above the neighbouring bars (2 Mar, 16 Mar, 6 Apr are
+        # taller than the 9 Mar total), with a short vertical leader down to the bar
         ax.annotate(
             f"AOS stability tests\n{eng[i]:.0f} h engineering",
-            (i + pd.Timedelta(days=3.5), tot[i]),
-            xytext=(0, 8),
-            textcoords="offset points",
+            (i + pd.Timedelta(days=3.5), tot[i] + 0.8),
+            xytext=(i + pd.Timedelta(days=3.5), ymax * 0.875),
+            textcoords="data",
             ha="center",
             va="bottom",
             color=C["Engineering"],
             fontsize=15,
             linespacing=1.1,
+            arrowprops=dict(
+                arrowstyle="-", color=C["Engineering"], lw=1.0, shrinkA=2, shrinkB=0
+            ),
         )
         ax.set_ylabel("telescope hours on sky per week")
         ax.xaxis.set_major_locator(mpl.dates.MonthLocator())

@@ -36,7 +36,7 @@ dynalene   ``dyn - dp_out`` against a threshold that depends on the date:
            ``sply - 1.5`` where Azimuth0001 is missing.
 
 Runs of closed minutes separated by less than ``merge_min`` are merged into one
-window. Windows are clipped to the −18° night.
+window. Windows are clipped to the accounting night (−12°, ``NIGHT_SUN_ALT``).
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from . import DAY_OBS_WEATHER_BIT_START
+from . import DAY_OBS_WEATHER_BIT_START, NIGHT_END_COL, NIGHT_START_COL
 
 __all__ = [
     "DYNALENE_RULES",
@@ -223,8 +223,8 @@ def efd_weather_night(
 def efd_weather_table(
     cache: pd.DataFrame,
     limits: pd.DataFrame,
-    start_col="sunset18_mjd",
-    end_col="sunrise18_mjd",
+    start_col=NIGHT_START_COL,
+    end_col=NIGHT_END_COL,
 ) -> tuple[pd.DataFrame, dict[int, NightWeather]]:
     rows, res = [], {}
     by_night = {d: g.drop(columns="day_obs") for d, g in cache.groupby("day_obs")}
@@ -265,10 +265,10 @@ def efd_weather_table(
 def weather_bit_table(
     periods: pd.DataFrame,
     limits: pd.DataFrame,
-    start_col="sunset18_mjd",
-    end_col="sunrise18_mjd",
+    start_col=NIGHT_START_COL,
+    end_col=NIGHT_END_COL,
 ) -> tuple[pd.DataFrame, dict[int, np.ndarray]]:
-    """WEATHER-bit windows per night from ``rubin_nights`` periods, clipped to the −18° night."""
+    """WEATHER-bit windows per night from ``rubin_nights`` periods, clipped to the accounting night."""
     w = periods[periods["type"] == "WEATHER"].copy()
     w["day_obs"] = w["day_obs"].astype(int)
     w["s"] = (
