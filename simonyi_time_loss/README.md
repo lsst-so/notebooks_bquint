@@ -64,6 +64,7 @@ simonyi_time_loss/
 ├── python/pull_allsky_cloud_1min.py       # Brian Stalder's allskycam cloud index → 1-min grid, data/cache/allsky_cloud_1min.parquet
 ├── python/run_rosp24_accounting.py        # the whole accounting from the caches → per_night.csv, per_month.csv, classification.pkl (~5 s)
 ├── python/make_latam_figures.py           # LSST@LATAM 2026 talk figures B1 (monthly) and B3 (nightly) from per_night.csv
+├── python/gap_min_sensitivity.py          # gap histogram, season totals for gap_min 2–30 min, state inside the ambiguous gaps (§3b)
 ├── notebooks/00 … 06                      # all executed in order (00 inventory → 06 figures)
 ├── data/
 │   ├── downtime_annotations.csv           # copy of nightly_survey_speed/downtime_annotations.csv (talk = 1 rows are labelled)
@@ -228,9 +229,12 @@ C1 tower limits (ROSP-24 §C, 2026-10-26), on the weather tower ESS `salIndex` 3
 thresholds differ from the operating rules there (20 / 25 m/s, RH de-prioritised) because ROSP-24 C1 states 15 / 18
 and RH > 80 %. Precipitation and snow/ice on the dome have no usable EFD source (§3.5) and are not evaluated. Over
 the range the C1 limits are met 54.9 h per minute (RH 33.2, dew point 15.1, wind 21.9, overlapping), 21.9 h of it
-before 2026-02-25. `[check]` the tower RH reads a median of 3–4 % on the −12° night of 8 Jul and below 10 % on 32
-nights from January, and its dew point sits 8 °C below the T − (100 − RH)/5 summit formula in May–July; if the RH
-sensor reads low, RH and dew-point closures are under-detected in winter.
+before 2026-02-25. The tower RH reads a median of 3–4 % on the −12° night of 8 Jul and below 10 % on 32 nights
+from January; checked 2026-10-27 and found genuine: on those nights the other five ESS humidity sensors (camera 111,
+M2 112, M1M3 113, AuxTel 201, laser 404) agree with the tower within 1 %, and the tower RH reproduces its own
+T / dew point through the Magnus formula to 0.1 %. The low readings are the dry Pachón winter (April–July), not a
+sensor fault; the earlier "8 °C below the T − (100 − RH)/5 formula" remark was an artefact of that approximation,
+which only holds above ~50 % RH.
 
 Fallback windows are runs of fallback minutes merged across gaps < 10 min and kept only if ≥ 10 min, the resolution
 of the gap rule (`fallback.py`). The minimum-duration choice moves the pre-bit fallback by 1 h and the masked-period
@@ -305,8 +309,39 @@ fallback calls 1–2 h of cloud or RH a weather closure on a night the reports c
 (correlation 0.37, was 0.6 when the Dynalene nights counted as weather on both sides); code fault + idle 450 h vs
 declared fault 350 h excluding the whole-night camera-shutdown tallies, correlation 0.64.
 
-gap_min sensitivity was not recomputed for the ROSP-24 classifier; the 26 Oct morning values (on sky 1180 / 1306 /
-1368 h at 2 / 5 / 10 min) still indicate the scale.
+**gap_min sensitivity and the ambiguous gaps** (`python/gap_min_sensitivity.py`, 2026-10-27; tables
+`data/processed/gap_min_sensitivity.csv`, `visit_gaps.parquet`). The season has 97 152 inter-visit gaps on 185 nights.
+Bridging is a step function of gap length, so the question is how much time sits near the 10-min rule:
+
+| gap length (min) | 0–2 | 2–5 | 5–7.5 | 7.5–10 | 10–15 | 15–20 | 20–30 | 30–60 | 60–120 | >120 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| gaps | 93 471 | 2730 | 354 | 178 | 173 | 84 | 64 | 67 | 17 | 14 |
+| hours | 341.0 | 126.2 | 36.5 | 25.5 | 34.7 | 23.7 | 26.5 | 45.2 | 22.6 | 48.8 |
+
+Season totals (−12° night, 2590 h) as the rule moves: survey 29.6 / 32.2 / 32.8 / **33.1** / 33.7 / 33.9 / 34.1 %,
+engineering 16.4 / 18.6 / 19.4 / **20.0** / 20.8 / 21.5 / 22.5 %, fault + idle 42.3 / 37.4 / 36.1 / **35.1** / 33.7 /
+32.7 / 31.6 % at gap_min 2 / 5 / 7.5 / **10** / 15 / 20 / 30 min; weather 11.8 % throughout (it takes precedence
+over visits). Between 5 and 20 min, a factor two either side of the rule, the totals move by ±1.5 points; a
+2-min rule is the only choice that changes the picture (−3.5 points of survey), and it counts the ~3-min
+filter-change and slew gaps as loss. Nights whose label changes between 5 and 20 min: OPEN 37 → 76,
+FAULT-DOMINATED 130 → 91 (CLOSED and WEATHER-DOMINATED are unaffected).
+
+The ambiguous gaps themselves: 789 gaps of 5–20 min, **120.5 h** (4.7 % of the night), on 175 nights, median 4 per
+night. The observatory state and the dome tell what they were (bit era, 398 gaps, 63.6 h; the pre-bit 391 gaps,
+56.9 h have no state):
+
+| | gaps | h | OPERATIONAL > 50 % | FAULT/DOWNTIME > 50 % | WEATHER | mixed |
+|---|---|---|---|---|---|---|
+| 5–10 min, bridged as overhead now | 250 | 29.1 | 159 (18.2 h) | 52 (6.2 h) | 13 (1.6 h) | 26 (3.1 h) |
+| 10–20 min, counted as loss now | 148 | 34.5 | 54 (12.1 h) | 58 (13.6 h) | 5 (1.3 h) | 31 (7.5 h) |
+
+In every one of them the shutter is open and the telescope above 20°: these are short interruptions of an
+observing night, not closures. Half of the bridged 5–10 min gaps are in OPERATIONAL state and a fifth carry a
+FAULT, so the 10-min rule mislabels about 6 h of short faults as overhead; conversely about 12 h of the 10–20 min
+gaps are OPERATIONAL (scheduler or observer pauses with nothing in fault) and are charged to fault + idle. The two
+errors nearly cancel at 10 min, which is a second reason to keep it. A state-aware rule (bridge a gap ≤ 20 min
+unless the Scheduler is in FAULT or DOWNTIME) would move ~12 h from fault + idle to survey/engineering and ~6 h the
+other way, 0.5 points of the night, and only works in the bit era; it is not applied.
 
 Known limitations: the allskycam index misses closures that were decided on forecast or afternoon weather (7 Dec)
 and cannot see humidity, so pre-bit weather is a lower bound (the 15 report-cloud nights it contradicts hold 37 h);
@@ -404,7 +439,8 @@ The EFD client is `rubin_nights.influx_query.InfluxQueryClient` (synchronous Inf
    `focus_alignment_hours` from engineering to survey; B1/B3 shares change by up to 11 points in November.
 2. **B11 bracket 4 = shutter-open only "Exposing"** (default yes, applied): 4.7 h; "exposing + readout" 4.8 h is in
    the B11 README.
-3. Tower RH sanity `[check]` (§3.7): the ESS 301 relative humidity reads 3–10 % on many winter nights.
+3. ~~Tower RH sanity `[check]`~~ resolved 2026-10-27 (§3.7): the 3–10 % winter readings are confirmed by five
+   independent ESS sensors and by the tower's own dew point; no under-detection.
 4. The 15 pre-bit nights the night reports call cloud but the allskycam calls clear (§3.7): 37 h now in fault + idle;
    7 Dec (rain/hail precaution) is the clearest case where the ROSP-24 evidence hierarchy and the observers disagree.
 5. Masked-period fallback on nights nobody would call weather nights (6 May camera glycol, 8.4 h cloudy): ROSP-24

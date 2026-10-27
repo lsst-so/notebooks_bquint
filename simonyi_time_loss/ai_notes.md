@@ -181,3 +181,15 @@ by the human tables; fault + idle reported together as "fault"; Q2 (per-OBS-tick
   green, engineering orange, weather grey). Python port of the dataviz validator used (`node` not on the login node).
 - B10/B10b regenerated and pixel-compared with HEAD: identical; committed PNGs kept.
 - Not done: gap_min sensitivity under the new classifier; B11 night re-selection under ROSP-24.
+
+### 2026-10-27 — resume after disconnect (Claude, Fable 5.1)
+- fc0277c pushed to origin on Bruno's word. Metadata-only changes in two unrelated notebooks discarded.
+- Focus / Alignment stay in engineering (Bruno: the explicit split also tells the progress story).
+- Tower RH `[check]` closed: on the low-RH nights (median < 10 %, 32 nights from 2 Jan, mostly Apr–Jul) ESS 111/112/113/
+  201/404 agree with ESS 301 within 1 %, and 301's RH equals Magnus(T, Td) to 0.1 %. Real dry-winter air, not a
+  sensor fault. README §3.7 and §5 item 3 updated.
+- gap_min: `python/gap_min_sensitivity.py` → `data/processed/gap_min_sensitivity.csv`, `visit_gaps.csv`. 97 152 gaps;
+  789 of 5–20 min hold 120.5 h (4.7 % of the night). Totals move ±1.5 points for gap_min 5–20; only 2 min changes the
+  picture (−3.5 survey). State in the bit-era ambiguous gaps: 5–10 min bridged = 63 % OPERATIONAL / 21 % FAULT (6.2 h
+  of faults called overhead); 10–20 min loss = 35 % OPERATIONAL (12.1 h of pauses called loss) / 39 % FAULT. Shutter
+  open and telescope up in all of them. Errors nearly cancel at 10 min → keep 10. README §3b updated.
