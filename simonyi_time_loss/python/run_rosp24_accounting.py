@@ -125,6 +125,7 @@ def main() -> None:
     cols = [
         "night_hours",
         "on_sky_hours",
+        "focus_alignment_hours",
         "engineering_hours",
         "weather_hours",
         "nonweather_loss_hours",
@@ -134,14 +135,13 @@ def main() -> None:
     ]
     t["month"] = t.day_obs // 100
     m = (
-        t.groupby("month")[
-            cols + ["night_hours_18", "focus_alignment_hours", "dynalene_hours"]
-        ]
+        t.groupby("month")[cols + ["night_hours_18", "dynalene_hours"]]
         .sum()
         .round(2)
     )
     for c in (
         "on_sky",
+        "focus_alignment",
         "engineering",
         "weather",
         "nonweather_loss",

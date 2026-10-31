@@ -9,10 +9,13 @@ category in the ROSP-24 precedence list (comment of 2026-10-19) that applies:
                                 (before) or masked (FAULT or DOWNTIME set, bit unset)
                                 the §C fallback: allskycam cloud index > 0.5 or the C1
                                 weather-tower limits (fallback.py)
-    3. B2 engineering           on-sky visits that are not Survey Programs, in blocks
-                                bridged at gaps < 10 min (engineering_time_budget rule);
-                                Focus and Alignment (BLOCK-T539) counts as engineering
-                                and is reported as a sub-total
+    3. Focus and Alignment      BLOCK-T539 visits in blocks bridged at gaps ≤ 10 min; its
+                                own category (Bruno, 2026-10-27: not engineering, not
+                                survey — the explicit split tells the progress story)
+    3b. B2 engineering          the other on-sky visits that are not Survey Programs, in
+                                blocks bridged at gaps ≤ 10 min (engineering_time_budget
+                                rule); a bridged gap between a focus and an engineering
+                                visit is engineering
     4. D  technical fault  }    everything in the night not assigned above and not
     5. E  operational idle }    covered by a survey visit or a bridged gap; D and E
                                 stay merged ("fault + idle", ROSP-50 open). Includes
@@ -120,15 +123,11 @@ def category_blocks(visits: pd.DataFrame, bridge_days: float) -> dict[str, np.nd
             if len(v)
             else empty()
         )
-    out["first_is_survey"] = (
-        bool(cat[np.argmin(visits["obs_start_mjd"].to_numpy())] == "survey")
-        if len(visits)
-        else False
+    out["first_cat"] = (
+        str(cat[np.argmin(visits["obs_start_mjd"].to_numpy())]) if len(visits) else ""
     )
-    out["last_is_survey"] = (
-        bool(cat[np.argmax(visits["obs_end_mjd"].to_numpy())] == "survey")
-        if len(visits)
-        else False
+    out["last_cat"] = (
+        str(cat[np.argmax(visits["obs_end_mjd"].to_numpy())]) if len(visits) else ""
     )
     out["any"] = (
         merge_intervals(
@@ -161,8 +160,8 @@ class NightClassification:
     weather: np.ndarray
     weather_bit: np.ndarray
     weather_fallback: np.ndarray  # fallback windows actually used (absent/masked)
-    engineering: np.ndarray
-    focus: np.ndarray  # subset of engineering
+    focus: np.ndarray  # Focus and Alignment (BLOCK-T539), own category
+    engineering: np.ndarray  # B2, the other non-survey visits
     fault_idle: np.ndarray
     dynalene: np.ndarray  # subset of fault_idle
     idle_bit: np.ndarray  # subset of fault_idle
@@ -177,6 +176,7 @@ class NightClassification:
         parts = [
             self.planned,
             self.weather,
+            self.focus,
             self.engineering,
             self.fault_idle,
             self.survey,
@@ -226,29 +226,39 @@ def classify_night(
         source = "fallback (allsky cloud + C1)"
     weather = intersect(union(bit, fb_used), remainder)
     remainder = subtract(remainder, weather)
-    # 3. B2 engineering (non-survey visits, focus included, bridged together at ≤ gap_min)
+    # 3. Focus and Alignment, 3b. B2 engineering. The non-survey visits bridged together at
+    #    ≤ gap_min form the non-survey blocks; the Focus and Alignment blocks (BLOCK-T539,
+    #    bridged within the programme) are their own category, the rest is engineering, so
+    #    a bridged gap between a focus and an engineering visit is engineering.
     blocks = category_blocks(visits, bridge)
-    eng_blocks = blocks["nonsurvey"]
+    nonsurvey_blocks = blocks["nonsurvey"]
+    focus_blocks = blocks["focus"]
     onsky_any = blocks["any"]
     # Edge gaps ≤ gap_min are overhead like interior ones (README §3c step 5): extend the
     # first/last window to the night limit, in the category of the first/last visit.
     if len(onsky_any):
         if 0 < onsky_any[0, 0] - t0 <= bridge:
             onsky_any[0, 0] = t0
-            if not blocks["first_is_survey"] and len(eng_blocks):
-                eng_blocks[0, 0] = t0
+            if blocks["first_cat"] != "survey" and len(nonsurvey_blocks):
+                nonsurvey_blocks[0, 0] = t0
+            if blocks["first_cat"] == "focus" and len(focus_blocks):
+                focus_blocks[0, 0] = t0
         if 0 < t1 - onsky_any[-1, 1] <= bridge:
             onsky_any[-1, 1] = t1
-            if not blocks["last_is_survey"] and len(eng_blocks):
-                eng_blocks[-1, 1] = t1
-    eng_blocks = clip(eng_blocks, t0, t1)
+            if blocks["last_cat"] != "survey" and len(nonsurvey_blocks):
+                nonsurvey_blocks[-1, 1] = t1
+            if blocks["last_cat"] == "focus" and len(focus_blocks):
+                focus_blocks[-1, 1] = t1
+    nonsurvey_blocks = clip(nonsurvey_blocks, t0, t1)
+    focus_blocks = clip(intersect(focus_blocks, nonsurvey_blocks), t0, t1)
     onsky_any = clip(onsky_any, t0, t1)
-    engineering = intersect(eng_blocks, remainder)
-    focus = intersect(clip(blocks["focus"], t0, t1), engineering)
+    focus = intersect(focus_blocks, remainder)
+    remainder = subtract(remainder, focus)
+    engineering = intersect(subtract(nonsurvey_blocks, focus_blocks), remainder)
     remainder = subtract(remainder, engineering)
     # 6a. A1/A2 survey on sky = all-visit union minus the non-survey blocks (a bridged gap
-    #     between a survey and an engineering visit goes to science overhead), after weather
-    survey = intersect(subtract(onsky_any, eng_blocks), remainder)
+    #     between a survey and a non-survey visit goes to science overhead), after weather
+    survey = intersect(subtract(onsky_any, nonsurvey_blocks), remainder)
     remainder = subtract(remainder, survey)
     # 6b. A3 start-up allowance: first 10 min after evening −12°, up to the first survey
     #     visit; only on nights that reached a survey visit (no start-up without a start)

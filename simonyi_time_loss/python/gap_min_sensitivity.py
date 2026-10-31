@@ -180,6 +180,7 @@ def main():
             [
                 "on_sky_hours",
                 "startup_hours",
+                "focus_alignment_hours",
                 "engineering_hours",
                 "weather_hours",
                 "nonweather_loss_hours",
@@ -190,6 +191,7 @@ def main():
             dict(
                 gap_min=gm,
                 survey_h=tot.on_sky_hours + tot.startup_hours,
+                focus_h=tot.focus_alignment_hours,
                 engineering_h=tot.engineering_hours,
                 weather_h=tot.weather_hours,
                 fault_idle_h=tot.nonweather_loss_hours + tot.unattributed_hours,
@@ -197,7 +199,7 @@ def main():
             )
         )
     s = pd.DataFrame(rows).set_index("gap_min")
-    for c in ("survey", "engineering", "weather", "fault_idle"):
+    for c in ("survey", "focus", "engineering", "weather", "fault_idle"):
         s[f"{c}_pct"] = 100 * s[f"{c}_h"] / night_h
     s.to_csv(PROC / "gap_min_sensitivity.csv")
     print("\nSeason totals vs gap_min (h and % of night):")
