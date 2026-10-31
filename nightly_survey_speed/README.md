@@ -197,18 +197,16 @@ the same code and the same date range.
   `DOWNTIME_MIN_NIGHTS`, `DOWNTIME_CATEGORIES` and `DOWNTIME_LABEL_CATEGORIES` as selectors;
   it needs the continuous x axis. The default range now ends at 20260713, the last night before
   the July storm.
-- **Colors.** `lsst.utils.plotting` has no named categorical palette. We read the color cycle of
-  its `rubin.mplstyle`, which the file documents as the seaborn colorblind palette, and keep the
-  original roles: slot 1 `#0173B2` blue for Survey Programs, slot 2 `#DE8F05` orange for
-  Engineering, slot 3 `#029E73` green for Focus and Alignment. The style's `accent_color()` is
-  the same orange. We checked the three colors with an OKLab colour-difference computation under
-  simulated protanopia and deuteranopia (Machado, Oliveira and Fernandes 2009, severity 1.0):
-  the worst pair (orange versus green under protanopia) has a difference of 9.2, above the
-  target of 8, and all pairs are above 15 for normal vision. The original `tab:orange` versus
+- **Colors.** The three categories read `CATEGORY_COLORS` from the repo palette
+  (`rubin_color_pallete/rubin_palette.py`), the one table every figure in the repo shares
+  (2026-10-31): `#1C81A4` brand blue for Survey Programs, `#CE7F00` orange for Engineering,
+  `#00630C` green for Focus and Alignment. These are the original roles of the `tab:` colors.
+  The table was checked with the `dataviz` palette validator (OKLab, Machado, Oliveira and
+  Fernandes 2009 colour-blind simulation); results are in the palette README. Before
+  2026-10-31 the colors came from the seaborn colorblind cycle of `lsst.utils.plotting`'s
+  `rubin.mplstyle` (`#0173B2`, `#DE8F05`, `#029E73`). The original `tab:orange` versus
   `tab:green` scores 0.7 under protanopia, so those two were indistinguishable for red-blind
-  readers. The orange has a contrast of 2.6:1 against white, so values are also provided in
-  hover and in the per-night table. [check: we did not find a machine-readable Rubin visual
-  identity palette in the stack; if one exists it should replace these three values]
+  readers. Values are also provided in hover and in the per-night table.
 - **Outputs.** The figure is saved to `plots/*.html` (self-contained, tens of megabytes, not
   committed) and shown inline. Two static matplotlib snapshots are written for slides, one with the
   current switches and one with all improvements on. A per-night CSV

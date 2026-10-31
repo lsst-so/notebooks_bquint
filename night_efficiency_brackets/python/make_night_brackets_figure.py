@@ -81,19 +81,18 @@ DATA = ROOT / "data"
 FIG = ROOT / "figures"
 FIG.mkdir(exist_ok=True)
 
-# One palette across the talk figures (2026-10-26, same as simonyi_time_loss/time_loss/style.py):
-# survey = green (slot 5), engineering = orange (slot 2, as B10/B10b), weather = neutral grey,
-# fault + idle = brand blue. Validated on all pairs (worst CVD dE 12.3, normal 15.5, PASS).
-# Focus and Alignment is engineering under ROSP-24 and takes the engineering colour.
+# Category colours shared by every figure (rubin_palette.CATEGORY_COLORS, 2026-10-31; roles
+# follow the nightly survey speed plot): survey = brand blue, Focus and Alignment = green,
+# engineering = orange, weather = neutral grey, fault + idle = wine.
 C = {
-    "Survey Programs": rp.CATEGORICAL[4],
-    "Focus and Alignment": rp.CATEGORICAL[1],
-    "Engineering": rp.CATEGORICAL[1],
-    "startup": rp.CATEGORICAL[4],
-    "weather": rp.NEUTRALS["muted"],
+    "Survey Programs": rp.CATEGORY_COLORS["survey"],
+    "Focus and Alignment": rp.CATEGORY_COLORS["focus"],
+    "Engineering": rp.CATEGORY_COLORS["engineering"],
+    "startup": rp.CATEGORY_COLORS["survey"],
+    "weather": rp.CATEGORY_COLORS["weather"],
     "weather_text": rp.NEUTRALS["ink_secondary"],
-    "fault": rp.BRAND["blue"],
-    "fault_text": rp.BRAND["blue"],
+    "fault": rp.CATEGORY_COLORS["fault_idle"],
+    "fault_text": rp.CATEGORY_COLORS["fault_idle"],
     "ink": rp.NEUTRALS["ink"],
     "ink2": rp.NEUTRALS["ink_secondary"],
     "muted": rp.NEUTRALS["muted"],

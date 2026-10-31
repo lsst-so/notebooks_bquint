@@ -72,10 +72,10 @@ CATS = [
     "Focus and Alignment",
     "Survey Programs",
 ]  # stack order, bottom first: engineering sits on the policy line
-C = {
-    "Survey Programs": rp.CATEGORICAL[0],
-    "Focus and Alignment": rp.CATEGORICAL[2],
-    "Engineering": rp.CATEGORICAL[1],
+C = {  # category colours shared by every figure (rubin_palette.CATEGORY_COLORS)
+    "Survey Programs": rp.CATEGORY_COLORS["survey"],
+    "Focus and Alignment": rp.CATEGORY_COLORS["focus"],
+    "Engineering": rp.CATEGORY_COLORS["engineering"],
     "policy": rp.CATEGORICAL[3],
     "ink": rp.NEUTRALS["ink"],
     "ink2": rp.NEUTRALS["ink_secondary"],

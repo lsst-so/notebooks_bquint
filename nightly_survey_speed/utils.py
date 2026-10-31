@@ -23,6 +23,7 @@ from __future__ import annotations
 import datetime
 import logging
 import os
+import sys
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -485,36 +486,25 @@ def twilight_table(
 # Colors                                                                       #
 # --------------------------------------------------------------------------- #
 
-# Fallback copy of the first three colors of ``lsst.utils.plotting``'s
-# ``rubin.mplstyle`` cycle (seaborn colorblind palette). Only used if the style
-# cannot be loaded; the function below reads them from the style itself.
-_RUBIN_CYCLE_FALLBACK = ("#0173B2", "#DE8F05", "#029E73")
+# Path resolved relative to this file; copy the palette module into this folder
+# before extracting the investigation.
+_PALETTE_DIR = Path(__file__).resolve().parent.parent / "rubin_color_pallete"
 
 
 def rubin_category_colors() -> dict[str, str]:
-    """Colors for the three categories from the Rubin publication plot style.
+    """Colors for the three categories from the repo's shared category table.
 
-    Reads the ``axes.prop_cycle`` of ``lsst.utils.plotting.publication_plots``'s
-    ``rubin.mplstyle`` and assigns slot 1 (blue) to Survey Programs, slot 2
-    (orange) to Engineering and slot 3 (green) to Focus and Alignment, the same
-    roles as the ``tab:`` colors in the original figure. The style file cites
-    the seaborn colorblind palette as its source.
+    Reads ``CATEGORY_COLORS`` of ``rubin_color_pallete/rubin_palette.py``, the
+    table every figure in the repo shares: Survey Programs in brand blue,
+    Engineering in orange and Focus and Alignment in green, the same roles as
+    the ``tab:`` colors in the original figure.
     """
-    colors = list(_RUBIN_CYCLE_FALLBACK)
-    try:
-        import matplotlib
-        from lsst.utils.plotting import publication_plots
+    if str(_PALETTE_DIR) not in sys.path:
+        sys.path.insert(0, str(_PALETTE_DIR))
+    import rubin_palette as rp
 
-        with matplotlib.rc_context():
-            publication_plots.set_rubin_plotstyle()
-            cycle = matplotlib.rcParams["axes.prop_cycle"].by_key()["color"]
-        colors = [c if c.startswith("#") else f"#{c}" for c in cycle[:3]]
-    except Exception as err:  # noqa: BLE001 - keep working without the stack
-        log.warning(
-            "could not load the Rubin plot style (%s); using the fallback copy", err
-        )
     return {
-        "Survey Programs": colors[0],
-        "Engineering": colors[1],
-        "Focus and Alignment": colors[2],
+        "Survey Programs": rp.CATEGORY_COLORS["survey"],
+        "Engineering": rp.CATEGORY_COLORS["engineering"],
+        "Focus and Alignment": rp.CATEGORY_COLORS["focus"],
     }

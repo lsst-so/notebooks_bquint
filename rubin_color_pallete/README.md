@@ -48,6 +48,41 @@ Caveats:
   slots (teal, orange, purple) are mutually safe. Beyond that, fold series
   into "Other" or use small multiples.
 
+## Category colours (`CATEGORY_COLORS`)
+
+One colour per *meaning*, shared by every plot in the repo (time-loss B1/B3,
+B10/B10b, B11, nightly survey speed, ...). Change a value here and it
+propagates everywhere; never redefine these hex values in a plot script. The
+roles follow the nightly survey speed plot. Keys are listed in the time-loss
+precedence order, which is also the legend order.
+
+| Key           | Category                          | Colour    | Source                    |
+|---------------|-----------------------------------|-----------|---------------------------|
+| `weather`     | Weather                           | `#9AA0A0` | `NEUTRALS["muted"]`, always hatched and labelled |
+| `focus`       | Focus and Alignment (BLOCK-T539)  | `#00630C` | `CATEGORICAL[4]`, green   |
+| `engineering` | Engineering                       | `#CE7F00` | `CATEGORICAL[1]`, orange  |
+| `fault_idle`  | Fault + idle                      | `#5E1A33` | wine (not a palette slot) |
+| `survey`      | Survey Programs                   | `#1C81A4` | `BRAND["blue"]`, Pantone 2454 C |
+
+Validated 2026-10-31 with the `dataviz` skill's `validate_palette.js`, all ten
+pairs, light surface:
+
+| Check                                   | Result |
+|-----------------------------------------|--------|
+| Worst CVD dE (target >= 8)              | 11.5 (fault + idle vs focus, deuteranopia); tritanopia 14.3 |
+| Worst normal-vision dE (floor 15)       | 15.5 (weather vs engineering) |
+| Lightness band (OKLCH L 0.43-0.77)      | FAIL for `fault_idle` (L 0.34), accepted on purpose |
+| Chroma floor / contrast >= 3:1          | FAIL / WARN for `weather` only (grey by design) |
+
+The deliberate exceptions:
+
+- **Wine is darker than the band.** Wines inside the band (`#7D3252`,
+  `#802E52`) pass the band but drop to CVD dE 7.5 against the green, which the
+  method allows only with secondary encoding. We chose separation over the band.
+- **Weather is a neutral.** It carries no identity hue, so it is always hatched
+  and labelled.
+- Light surfaces only; there is no dark-slide variant yet.
+
 ## Other exports
 
 - `BRAND` - the verbatim brand hex values (teals, steel, cool gray, accents).
