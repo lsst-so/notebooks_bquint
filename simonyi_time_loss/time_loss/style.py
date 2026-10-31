@@ -5,10 +5,10 @@ palette module into this folder before extracting the investigation.
 
 One palette across the LSST@LATAM talk figures (B1, B3, B11). Category colours
 come from ``rp.CATEGORY_COLORS`` (2026-10-31), the table every figure in the repo
-shares and whose roles follow the nightly survey speed plot: survey = brand blue,
-Focus and Alignment = green, engineering = orange, weather = neutral grey,
-fault + idle = wine. Validation and the deliberate exceptions are in the palette
-README. The Dynalene closure is drawn in the fault colour, hatched.
+shares, with the nightly survey speed colours: survey = blue, Focus and
+Alignment = green, engineering = orange; the losses are greys, weather = light
+grey, fault + idle = charcoal. Validation is in the palette README. The Dynalene
+closure is drawn in the fault colour, hatched.
 """
 
 from __future__ import annotations

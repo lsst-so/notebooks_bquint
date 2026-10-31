@@ -52,36 +52,41 @@ Caveats:
 
 One colour per *meaning*, shared by every plot in the repo (time-loss B1/B3,
 B10/B10b, B11, nightly survey speed, ...). Change a value here and it
-propagates everywhere; never redefine these hex values in a plot script. The
-roles follow the nightly survey speed plot. Keys are listed in the time-loss
-precedence order, which is also the legend order.
+propagates everywhere; never redefine these hex values in a plot script. Keys
+are listed in the time-loss precedence order, which is also the legend order.
 
-| Key           | Category                          | Colour    | Source                    |
-|---------------|-----------------------------------|-----------|---------------------------|
-| `weather`     | Weather                           | `#9AA0A0` | `NEUTRALS["muted"]`, always hatched and labelled |
-| `focus`       | Focus and Alignment (BLOCK-T539)  | `#00630C` | `CATEGORICAL[4]`, green   |
-| `engineering` | Engineering                       | `#CE7F00` | `CATEGORICAL[1]`, orange  |
-| `fault_idle`  | Fault + idle                      | `#5E1A33` | wine (not a palette slot) |
-| `survey`      | Survey Programs                   | `#1C81A4` | `BRAND["blue"]`, Pantone 2454 C |
+Survey, engineering and focus are the exact colours of the nightly survey speed
+plot (the seaborn colorblind cycle of `lsst.utils.plotting`'s `rubin.mplstyle`),
+which has been shown publicly and must stay identical. They are not Rubin brand
+colours. The two losses are greys: colour = time used, grey = time lost.
+
+| Key           | Category                          | Colour    | Note                          |
+|---------------|-----------------------------------|-----------|-------------------------------|
+| `weather`     | Weather                           | `#B4B8B8` | light grey, always hatched and labelled |
+| `focus`       | Focus and Alignment (BLOCK-T539)  | `#029E73` | green, nightly survey speed   |
+| `engineering` | Engineering                       | `#DE8F05` | orange, nightly survey speed  |
+| `fault_idle`  | Fault + idle                      | `#4A4D4E` | charcoal                      |
+| `survey`      | Survey Programs                   | `#0173B2` | blue, nightly survey speed    |
 
 Validated 2026-10-31 with the `dataviz` skill's `validate_palette.js`, all ten
 pairs, light surface:
 
 | Check                                   | Result |
 |-----------------------------------------|--------|
-| Worst CVD dE (target >= 8)              | 11.5 (fault + idle vs focus, deuteranopia); tritanopia 14.3 |
-| Worst normal-vision dE (floor 15)       | 15.5 (weather vs engineering) |
-| Lightness band (OKLCH L 0.43-0.77)      | FAIL for `fault_idle` (L 0.34), accepted on purpose |
-| Chroma floor / contrast >= 3:1          | FAIL / WARN for `weather` only (grey by design) |
+| Worst CVD dE (target >= 8)              | 9.2 (engineering vs focus, protanopia); tritanopia 8.3 |
+| Worst normal-vision dE (floor 15)       | 16.9 (engineering vs weather) |
+| Lightness band / chroma floor           | FAIL for the two greys only (neutral by design) |
+| Contrast vs white (>= 3:1)              | WARN: orange 2.6:1, weather grey 2.0:1 |
 
-The deliberate exceptions:
+The 9.2 is set by the nightly survey speed orange and green; no fault colour
+can do better. The orange and the grey need visible labels, hover values or a
+table next to the figure (weather is always labelled).
 
-- **Wine is darker than the band.** Wines inside the band (`#7D3252`,
-  `#802E52`) pass the band but drop to CVD dE 7.5 against the green, which the
-  method allows only with secondary encoding. We chose separation over the band.
-- **Weather is a neutral.** It carries no identity hue, so it is always hatched
-  and labelled.
-- Light surfaces only; there is no dark-slide variant yet.
+History: a first version the same day used brand blue `#1C81A4`, the palette
+orange and green and a wine `#5E1A33` for fault + idle. It passed the validator
+but the wine dominated the time-loss figures, so the losses became greys and
+survey/engineering/focus went back to the nightly survey speed colours. Mock-ups
+of the candidates (charcoal, pink, berry, plum, brown) all reached the same 9.2.
 
 ## Other exports
 

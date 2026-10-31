@@ -495,9 +495,11 @@ def rubin_category_colors() -> dict[str, str]:
     """Colors for the three categories from the repo's shared category table.
 
     Reads ``CATEGORY_COLORS`` of ``rubin_color_pallete/rubin_palette.py``, the
-    table every figure in the repo shares: Survey Programs in brand blue,
-    Engineering in orange and Focus and Alignment in green, the same roles as
-    the ``tab:`` colors in the original figure.
+    table every figure in the repo shares. Its three values are the seaborn
+    colorblind blue, orange and green this plot has always used (the
+    ``lsst.utils`` ``rubin.mplstyle`` cycle): Survey Programs blue, Engineering
+    orange, Focus and Alignment green, the same roles as the ``tab:`` colors in
+    the original figure.
     """
     if str(_PALETTE_DIR) not in sys.path:
         sys.path.insert(0, str(_PALETTE_DIR))

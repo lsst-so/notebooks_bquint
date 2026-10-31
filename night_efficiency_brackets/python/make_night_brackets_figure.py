@@ -81,9 +81,9 @@ DATA = ROOT / "data"
 FIG = ROOT / "figures"
 FIG.mkdir(exist_ok=True)
 
-# Category colours shared by every figure (rubin_palette.CATEGORY_COLORS, 2026-10-31; roles
-# follow the nightly survey speed plot): survey = brand blue, Focus and Alignment = green,
-# engineering = orange, weather = neutral grey, fault + idle = wine.
+# Category colours shared by every figure (rubin_palette.CATEGORY_COLORS, 2026-10-31; they
+# are the nightly survey speed colours): survey = blue, Focus and Alignment = green,
+# engineering = orange, weather = light grey, fault + idle = charcoal.
 C = {
     "Survey Programs": rp.CATEGORY_COLORS["survey"],
     "Focus and Alignment": rp.CATEGORY_COLORS["focus"],
