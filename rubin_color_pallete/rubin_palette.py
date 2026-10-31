@@ -22,6 +22,7 @@ Usage
     rp.use(mode="dark")              # for dark slides
     ax.plot(x, y, color=rp.TEAL)
     ax.bar(x, y, color=rp.CATEGORICAL)          # list of 6 hex strings
+    ax.bar(x, y, color=rp.CATEGORY_COLORS["survey"])  # colour by meaning
     im = ax.imshow(z, cmap=rp.teal_cmap())      # sequential teal ramp
     rp.preview("rubin_palette_preview.png")     # swatches + CVD simulation
 """
@@ -40,6 +41,7 @@ __all__ = [
     "CATEGORICAL_DARK",
     "NAMES",
     "NEUTRALS",
+    "CATEGORY_COLORS",
     "SEQUENTIAL_TEAL",
     "cycle",
     "use",
@@ -99,6 +101,23 @@ NEUTRALS = {
     "ink_secondary": "#6A6E6E",  # axis labels, legends (brand cool gray)
     "muted": "#9AA0A0",  # background bars, "other"
     "grid": "#DCE0E3",  # grid lines, downtime hatch fill
+}
+
+# --------------------------------------------------------------------------- #
+# Semantic category colours - one colour per meaning, shared by every plot    #
+# --------------------------------------------------------------------------- #
+# Survey, engineering and focus are the exact colours of the nightly survey
+# speed plot (seaborn colorblind, the lsst.utils rubin.mplstyle cycle), so that
+# plot stays identical. Losses are greys: colour = time used, grey = time lost.
+# Keys are listed in the time-loss precedence order (weather -> focus ->
+# engineering -> fault + idle -> survey). Light surfaces only. Change a colour
+# here and it propagates to every figure.
+CATEGORY_COLORS = {
+    "weather": "#B4B8B8",  # light grey, always hatched and labelled
+    "focus": "#029E73",  # Focus and Alignment (BLOCK-T539), green
+    "engineering": "#DE8F05",  # orange
+    "fault_idle": "#4A4D4E",  # fault + idle, charcoal
+    "survey": "#0173B2",  # Survey Programs, blue
 }
 
 # Sequential ramp on the teal hue (light -> dark), for heatmaps / magnitudes.
