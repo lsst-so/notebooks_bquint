@@ -132,6 +132,94 @@ def _save(fig, stem: str, dpi: int = 200):
     print("wrote", FIG / f"{stem}[_white].png")
 
 
+#: y-axis treatment of the fraction-of-night stacks (Bruno, 2026-11-02): no axis line, no
+#: ticks and no tick labels — only a horizontal rule every 20 % of the night, which the
+#: "Night Fraction" label is enough to read. Dropping the labels gives the width back to
+#: the bars.
+GRID_STEP = 0.20
+#: A rule crosses backgrounds from near-white (the margins either side, and the plot area
+#: above the short bars) to near-black (``Science`` is #024243), so **no flat colour is
+#: visible on all of them** — mock-ups on the real figure settled that on 2026-11-02:
+#: white and a light grey vanish in the margins, a mid or dark grey vanishes over Science
+#: and Engineering. So each rule is a **pair of touching hairlines, one white one black**
+#: (Bruno, 2026-11-02): whichever one matches the background drops away and the other
+#: carries the line, on a light or a dark slide alike. Each is offset half its width from
+#: the level, so the pair straddles it and the two touch rather than overlap.
+#:
+#: Weight matters more than it looks: the first try at 0.25 pt / alpha 0.25 was invisible
+#: at 300 dpi (0.25 pt ≈ 1 px, antialiased to a quarter-strength sub-pixel line, and the
+#: two tones partly cancel to the mid grey that had already failed). 0.5 pt at alpha 0.5
+#: is ~2 px each and renders cleanly.
+GRID_COLORS = ("white", "black")  # drawn in this order, first one above the level
+#: >>> opacity of both hairlines — the knob to tweak if the rules read too strong or too
+#: faint on the slide. 0.3 was checked against 0.5 on zoomed crops of the dark teals
+#: (Bruno, 2026-11-02) and still holds there; it is about as light as the pair goes. Note
+#: it is alpha *and* width together that decide whether a rule survives the raster: at
+#: 0.25 pt the same 0.25 alpha was invisible at 300 dpi. <<<
+GRID_ALPHA = 0.3
+GRID_LW = 0.5
+#: how far the rules run past the axes, left and right (Bruno, 2026-11-02). Asymmetric:
+#: just a nick on the left, where the "Night Fraction" label is, and a longer run on the
+#: right, where there is nothing else.
+GRID_OVERHANG_LEFT_PT = 3.0
+GRID_OVERHANG_RIGHT_PT = 10.0
+
+
+def _fraction_yaxis(ax, label: str = "Night Fraction"):
+    """Replace the y axis with horizontal rules every ``GRID_STEP`` of the night.
+
+    The spine, the tick marks and the tick labels all go. 0 % is the x axis and 100 % the
+    top of the frame, so neither gets a rule. Each rule is a white/black hairline pair
+    (see ``GRID_COLORS``) running ``GRID_OVERHANG_PT`` past the axes on both sides, so it
+    is re-fitted on every draw: the overhang is a length in points, and the axes width in
+    points is only known once the layout engine has run. Call after ``set_ylim``.
+    """
+    ax.spines["left"].set_visible(False)
+    ax.set_ylabel(label)
+    ax.tick_params(axis="y", length=0, labelleft=False)
+    # x in axes fraction so the overhang can be set as a fraction, y in data units so the
+    # rules follow the scale; clip_on=False lets them leave the axes.
+    blend = mpl.transforms.blended_transform_factory(ax.transAxes, ax.transData)
+    n = int(round(1.0 / GRID_STEP))
+    rules = []
+    for i in range(1, n):
+        y = i * GRID_STEP
+        for color, sign in zip(GRID_COLORS, (+1, -1)):
+            # half-width offset in points, so the two lines touch at the level itself
+            # whatever the figure dpi
+            offset = mpl.transforms.ScaledTranslation(
+                0, sign * (GRID_LW / 2) / 72.0, ax.figure.dpi_scale_trans
+            )
+            rules.append(
+                ax.add_line(
+                    mpl.lines.Line2D(
+                        [0, 1],
+                        [y, y],
+                        transform=blend + offset,
+                        color=color,
+                        alpha=GRID_ALPHA,
+                        linewidth=GRID_LW,
+                        solid_capstyle="butt",
+                        clip_on=False,
+                        zorder=2.5,  # over the bars (1), under the in-bar values (3)
+                    )
+                )
+            )
+
+    def _fit(_event=None):
+        w = ax.get_window_extent().width  # pixels, final only after the layout runs
+        if w <= 0:
+            return
+        px_per_pt = ax.figure.dpi / 72.0
+        left = GRID_OVERHANG_LEFT_PT * px_per_pt / w
+        right = GRID_OVERHANG_RIGHT_PT * px_per_pt / w
+        for ln in rules:
+            ln.set_xdata([-left, 1.0 + right])
+
+    ax.figure.canvas.mpl_connect("draw_event", _fit)
+    _fit()
+
+
 def _stack(ax, x, t: pd.DataFrame, width: float, denom=None):
     """Stacked bars: weather hatched (palette rule), Dynalene hatched inside fault + idle."""
     bottom = np.zeros(len(t))
@@ -409,8 +497,7 @@ def monthly(t: pd.DataFrame, min_label: float = 0.10):
             ]
         )
         ax.set_ylim(0, 1)
-        ax.set_ylabel(f"fraction of {NIGHT} night")
-        ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter(1.0))
+        _fraction_yaxis(ax)
         handles_, labels_ = ax.get_legend_handles_labels()
         order = PRECEDENCE[:-1] + [DYN_LABEL, PRECEDENCE[-1]]
         hl = dict(zip(labels_, handles_))
@@ -591,8 +678,7 @@ def monthly_6bin(t: pd.DataFrame):
         ax.set_ylim(0, 1)
         # bars run edge to edge; no empty margin either side
         ax.set_xlim(-0.5 - 0.03, len(mo) - 0.5 + 0.03)
-        ax.set_ylabel(f"fraction of {NIGHT} night")
-        ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter(1.0, decimals=0))
+        _fraction_yaxis(ax)
         # Value labels, white, centred on their own segment. Two gates (Bruno,
         # 2026-11-02): a hard editorial floor of 5 % — below that the number is not worth
         # reading off the slide — and a measured fit test, LABEL_PT + 2 pt converted to an

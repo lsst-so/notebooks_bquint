@@ -359,6 +359,26 @@ plot height); layout pads are 0.01; the legend is three columns × two rows. Bec
 column-first, the handle order is **transposed** so it reads left → right in stack order (Weather, Planned
 maintenance, Fault + idle / Alignment, Engineering, Science).
 
+**The y axis** (Bruno, 2026-11-02) is a horizontal ruling instead of an axis: `_fraction_yaxis()`, shared by
+`monthly()` and `monthly_6bin()`, drops the left spine, the tick marks *and* the tick labels — the "Night
+Fraction" label alone is enough to read a 20 % ruling, and dropping the labels gives the width back to the bars
+(the 6-bin axes goes to 5.78 of the 6 in). A rule is drawn at each interior 20 %; 0 % is the x axis and 100 % the
+top of the frame, so neither gets one. Each runs past the axes — **3 pt left** (a nick, beside the ylabel) and
+**10 pt right** — re-fitted on every draw, since the overhang is a length in points but `Line2D` x-data is an
+axes fraction and the axes width is only final once the layout engine has run.
+
+Each rule is a **pair of touching 0.5 pt hairlines, one white one black, both at alpha 0.3**, offset ±¼ pt so the
+pair straddles the level. Whichever tone matches the background drops away and the other carries the line. That
+is not fussiness — the rules cross backgrounds from near-white (the margins, and the plot area above the short
+bars) to near-black (Science is `#024243`), and **no flat colour is visible on all of them**. Five attempts, each
+rendered on the real figure, settled it: white and light grey `#CCCCCC` vanish in the margins; mid grey
+`#6E7374` and `#333333` vanish over Science and Engineering; white-inside-with-ink-overhangs looks like a drawing
+error at the join. A white core over a dark halo (`path_effects`) also worked but read heavier, with a faint
+doubling on the light greys. Tune the weight at `GRID_ALPHA` / `GRID_LW`, but note the two interact: the first
+try at 0.25 pt / alpha 0.25 was invisible at 300 dpi (≈ 1 px antialiased to quarter strength, and the two tones
+composite toward the mid grey that had already failed). 0.3 at 0.5 pt was checked against 0.5 on zoomed crops of
+the Apr/May teals and holds.
+
 The six bins are the categories the classifier already produces — no new classification. Stack bottom → top,
 legend top → bottom in the same order, both from the single constant `SLIDE2_CAT`:
 
