@@ -3,8 +3,12 @@
 One assignment feeds every figure and ``per_night.csv``. Time goes to the first
 category in the ROSP-24 precedence list (comment of 2026-10-19) that applies:
 
-    1. B1 planned maintenance   none in 2025-10-25 → 2026-07-14 (ROSP-28); the category
-                                exists and is zero
+    0. storm windows            2026-07-15 → 2026-10-26 is assigned by rule, not by data
+                                (``storm_override``, boundaries in ``STORM_PERIODS``):
+                                the whole night is weather (storm, recovery) or planned
+                                maintenance. Bruno, 2026-11-01
+    1. B1 planned maintenance   2026-09-16 → 2026-10-05 (Kevin Reil, #summit-announce);
+                                zero in 2025-10-25 → 2026-07-14 (ROSP-28)
     2. C  weather               WEATHER bit (from 2026-02-25); where the bit is absent
                                 (before) or masked (FAULT or DOWNTIME set, bit unset)
                                 the §C fallback: allskycam cloud index > 0.5 or the C1
@@ -46,7 +50,13 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
-from . import DAY_OBS_WEATHER_BIT_START, GAP_MIN_MINUTES, NIGHT_END_COL, NIGHT_START_COL
+from . import (
+    DAY_OBS_WEATHER_BIT_START,
+    GAP_MIN_MINUTES,
+    NIGHT_END_COL,
+    NIGHT_START_COL,
+    STORM_PERIODS,
+)
 from .intervals import clip, empty, hours, intersect, normalize, subtract, union
 from .visits import merge_intervals
 
@@ -61,6 +71,7 @@ __all__ = [
     "classify_night",
     "classify_all",
     "label_night",
+    "storm_override",
 ]
 
 #: Survey Programs (engineering_time_budget / nightly_survey_speed categories).
@@ -76,9 +87,32 @@ FOCUS_PROGRAMS = ("BLOCK-T539",)
 #: A3 start-up allowance (ROSP-24, 2026-10-26): first 10 min after evening −12°.
 STARTUP_ALLOWANCE_MIN = 10.0
 #: B1 planned-maintenance blocks as (day_obs_first, day_obs_last) inclusive, noon→noon UTC.
-#: ROSP-28: the only planned-downtime block in the ledger is 14 Sep → 5 Oct 2026, outside the range.
-PLANNED_MAINTENANCE: tuple[tuple[int, int], ...] = ()
+#: Read from STORM_PERIODS so the boundaries live in one place (``__init__``). Until
+#: 2026-11-01 this was empty: the maintenance block fell outside the old range.
+PLANNED_MAINTENANCE: tuple[tuple[int, int], ...] = tuple(
+    (lo, hi) for lo, hi, kind, _ in STORM_PERIODS if kind == "planned"
+)
+#: Nights Bruno's rule assigns wholly to weather (storm and recovery), same source.
+STORM_WEATHER: tuple[tuple[int, int], ...] = tuple(
+    (lo, hi) for lo, hi, kind, _ in STORM_PERIODS if kind == "weather"
+)
 MJD_UNIX = 40587.0
+
+
+def storm_override(day_obs: int) -> str | None:
+    """``"weather"``, ``"planned"`` or ``None`` for one ``day_obs`` (``STORM_PERIODS``).
+
+    Bruno's rule of 2026-11-01: inside these windows the whole −12° night goes to
+    one category, whatever the observatory state says. The state record calls the
+    storm and the loss of site access DOWNTIME (checked on USDF: 20261006–20261026
+    is logged DOWNTIME, and 20260715–20260719 DOWNTIME + WEATHER), and the EFD has
+    no weather telemetry at all for 20260720–20260923 because summit power was lost
+    on 19 Jul — so neither the bit nor the §C fallback can decide these nights.
+    """
+    for lo, hi, kind, _ in STORM_PERIODS:
+        if lo <= int(day_obs) <= hi:
+            return kind
+    return None
 
 
 def _ts_to_mjd(s: pd.Series) -> np.ndarray:
@@ -214,7 +248,8 @@ def classify_night(
         if lo <= day_obs <= hi:
             planned = N.copy()
     remainder = subtract(N, planned)
-    # 2. C weather: bit, plus fallback where absent or masked
+    # 2. C weather: bit, plus fallback where absent or masked. Inside the storm and
+    #    recovery windows Bruno's rule overrides both (see storm_override).
     bit = clip(bit_windows, t0, t1) if bit_era else empty()
     fb_any = clip(fallback["fallback"], t0, t1)
     if bit_era:
@@ -224,7 +259,15 @@ def classify_night(
     else:
         fb_used = fb_any
         source = "fallback (allsky cloud + C1)"
-    weather = intersect(union(bit, fb_used), remainder)
+    override = storm_override(day_obs)
+    if override == "weather":
+        weather = remainder
+        source = "storm/recovery rule (Bruno 2026-11-01)"
+    elif override == "planned":
+        weather = empty()
+        source = "planned maintenance (Bruno 2026-11-01)"
+    else:
+        weather = intersect(union(bit, fb_used), remainder)
     remainder = subtract(remainder, weather)
     # 3. Focus and Alignment, 3b. B2 engineering. The non-survey visits bridged together at
     #    ≤ gap_min form the non-survey blocks; the Focus and Alignment blocks (BLOCK-T539,
@@ -316,6 +359,17 @@ def classify_night(
             n_engineering=blocks["n_engineering"],
             exp_time_survey_h=blocks["exp_time_survey_h"],
             cloud_minutes_missing=fallback.get("cloud_minutes_missing", 0),
+            storm_override=override or "",
+            # What the override displaced, so a conflict with the data is visible
+            # instead of erased (guardrail of the 2026-11-01 handoff): on-sky and
+            # state hours the normal rules would have claimed inside the window.
+            override_onsky_hours=hours(onsky_any) if override else 0.0,
+            override_operational_hours=hours(intersect(states["OPERATIONAL"], N))
+            if override
+            else 0.0,
+            override_fault_hours=hours(intersect(states["FAULT"], N))
+            if override
+            else 0.0,
         ),
     )
     nc.check_partition()
@@ -418,6 +472,10 @@ def classify_all(
                 n_engineering_visits=x["n_engineering"],
                 cloud_minutes_missing=x["cloud_minutes_missing"],
                 gap_min=gap_min,
+                storm_override=x["storm_override"],
+                override_onsky_hours=round(x["override_onsky_hours"], 3),
+                override_operational_hours=round(x["override_operational_hours"], 3),
+                override_fault_hours=round(x["override_fault_hours"], 3),
             )
         )
     t = pd.DataFrame(rows)
