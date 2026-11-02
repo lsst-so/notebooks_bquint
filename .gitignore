@@ -21,6 +21,9 @@ observatory_high_level_performance/data/visits_*.parquet
 observatory_high_level_performance/data/*.log
 observatory_high_level_performance/figures/*.html
 
+# night_budget: ConsDB visit + modelled slew cache (regenerate with python/night_budget.py)
+night_budget/data/visits_slew_*.parquet
+
 # simonyi_time_loss: EFD/ConsDB caches (regenerate with python/pull_efd_weather_1min.py and notebook 03)
 simonyi_time_loss/data/cache/
 simonyi_time_loss/data/step0/*.parquet
