@@ -26,6 +26,11 @@ mean](#what-expected-gap-and-excess-gap-mean) for the definition and the per-gap
 worth reading before presenting, since the split is measured against a *model*, not against
 the OSS-REQ-0289 requirement.
 
+Two things for the spoken notes, both in §4 and neither on the figure: the **gap cadence
+improved 2.3×** at survey start (median nightly gap 14.9 s before, 8.6 s after), and the one
+night with **zero loss in every category still only reached 0.825** — the ceiling is not set
+by faults.
+
 ## 2. Definitions
 
 | Source | Value | Use on the figure |
@@ -153,9 +158,16 @@ change is 120 s and does not overlap the slew.
 
 ### Night selector
 
-**good** = the largest `ratio` among LSST nights (`day_obs ≥ 20260629`) with weather = 0,
-fault + idle < 0.5 h and engineering + alignment < 0.5 h. **bad** = 8 Jul 2026, already
-explained in B11.
+**good** = the largest `ratio` among LSST nights (`day_obs ≥ 20260629`, `LSST_DAY_OBS_MIN`)
+with weather = 0, fault + idle < 0.5 h and engineering + alignment < 0.5 h. **bad** = 8 Jul
+2026, already explained in B11 — pre-chosen in the handoff rather than selected, so the
+audience can be walked from B11's timeline to B12's block form without meeting a new date.
+It is also the right *kind* of bad night: 10 Jul was worse (0.387) but is 6.5 h of pure
+weather, a bar that is mostly one grey block, where 8 Jul mixes weather (1.6 h), fault +
+idle (2.9 h) and a 4.2 h start-of-night, so every category stays visible.
+
+The era floor is deliberate but not a data limit — see
+[below](#why-6-jul-and-what-the-month-before-lsst-shows) for the month before survey start.
 
 The fault + idle cut is on ROSP-24's published `idle_bit_hours`, not on this module's
 `fault_idle_h`. The latter is a *residual* of the −12° night and so also absorbs the long
@@ -163,7 +175,7 @@ and non-survey gaps the Science split leaves out; gating on it rejected 6 Jul (0
 time the figure shows inside the Science block, while ROSP-24's own idle bit for that night
 is 0.251 h.
 
-Candidates over 20260629–20261030 (14 nights with visits):
+Candidates over 20260629–20261030 (14 nights in range; 13 with survey visits — 20260714 was fully clouded out):
 
 | day_obs | visits | n_vis_ave | ratio | exposing | idle | eng | align |
 |---|---|---|---|---|---|---|---|
@@ -174,6 +186,50 @@ Candidates over 20260629–20261030 (14 nights with visits):
 Plausible clean nights do cap around 0.82–0.85, as the handoff found. Nights excluded by
 the cuts but with a high ratio: 20260705 (0.791, 0.91 h engineering), 20260711 (0.781,
 0.96 h engineering), 20261027 (0.762, 1.10 h engineering).
+
+### Why 6 Jul, and what the month before LSST shows
+
+The LSST-era pool is thin — the July 2026 storm means only **13 nights have on-sky visits**
+between 20260629 and 20261030 — so on Bruno's suggestion (2026-11-02) the budget was also
+run over the month *before* survey start, 20260529–20260628
+(`data/night_budget_20260529_20260628.csv`, 16 more nights with visits). Two things come out
+of it, and **neither changes the figure**: both stay here and in the spoken notes.
+
+**1. The best single night is pre-LSST, by a hair.** 20260626 reached ratio **0.853** on 906
+visits — the most visits and the most exposing time (7.55 h) of any night in either era,
+with weather, engineering and alignment all zero and only 0.15 h of idle + fault. It edges
+6 Jul's 0.851. It is *not* used, for two reasons: it is a commissioning night before survey
+start, so it is off-message on a slide about LSST performance; and it carries 1.59 h of
+excess gap against 6 Jul's 0.66 h, which would undercut the slide's third point.
+
+**2. The gap cadence improved sharply at survey start.** This is the finding worth speaking
+to, since it is a real change rather than night-to-night luck:
+
+| | pre-LSST (20260529–0628) | LSST (20260629–20261030) |
+|---|---|---|
+| nights with visits | 16 | 13 |
+| median of the nightly gap medians | **14.9 s** | **8.6 s** |
+| range of nightly gap medians | 8.9 – 23.2 s | 7.4 – 14.8 s |
+| nights with median gap < 10 s | **2 of 16** | **11 of 13** |
+| pooled excess gap per survey visit | **8.3 s** | **3.7 s** |
+
+Pre-LSST nights reached a high ratio by being *long* — many visits over a full night — while
+running a 13–15 s cadence. The LSST-era nights reach the same ratio by actually moving
+faster: excess gap per visit fell **2.3×**. The two exceptions on each side are 20260529 and
+20260530 (8.9 and 9.6 s, already fast before the switch) and 20260629 (14.8 s, the slow
+night described below).
+
+**3. Only one night has zero in every loss category: 20260629** — weather, focus, alignment,
+engineering, idle and fault all 0.000 h, in either era. It is nonetheless the *weaker*
+candidate, and instructively so: its loss did not vanish, it moved into the gaps. 2.09 h of
+excess gap, a 14.8 s median, and 399 of its 874 gaps in the 15–30 s band where 6 Jul has 61.
+Nothing broke; the whole night simply ran slowly. That makes it the strongest available
+illustration that **the ceiling is not set by faults** — a fault-free night still only
+reached 0.825 — which is worth saying out loud even though the bar on the slide is 6 Jul.
+
+So: 6 Jul is within 0.002 of the best night ever recorded, is in the LSST era, and is the
+one whose gap cadence supports "the gaps are already close to the model". Switching the
+figure to any of these is one flag, e.g. `--good 20260626`.
 
 ## 5. The numbers on the figure (step 2)
 
@@ -288,7 +344,8 @@ night_budget/
 ├── README.md
 ├── data/
 │   ├── ideal_osf_v5.3.4.csv, _v5.3.7.csv, _v5.4.0b.csv   # per-night simulated OSF (step 0)
-│   ├── night_budget_20260629_20261030.csv                # one row per night (step 1)
+│   ├── night_budget_20260629_20261030.csv                # one row per night, LSST era (step 1)
+│   ├── night_budget_20260529_20260628.csv                # the month before survey start (§4)
 │   ├── rosp24_per_night.csv                              # copy of simonyi_time_loss output
 │   └── visits_slew_*.parquet                             # ConsDB + modelled slews (gitignored)
 ├── figures/
@@ -309,6 +366,7 @@ cd night_budget
 python python/ideal_osf.py --all                               # ~7 min, re-fits every baseline
 cp ../simonyi_time_loss/data/processed/per_night.csv data/rosp24_per_night.csv
 python python/night_budget.py --day-obs-min 20260629 --day-obs-max 20261101 --select
+python python/night_budget.py --day-obs-min 20260529 --day-obs-max 20260628   # pre-LSST month, §4
 python python/make_good_bad_night_figure.py
 ```
 
