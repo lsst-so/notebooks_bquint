@@ -2,8 +2,9 @@
 
 Three horizontal bars of equal length - the -12 deg observable night - stacked
 top to bottom: the LSST ideal night, a real good night and a real bad night.
-Each bar is the same block form as slide 3, in ROSP-24 precedence order and in
-``rubin_palette.CATEGORY_COLORS``, so the three read as the same accounting:
+Each bar is the same block form as slide 3, in ROSP-24 precedence order and in the
+deck's own ``SLIDE2_COLORS`` (as slide-4 B1; see ``PALETTE`` below and README §5),
+so the three read as the same accounting:
 
 * **Science**, subdivided: exposing (solid), expected gap + in-visit overhead
   (a lighter tint), excess gap (hatched);
@@ -15,6 +16,9 @@ night had met the RTN-093 survey-start criterion, survey speed > 0.7, i.e. at
 
 Inputs are this folder's own ``data/night_budget_<min>_<max>.csv``, written by
 ``night_budget.py``. No cross-folder imports.
+
+The legend sits in two rows under the x axis: ``Science:`` with the three
+subdivisions, then ``Lost:`` with the categories that are not Science.
 
 Outputs ``../figures/good_bad_night_<good>_<bad>.png`` and ``_white.png``, 16:6.
 
@@ -55,17 +59,65 @@ BAR_NOTE = {GOOD_DAY_OBS: "smooth", BAD_DAY_OBS: "camera + clouds"}
 SURVEY_SPEED_CRITERION = 0.7
 VISIT_S = 30.0
 
+# TEMPORARY: slide-2 colours, the same deliberate palette violation as slide-4 B1
+# (``SLIDE2_COLORS`` in ``simonyi_time_loss/python/make_latam_figures.py``, see that
+# README §3b.1). Copied rather than imported so this folder stays extractable; if the
+# deck palette changes, change it in both places. Bruno asked for the deck colours on
+# 2026-11-02 so B12 matches slides 4 and 5. Switching back to the Rubin palette is one
+# line: use ``RUBIN_COLORS`` instead of ``SLIDE2_COLORS`` below.
+SLIDE2_COLORS = {
+    "Science": "#024243",
+    "Engineering": "#045B5C",
+    "Alignment": "#058B8C",
+    "Fault + idle": "#F5A623",
+    "Planned maintenance": "#546E7A",
+    "Weather": "#9BAEB8",
+}
+#: The canonical Rubin palette, kept so the violation can be reverted in one line.
+RUBIN_COLORS = {
+    "Science": rp.CATEGORY_COLORS["survey"],
+    "Engineering": rp.CATEGORY_COLORS["engineering"],
+    "Alignment": rp.CATEGORY_COLORS["focus"],
+    "Fault + idle": rp.CATEGORY_COLORS["fault_idle"],
+    "Planned maintenance": rp.NEUTRALS["muted"],
+    "Weather": rp.CATEGORY_COLORS["weather"],
+}
+
+PALETTE = SLIDE2_COLORS
+
 C = {
-    "survey": rp.CATEGORY_COLORS["survey"],
-    "focus": rp.CATEGORY_COLORS["focus"],
-    "engineering": rp.CATEGORY_COLORS["engineering"],
-    "fault_idle": rp.CATEGORY_COLORS["fault_idle"],
-    "weather": rp.CATEGORY_COLORS["weather"],
+    "survey": PALETTE["Science"],
+    "focus": PALETTE["Alignment"],
+    "engineering": PALETTE["Engineering"],
+    "fault_idle": PALETTE["Fault + idle"],
+    "weather": PALETTE["Weather"],
     "ink": rp.NEUTRALS["ink"],
     "ink2": rp.NEUTRALS["ink_secondary"],
     "muted": rp.NEUTRALS["muted"],
     "grid": rp.NEUTRALS["grid"],
 }
+
+#: Legend rows: the Science subdivisions, then the categories that are not Science.
+#: ``(style, label)``; drawn in two rows under the x axis, in stack order.
+LEGEND_ROWS = (
+    (
+        "Science",
+        [
+            ("survey", "exposing (shutter open)"),
+            ("survey_light", "expected gap + in-visit overhead"),
+            ("survey_hatch", "excess gap"),
+        ],
+    ),
+    (
+        "Lost",
+        [
+            ("focus", "Alignment"),
+            ("engineering", "Engineering"),
+            ("fault_idle", "Fault + idle"),
+            ("weather_hatch", "Weather"),
+        ],
+    ),
+)
 
 RC = {
     "figure.figsize": (16, 6),
@@ -132,26 +184,38 @@ def real_bar(row: pd.Series) -> list[tuple[str, float, str]]:
     return blocks
 
 
-def _draw_block(ax, x: float, y: float, w: float, style: str) -> None:
-    """One block: solid, a lighter tint, or a hatch over a tint."""
+#: One spec per block style: ``(colour, alpha, hatch)``. The blocks and the legend
+#: swatches are both drawn from this, so they cannot drift apart. The three Science
+#: styles are one hue at three strengths, as the slide-3 form asks; Weather keeps the
+#: slide-4 B1 hatch direction so the two figures read the same way.
+STYLE = {
+    "survey": (C["survey"], 1.00, None),
+    "survey_light": (C["survey"], 0.45, None),
+    "survey_hatch": (C["survey"], 0.20, "///"),
+    "focus": (C["focus"], 1.00, None),
+    "engineering": (C["engineering"], 1.00, None),
+    "fault_idle": (C["fault_idle"], 1.00, None),
+    "weather_hatch": (C["weather"], 0.45, "\\\\\\"),
+}
+
+
+def _draw_block(ax, x: float, y: float, w: float, style: str, zorder: float = 1.0) -> None:
+    """One block: a solid colour, a lighter tint, or a hatch over a tint."""
     if w <= 0:
         return
-    base = {
-        "survey": C["survey"],
-        "survey_light": C["survey"],
-        "survey_hatch": C["survey"],
-        "focus": C["focus"],
-        "engineering": C["engineering"],
-        "fault_idle": C["fault_idle"],
-        "weather_hatch": C["weather"],
-    }[style]
-    alpha = {"survey_light": 0.42, "survey_hatch": 0.22, "weather_hatch": 0.30}.get(style, 1.0)
+    base, alpha, hatch = STYLE[style]
     ax.add_patch(
         mpl.patches.Rectangle(
-            (x, y - BAR_H / 2), w, BAR_H, facecolor=base, alpha=alpha, edgecolor="none", zorder=1
+            (x, y - BAR_H / 2),
+            w,
+            BAR_H,
+            facecolor=base,
+            alpha=alpha,
+            edgecolor="none",
+            zorder=zorder,
         )
     )
-    if style.endswith("_hatch"):
+    if hatch:
         ax.add_patch(
             mpl.patches.Rectangle(
                 (x, y - BAR_H / 2),
@@ -159,12 +223,20 @@ def _draw_block(ax, x: float, y: float, w: float, style: str) -> None:
                 BAR_H,
                 facecolor="none",
                 edgecolor=base,
-                hatch="///",
+                hatch=hatch,
                 linewidth=0,
-                alpha=0.55,
-                zorder=1.1,
+                alpha=0.85,
+                zorder=zorder + 0.1,
             )
         )
+
+
+def _legend_handles(style: str, label: str) -> mpl.patches.Patch:
+    """A legend swatch drawn from the same :data:`STYLE` spec as the blocks."""
+    base, alpha, hatch = STYLE[style]
+    return mpl.patches.Patch(
+        facecolor=base, alpha=alpha, hatch=hatch, edgecolor=base if hatch else "none", label=label
+    )
 
 
 def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Path:
@@ -198,9 +270,25 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
                 )
             )
             x = 0.0
+            edges = []
             for _name, w, style in blocks:
                 _draw_block(ax, x, y, w, style)
                 x += w
+                if w > 0:
+                    edges.append(x)
+            # Hairline separators at the joins. The deck palette puts Engineering
+            # (#045B5C) next to exposing (#024243), which are two steps of one teal
+            # ramp and merge where they touch; a white rule keeps every block
+            # countable without adding a sixth hue.
+            for edge in edges[:-1]:
+                ax.plot(
+                    [edge, edge],
+                    [y - BAR_H / 2, y + BAR_H / 2],
+                    color="white",
+                    linewidth=1.1,
+                    solid_capstyle="butt",
+                    zorder=2,
+                )
 
             # left-hand labels: date, then one word
             ax.text(-0.25, y + 0.10, label, ha="right", va="center", fontsize=16, color=C["ink"])
@@ -245,7 +333,31 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
 
         # wide side margins: the bar labels and the "N visits · ratio" labels
         # are drawn in data coordinates outside the x limits
-        fig.subplots_adjust(left=0.17, right=0.845, bottom=0.14, top=0.88)
+        # Two legend rows under the x axis: the Science subdivisions, then the
+        # categories that are not Science. Separate legends so each row can carry
+        # its own "Science:" / "Lost:" title; the second is added as an artist
+        # because an Axes holds only one legend.
+        for i, (title, entries) in enumerate(LEGEND_ROWS):
+            leg = ax.legend(
+                handles=[_legend_handles(style, label) for style, label in entries],
+                title=f"{title}:",
+                loc="upper left",
+                bbox_to_anchor=(0.0, -0.17 - 0.175 * i),
+                ncol=len(entries),
+                frameon=False,
+                fontsize=13,
+                handlelength=1.3,
+                handleheight=1.1,
+                columnspacing=1.6,
+                borderpad=0.0,
+                borderaxespad=0.0,
+            )
+            leg.set_title(f"{title}:", prop={"size": 13})
+            leg._legend_box.align = "left"
+            if i < len(LEGEND_ROWS) - 1:
+                ax.add_artist(leg)
+
+        fig.subplots_adjust(left=0.17, right=0.845, bottom=0.30, top=0.90)
         FIG.mkdir(exist_ok=True)
         stem = FIG / f"good_bad_night_{good}_{bad}"
         fig.savefig(f"{stem}.png", dpi=200, transparent=True)

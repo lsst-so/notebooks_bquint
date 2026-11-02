@@ -128,6 +128,34 @@ the cuts but with a high ratio: 20260705 (0.791, 0.91 h engineering), 20260711 (
 Ideal night: 11.86 h, OSF 0.7424 (6 Jul's season), exposing **8.81 h**, 1056 visits.
 RTN-093 tick at 0.7 × that = **6.17 h** of exposing.
 
+### Colours and legend — the deck palette, a deliberate palette violation
+
+Bruno asked on 2026-11-02 for the slide colours rather than the Rubin palette, so B12
+uses the same `SLIDE2_COLORS` hexes as slide-4 B1 — Science `#024243`, Engineering
+`#045B5C`, Alignment `#058B8C`, Fault + idle `#F5A623`, Weather `#9BAEB8` — read off the
+night-definition strip on slide 2 of the deck. The constant is **copied** into
+`make_good_bad_night_figure.py`, not imported from `simonyi_time_loss`, so this folder
+stays extractable; if the deck palette changes it must change in both places.
+`rubin_palette.CATEGORY_COLORS` is untouched, and reverting is one line: set
+`PALETTE = RUBIN_COLORS`.
+
+This **fails the normal-vision contrast floor** in the same way slide-4 B1 does: Science
+`#024243` against Engineering `#045B5C` is ΔE **10.9**, under the floor of 15, because
+they are two steps of one teal ramp. Two mitigations, both in `make_figure()`:
+
+- **white hairline separators** at every block join, so each block stays countable
+  without introducing a sixth hue;
+- the Science subdivisions are **one hue at three strengths** (solid / 45 % tint /
+  20 % tint + `///` hatch), and the two hatched blocks lean opposite ways — excess gap
+  `///`, Weather `\\\` — as on slide-4 B1.
+
+Every other pair clears the floor comfortably (Science vs Alignment ΔE 30.5, Engineering
+vs Alignment 19.6, Science vs the expected-gap tint 43.0, Fault vs Weather 82.9).
+
+The legend is **two rows under the x axis**: `Science:` with the three subdivisions, then
+`Lost:` with Alignment, Engineering, Fault + idle and Weather. Swatches and blocks are
+both drawn from the single `STYLE` dict, so they cannot drift apart.
+
 | | ideal | 6 Jul 2026 (good) | 8 Jul 2026 (bad) |
 |---|---|---|---|
 | night (−12°) | 11.86 h | 11.86 h | 11.85 h |
