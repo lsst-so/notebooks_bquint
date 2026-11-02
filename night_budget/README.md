@@ -337,6 +337,142 @@ model permits; the requirement asks for a faster model.
 **fO is not measured here.** ROSP-6's fE = fS·fA·fO needs fS and fA too; this folder
 measures only the fO-like ratio, and the 2024 sub-factors are not a baseline.
 
+## 5b. B13 — cumulative visits through the night
+
+B12 shows **how much** of each night went where; B13 shows **when**. It goes directly under
+B12 on slide 6 and covers the same two nights, drawn by
+`python/make_cumulative_visits_figure.py` from the same cached
+`data/visits_slew_*.parquet` and `data/night_budget_*.csv`. The counts are asserted against
+B12's (899 and 559), so the two figures cannot disagree.
+
+| line | data | style | end label |
+|---|---|---|---|
+| simulated survey pace | straight (0, 0) → (11.863 h, `n_vis_ave` = 1056) | ink `#1F2A30`, dashed (4, 2), 0.9 pt | `simulated pace · 1056 · 89 /h` |
+| start-of-survey threshold | straight (0, 0) → (11.863 h, 0.7 × 1056 = 739) | ink, dotted (1, 1.5), 0.8 pt | `LSST min criteria (0.7 ideal) · 739 · 62 /h` |
+| 6 Jul 2026 | step, `where="post"`: running count of survey visits at each `obs_end`, x = hours since that night's evening −12° | Science `#024243`, 1.3 pt | `6 Jul · 899 [0.85] · 83 /h` **bold** |
+| 8 Jul 2026 | the same | Fault + idle `#F5A623`, 1.3 pt | `8 Jul · 559 [0.53] · 79 /h` **bold** |
+
+The threshold label is Bruno's wording (2026-11-02) — "LSST min criteria (0.7 ideal)" rather
+than "0.7 threshold", so the line is read as the minimum the survey must beat and not as a
+per-night pass mark. The ratio to the simulated night is in **square brackets** on both
+night labels, with no separating dot before the bracket (Bruno, 2026-11-02): the brackets
+already part the ratio from the count, so a third `·` only crowded the label. The printed
+report brackets the same `ratio`.
+
+### The visits/h on each label
+
+Every label ends in a **visits per hour** (Bruno, 2026-11-02), so the figure carries the
+pace and not only the totals. The two reference lines are straight, so theirs is simply the
+slope: 1056 / 11.863 = **89 /h** simulated, and 0.7 of that = **62 /h** for the minimum
+criterion. Each night's is its **steady-state** rate, `steady_state_rate()`:
+
+- "Steady state" starts at the **first visit after that night's longest stall** — 2.0 h on
+  6 Jul, 5.0 h on 8 Jul. On both nights the stall is the last interruption, so everything
+  after it is the night running as intended. This is a choice, not a measurement: a night
+  with two comparable stalls would want a different rule.
+- The quoted figure is a **least-squares fit** of the cumulative count over that stretch:
+  **83 /h** on 6 Jul (0.94 of simulated) and **79 /h** on 8 Jul (0.89). The function also
+  returns the end-to-end rate over the same stretch — 83.0 and 77.7 /h — which is the more
+  conservative reading; the two differ by 2 % on 8 Jul.
+- So the two nights' *steady* paces are much closer to each other, and to the simulations,
+  than their totals are (0.85 vs 0.53). **What separated the two nights was time lost, not
+  the rate while observing** — which is the point of putting B13 under B12.
+
+### The half-width variant (`--half`)
+
+`python python/make_cumulative_visits_figure.py --half` also writes
+`figures/cumulative_visits_20260706_20260708_half[_white].png` at **4.77 × 2.00 in** — half
+the width, same height, so the aspect goes from 4.8:1 to 2.4:1 (Bruno, 2026-11-02). For a
+two-up slide or a column in a technote.
+
+At that width the end labels cannot sit beside the axes: the widest is 2.41 in against a
+4.77 in figure, which would leave under 1.7 in of plot. So they become a **four-row legend
+inside the axes, upper left** — the corner is free because every curve starts at (0, 0) and
+the highest only reaches ~250 visits by 2 h. The legend keeps the same text, the same bold
+and the same per-row colour as the end labels, with a short line segment as the handle, at
+7.0 pt rather than 8.5 so four rows fit the corner.
+
+The block is then **slid down clear of the horizontal gridlines**
+(`_grid_clearing_offset`, Bruno 2026-11-02): in the first draft the dotted "LSST min
+criteria" handle landed within 10 visits of the 1000 line and read as part of its own dash
+pattern. A small nudge cannot fix that — the rows are ~100 visits apart and the gridlines
+250, so *some* row is always near one — so the offset that maximises the worst
+row-to-gridline distance is searched for over one gridline pitch and applied to the whole
+legend. That is −190 visits here, taking the worst clearance from 9 to 49 visits. It is
+searched rather than hard-coded so it stays right if the type size, the row count or
+`Y_TICKS` change. Side margins shrink to 0.60 / 0.12 in,
+so the axes get nearly the whole width. Everything else — data, colours, limits, ticks,
+type sizes — is shared: both variants build their lines from one list of specs, so the
+figure cannot label a line it did not draw, and only the full-width pass prints the report.
+
+**All four end labels are one row each.** This is the full-width figure; the threshold label
+is the widest at 2.41 in
+(8.5 pt), which is why B13 takes **its own side margins** rather than B12's: `B13_LEFT_IN`
+0.60 in — all the y label and the tick numbers need — and `B13_RIGHT_IN` 2.50 in (2.08 in
+before the visits/h were added). Under B12's margins (1.289 / 1.385 in) that label did not
+fit on one line and B13 carried 0.7 in of dead space on the left. The trade is that **B13's
+hour ticks no longer sit under B12's** when the two are stacked. Bruno chose the single-row
+labels over the alignment (2026-11-02); `slide_layout.b12_side_margins` is still there if
+the alignment is ever wanted back. `figures/_check_b12_b13_overlay.png` stacks the two as
+they appear on the slide; it is **gitignored** - a throwaway check, regenerate it by pasting
+the two `_white.png`s one above the other.
+
+**Layout.** 9.55 × 2.00 in at 300 dpi, so again a point here is a point on the slide: ticks
+and axis labels 7.5 pt, end labels 8.5 pt, axis lines 0.6 pt, tick length 2.5, light
+horizontal grid (`#D5DDE0`, 0.4 pt), top and right spines off, no title and no legend — the
+end labels name the lines. y runs 0 → 1150 with ticks every 250; x runs 0 → 6 Jul's −12°
+night length (11.863 h) with ticks every 2 h. Side margins come from
+`python/slide_layout.py` (see the paragraph above). Only labels are nudged to avoid
+collisions (at least 1.25 × 8.5 pt apart, worked out in display space); the lines are never
+moved. Solid colours, no alpha, as in B12. Each curve is pinned to (0, 0) and carried flat
+to the morning −12° crossing, so its last point is the night's total.
+
+### The printed numbers
+
+Exactly as `python/make_cumulative_visits_figure.py` prints them. Simulated pace: **1056
+visits over 11.863 h = 89.0 /h**; LSST min criteria (0.7 ideal): **739 visits**.
+
+| | 6 Jul | 8 Jul |
+|---|---|---|
+| survey visits in the −12° night | 899 | 559 |
+| night length (−12°) | 11.863 h | 11.846 h |
+| first survey visit after −12° | 0.41 h | 4.37 h |
+| longest flat stretch (survey-only) | 1.40 → 2.02 h, 37 min — alignment / TARTS test (BLOCK-T668) | 4.72 → 5.00 h, 17 min — HV bias trip, OBS-2010 |
+| visits vs ideal at 2 h | 86 vs 178 | 0 vs 178 |
+| at 6 h | 405 vs 534 | 104 vs 534 |
+| at end of night | 899 vs 1056, ratio **[0.85]** | 559 vs 1056, ratio **[0.53]** |
+| steady state, least squares (**on the label**) | 83.4 /h from 2.0 h | 79.3 /h from 5.0 h |
+| steady state, end to end | 83.0 /h | 77.7 /h |
+| steady state as a fraction of simulated | 0.94 | 0.89 |
+| simulated pace | 89.0 /h | 89.0 /h |
+| hours under the min-criteria line | 4.46 h | 11.86 h (all night) |
+
+Both stalls are named from sources B11/B12 already carry, not from new ones. On 6 Jul the
+cached visits put four `BLOCK-T668` `infocus_wavefront_tarts_test` acquisitions inside the
+37-min stretch, which matches the night log's "TARTS test abandoned (RA config)"; on 8 Jul
+the stretch is 03:36–03:53 UTC, the log's "HV bias tripped 03:30–03:50 UTC (OBS-2010)"
+(`simonyi_time_loss/data/raw/nightlog_sweep_2026-07.md`).
+
+Two values differ slightly from the chat mockup, both under 2 %: 405 rather than 404 visits
+at 6 h on 6 Jul (one visit, a boundary rounding), and 83.4 /h rather than 82.6 /h for 6 Jul's
+post-stall slope (the slope is fitted from the first visit after the stall rather than from a
+hand-set 2.1 h). 8 Jul's slope is 79.3 /h least-squares, 77.7 /h end-to-end; the mockup's
+76.8 /h is the end-to-end form from a slightly later start.
+
+### Two caveats specific to B13
+
+1. **The simulated-pace line is straight by construction.** The OSF fit gives a per-night
+   *total* only, so the line is the night's average pace. The simulations' instantaneous
+   rate through the night is not uniform — it varies with airmass, filter changes and the
+   scheduler's own choices — so the line should not be read as "where the sims would be at
+   3 h". The same holds for the min-criteria line, which is 0.7 of it.
+2. **The RTN-093 0.7 criterion is, as far as we know, assessed over a stretch of nights,
+   not per night.** On a single-night plot it is a reference pace, not a pass/fail test, and
+   "4.46 h under the line" is not 4.46 h of failing. The label says "LSST min criteria"
+   rather than "0.7 threshold" partly for this reason — it names the criterion without
+   claiming the night was tested against it. **Bruno to confirm the RTN-093 wording** before
+   the talk.
+
 ## 6. Contents
 
 ```
@@ -349,11 +485,15 @@ night_budget/
 │   ├── rosp24_per_night.csv                              # copy of simonyi_time_loss output
 │   └── visits_slew_*.parquet                             # ConsDB + modelled slews (gitignored)
 ├── figures/
-│   └── good_bad_night_20260706_20260708[_white].png      # B12, 9.55 x 2.22 in
+│   ├── good_bad_night_20260706_20260708[_white].png      # B12, 9.55 x 2.22 in
+│   ├── cumulative_visits_20260706_20260708[_white].png   # B13, 9.55 x 2.00 in
+│   └── cumulative_visits_20260706_20260708_half[_white].png  # B13 half width, 4.77 x 2.00 in
 └── python/
-    ├── ideal_osf.py                    # step 0: fit the ideal-night OSF from an opsim
-    ├── night_budget.py                 # step 1: the per-night budget + night selector
-    └── make_good_bad_night_figure.py   # step 2: the figure
+    ├── ideal_osf.py                        # step 0: fit the ideal-night OSF from an opsim
+    ├── night_budget.py                     # step 1: the per-night budget + night selector
+    ├── slide_layout.py                     # the slide box, and B12's / B13's side margins
+    ├── make_good_bad_night_figure.py       # step 2: B12
+    └── make_cumulative_visits_figure.py    # step 2: B13
 ```
 
 ## 7. Reproducing
@@ -367,7 +507,8 @@ python python/ideal_osf.py --all                               # ~7 min, re-fits
 cp ../simonyi_time_loss/data/processed/per_night.csv data/rosp24_per_night.csv
 python python/night_budget.py --day-obs-min 20260629 --day-obs-max 20261101 --select
 python python/night_budget.py --day-obs-min 20260529 --day-obs-max 20260628   # pre-LSST month, §4
-python python/make_good_bad_night_figure.py
+python python/make_good_bad_night_figure.py                    # B12
+python python/make_cumulative_visits_figure.py --half           # B13 + the half-width variant
 ```
 
 ## 8. Caveats

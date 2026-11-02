@@ -51,6 +51,8 @@ sys.path.insert(
 )  # copy the module here before extraction
 import rubin_palette as rp  # noqa: E402
 
+from slide_layout import b12_side_margins  # noqa: E402
+
 DATA = ROOT / "data"
 FIG = ROOT / "figures"
 
@@ -127,6 +129,8 @@ LEGEND_ENTRIES = [
 ]
 
 #: Exact size of the box the figure occupies on the slide (Bruno, 2026-11-02).
+#: The width is shared with B13; the side margins are B12's own, and live in
+#: :mod:`slide_layout` next to B13's (see that module on why they differ).
 #: At this size the figure is placed at ~1:1, so a point here is a point on the
 #: slide and the type sizes below are the real on-screen sizes. The frame is wide
 #: and *short* - three bars, an axis and two legend rows inside 2.22 in - so every
@@ -404,7 +408,7 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
 
         # Side margins hold the bar labels and the "N visits · ratio" labels, which
         # are drawn in data coordinates outside the x limits.
-        fig.subplots_adjust(left=0.135, right=0.855, bottom=0.22, top=0.98)
+        fig.subplots_adjust(bottom=0.22, top=0.98, **b12_side_margins(FIG_W))
         # Grow the bottom margin until the legend row actually fits: its height
         # depends on the font metrics, so measure rather than guess.
         fig.canvas.draw()

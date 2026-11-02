@@ -27,3 +27,6 @@ night_budget/data/visits_slew_*.parquet
 # simonyi_time_loss: EFD/ConsDB caches (regenerate with python/pull_efd_weather_1min.py and notebook 03)
 simonyi_time_loss/data/cache/
 simonyi_time_loss/data/step0/*.parquet
+
+# night_budget: throwaway B12/B13 stacking check (regenerate when the figures change)
+night_budget/figures/_check_b12_b13_overlay.png
