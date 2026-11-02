@@ -19,6 +19,13 @@ good night, a real bad night — in the same block form as slide 3.
    visit of excess. The remaining shortfall is not the gaps — it is the hour at the start
    of the night and the transitions.
 
+The three Science blocks on each bar are **exposing** (shutter open), **expected gap** (the
+slew, readout and settle the kinematic model says each gap needed) and **excess gap** (what
+the night spent over that model). See [§4, what "expected gap" and "excess gap"
+mean](#what-expected-gap-and-excess-gap-mean) for the definition and the per-gap numbers —
+worth reading before presenting, since the split is measured against a *model*, not against
+the OSS-REQ-0289 requirement.
+
 ## 2. Definitions
 
 | Source | Value | Use on the figure |
@@ -88,11 +95,56 @@ The Science block is split four ways over survey visits only:
 | `gap_excess_h` | Σ (gap − expected) over survey gaps ≤ 10 min |
 | `gap_expected_current_h` | the same with `slew_model` — today's TMA limits |
 
-**Expected gap: ideal or current TMA?** The figure uses the **ideal** model
-(`slew_model_ideal`), because the bar is read against the simulated ideal night; the
-**current**-TMA number is reported in §5 so the two can be separated. The difference is
-small today: 9.7 s against 9.2 s per visit on 6 Jul, so the TMA limits applied that night
-were close to the 40 % model. Open for Bruno to overrule.
+### What "expected gap" and "excess gap" mean
+
+A **visit gap** is dead time between two survey visits: from the shutter closing on one to
+the shutter opening on the next (the OSS-REQ-0289 inter-visit interval). Across it the
+telescope has to read out the last exposure, slew to the next field, rotate, settle, and
+sometimes change filter. Some of that is unavoidable physics; the rest is not. The split
+separates the two.
+
+For each survey visit, `add_model_slew_times` **simulates the slew that should have
+preceded it** — same start and end pointing, same rotator angle, same filter change if one
+happened — through the FBS kinematic model at 40 % TMA, the one the baseline simulations
+assume. Call that modelled duration *m*, and the gap actually observed *g*. Then:
+
+- **expected gap** = `min(m, g)` — the part of the gap the model says was *necessary*. It
+  is capped at *g* so a gap that beat the model never contributes more than it took.
+- **excess gap** = `g − min(m, g)` — what the night spent *over* the model. Zero when the
+  gap matched or beat the model, positive otherwise.
+
+The two therefore sum to the whole gap by construction, and the split is a comparison
+against a physical model, **not** against a requirement. A night can have small excess and
+still miss OSS-REQ-0289, which is exactly what 6 Jul does.
+
+Why this is the useful cut for the slide: it answers "could this night have gone faster with
+the telescope we have?" separately from "is the telescope as fast as the survey needs?".
+Excess gap is the part operations can recover; expected gap can only be reduced by making
+the hardware or the scheduler faster.
+
+On 6 Jul, over the night's 897 survey gaps:
+
+| | median | mean | total |
+|---|---|---|---|
+| actual gap *g* | 9.2 s | 12.3 s | 3.07 h |
+| modelled slew *m* | 7.3 s | 9.9 s | — |
+| **expected** = min(*m*, *g*) | 7.2 s | 9.7 s | 2.41 h |
+| **excess** = *g* − expected | 1.4 s | 2.6 s | 0.66 h |
+
+Two things that table hides. **160 of the 897 gaps had zero excess** — they matched or beat
+the model outright. And the excess is not spread evenly: **46 % of it comes from the worst
+10 % of gaps** (the longest is 218 s against a 9 s median). So "0.66 h of excess" is mostly
+a few dozen bad gaps, not a uniform tax on every visit — which is why the figure also
+reports the count of gaps over twice the model (46 on 6 Jul).
+
+**Which model — ideal or current TMA?** `add_model_slew_times` returns both: `slew_model`
+uses the TMA limits the EFD says were actually applied that night, `slew_model_ideal` the
+40 % TMA model the simulations assume. The figure and `gap_expected_h` use the **ideal**
+one, because each bar is read against the simulated ideal night; `gap_expected_current_h`
+carries the current-TMA version so "the TMA is slower than the sims assume" can be
+separated from "everything else". The difference is small today — 9.7 s against 9.2 s per
+visit on 6 Jul — so the limits applied that night were close to the 40 % model. Open for
+Bruno to overrule.
 
 Pitfalls handled: gaps reset at each `day_obs`; ConsDB `obs_*_mjd` are TAI, converted to
 UTC (−37 s); the first gap of the night and the first gap after a non-survey visit are
@@ -183,8 +235,10 @@ here is a point on screen**. Every type size is therefore a real slide point and
 the 7–8 pt floor: bar labels 8.5, the `N visits · ratio` labels 8.5, ticks and x label and
 legend 7.5, in-bar `%` labels 7.5. Line weights came down to match (axis 0.6, separators
 0.8, hatch 0.5). There is no title — the slide carries one, and in a frame this short every
-line of height counts. `BAR_H = 0.78` with y limits just beyond the outer bars, and the
-margins hold only what must live outside the axes.
+line of height counts. `BAR_H = 0.89` at a bar pitch of 1.0, so the gap between bars is 0.11 —
+half what it was, with the bars taking up the difference (Bruno, 2026-11-02). The y limits
+follow `BAR_H` rather than being fixed, so changing the thickness keeps the air above and
+below correct, and the margins hold only what must live outside the axes.
 
 Because the type is pinned to the slide box, **changing `FIG_W`/`FIG_H` alone will not
 rescale the figure sensibly** — the point sizes would no longer match the placed size. If the

@@ -155,7 +155,11 @@ RC = {
     "ytick.color": C["ink2"],
 }
 
-BAR_H = 0.78  # bar thickness in y units; thick bars leave room for the % labels
+#: Bar thickness in y units. Bars sit at a pitch of 1.0, so the gap between them
+#: is ``1 - BAR_H``: 0.89 leaves 0.11, half the 0.22 it was (Bruno, 2026-11-02),
+#: and the bars take up the difference. Thick bars also leave room for the
+#: in-bar ``%`` labels.
+BAR_H = 0.89
 
 
 def load_budget(path: Path | None = None) -> pd.DataFrame:
@@ -370,7 +374,7 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
         ax.set_xlim(0, night_h)
         # tight y limits: half a bar of air above and below, no more. The figure
         # goes on a slide, so empty space costs on-screen size.
-        ax.set_ylim(-0.60, 2.60)
+        ax.set_ylim(-BAR_H / 2 - 0.06, 2 + BAR_H / 2 + 0.06)
         ax.set_yticks([])
         for side in ("left", "right", "top"):
             ax.spines[side].set_visible(False)
