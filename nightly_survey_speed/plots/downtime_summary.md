@@ -1,4 +1,4 @@
-# Downtime summary, 2025-10-26 to 2026-07-13
+# Downtime summary, 2025-10-26 to 2026-11-01
 
 Nights lost = nights inside the span with fewer than 50 plotted visits in ConsDB (`cdb_lsstcam.visit1`, airmass > 0, img_type in acq/science/cwfs/focus). Spans marked * are drawn on `utilization_annotated.png`.
 
@@ -36,19 +36,22 @@ Nights lost = nights inside the span with fewer than 50 plotted visits in ConsDB
 | 2026-07-01 | 2026-07-04 | 4 | Weather and TMA faults* | mixed | partial | high | FRACAS-400, FRACAS-403 |
 | 2026-07-07 | 2026-07-07 | 1 | UNKNOWN | unknown | full | low | - |
 | 2026-07-08 | 2026-07-08 | 0 | LSSTCam REB power supplies tripped* | fault | partial | medium | FRACAS-404 |
-| 2026-07-14 | 2026-10-12 | outside range | July storm and recovery | weather | full | high | - |
+| 2026-07-14 | 2026-09-15 | 64 | July storm* | weather | full | high | - |
+| 2026-09-16 | 2026-10-05 | 20 | Planned maintenance downtime* | planned | full | high | - |
+| 2026-10-06 | 2026-10-26 | 21 | Recovery and return to sky* | weather | full | high | - |
+| 2026-10-31 | 2026-11-01 | 2 | Rotator fault* | fault | full | high | - |
 
 ## Nights lost per category (in range, sum over spans)
 
 | Category | Nights lost |
 |---|---|
-| fault | 49 |
-| weather | 7 |
-| planned | 1 |
+| fault | 51 |
+| weather | 92 |
+| planned | 21 |
 | mixed | 4 |
 | degraded | 9 |
 | unknown | 19 |
-| **total** | **89** |
+| **total** | **196** |
 
-Distinct blank nights in ConsDB over the range: **80**, of which 61 are covered by a labelled span and 19 are UNKNOWN.
+Distinct blank nights in ConsDB over the range: **188**, of which 169 are covered by a labelled span and 19 are UNKNOWN.
 The per-category sum exceeds this because the degraded span (earthquake, TMA at 5 %) overlaps other spans, so its blank nights are counted twice.
