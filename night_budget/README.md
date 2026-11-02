@@ -128,33 +128,67 @@ the cuts but with a high ratio: 20260705 (0.791, 0.91 h engineering), 20260711 (
 Ideal night: 11.86 h, OSF 0.7424 (6 Jul's season), exposing **8.81 h**, 1056 visits.
 RTN-093 tick at 0.7 × that = **6.17 h** of exposing.
 
-### Colours and legend — the deck palette, a deliberate palette violation
+### Colours and legend — the deck palette, as in slide-4 B1
 
-Bruno asked on 2026-11-02 for the slide colours rather than the Rubin palette, so B12
-uses the same `SLIDE2_COLORS` hexes as slide-4 B1 — Science `#024243`, Engineering
-`#045B5C`, Alignment `#058B8C`, Fault + idle `#F5A623`, Weather `#9BAEB8` — read off the
-night-definition strip on slide 2 of the deck. The constant is **copied** into
-`make_good_bad_night_figure.py`, not imported from `simonyi_time_loss`, so this folder
-stays extractable; if the deck palette changes it must change in both places.
-`rubin_palette.CATEGORY_COLORS` is untouched, and reverting is one line: set
-`PALETTE = RUBIN_COLORS`.
+Bruno asked on 2026-11-02 for the same scheme as
+`time_loss_monthly_talk_20251025-20261031_6bin_white.png`, so B12 uses the deck's
+`SLIDE2_COLORS` hexes — Science `#024243`, Engineering `#045B5C`, Alignment `#058B8C`,
+Fault + idle `#F5A623`, Weather `#9BAEB8` — read off the night-definition strip on slide 2.
+The constant is **copied** into `make_good_bad_night_figure.py`, not imported from
+`simonyi_time_loss`, so this folder stays extractable; if the deck palette changes it must
+change in both places. `rubin_palette.CATEGORY_COLORS` is untouched, and reverting to it is
+one line: set `PALETTE = RUBIN_COLORS`.
 
-This **fails the normal-vision contrast floor** in the same way slide-4 B1 does: Science
-`#024243` against Engineering `#045B5C` is ΔE **10.9**, under the floor of 15, because
-they are two steps of one teal ramp. Two mitigations, both in `make_figure()`:
+The first draft looked worse than B1 even though it used the same hexes. The reason was
+**alpha**: tinting Science at 45 % / 20 % to make the gap blocks washed them toward the
+weather grey. B1 has no transparency anywhere — every block is a solid colour, separated by
+white rules and labelled in white. B12 now does the same, which needs one fill that is not
+a deck colour:
 
-- **white hairline separators** at every block join, so each block stays countable
-  without introducing a sixth hue;
-- the Science subdivisions are **one hue at three strengths** (solid / 45 % tint /
-  20 % tint + `///` hatch), and the two hatched blocks lean opposite ways — excess gap
-  `///`, Weather `\\\` — as on slide-4 B1.
+| block | fill | note |
+|---|---|---|
+| exposing | `#024243` | Science, the deck colour |
+| expected gap + in-visit | `#7FC6C7` | `GAP_TEAL`, a step of `rubin_palette.SEQUENTIAL_TEAL` |
+| excess gap | `#7FC6C7` + `///` | **same fill as expected gap**, told apart only by the hatch (Bruno, 2026-11-02) |
+| Alignment / Engineering / Fault + idle | deck colours | solid |
+| Weather | `#9BAEB8` + `\\\` | hatch direction as on B1 |
 
-Every other pair clears the floor comfortably (Science vs Alignment ΔE 30.5, Engineering
-vs Alignment 19.6, Science vs the expected-gap tint 43.0, Fault vs Weather 82.9).
+`#7FC6C7` was chosen because it clears every one of the six deck colours: nearest is
+Weather at ΔE 18.3, then Alignment at 24.7.
 
-The legend is **two rows under the x axis**: `Science:` with the three subdivisions, then
-`Lost:` with Alignment, Engineering, Fault + idle and Weather. Swatches and blocks are
-both drawn from the single `STYLE` dict, so they cannot drift apart.
+One pair still **fails the normal-vision contrast floor**, exactly as slide-4 B1 does:
+Science `#024243` against Engineering `#045B5C` is ΔE **10.9**, under the floor of 15,
+because they are two steps of one teal ramp. It is mitigated by the **white hairline
+separators** at every block join, so each block stays countable without a seventh hue. All
+14 other pairs clear the floor (full matrix printed by the ΔE check in the commit message of
+`8130bd8`); the worst after that pair is gap vs Weather at 18.3.
+
+**In-bar `%` labels** are drawn on every block wide enough to hold one — the threshold is
+`LABEL_MIN_FRAC = 0.055` of the night, about 39 min, below which "6%" would not fit at
+7.5 pt. Label colour comes from the same `STYLE` dict as the fill: white on the four dark blocks, ink on
+the two light ones. On 6 Jul the Alignment and Engineering blocks (2 % and 1 %) fall below
+the threshold and are deliberately unlabelled — their numbers are in the table above.
+
+The legend is **one centred row of seven** under the x label, in stack order. It started as
+two rows with `Science:` / `Lost:` titles, but inside a 2.22 in frame each title costs a
+line of height and the lower row collided with the x label; the entry labels carry the
+grouping instead ("exposing", "expected gap", "excess gap", then the plain category nouns).
+Swatches and blocks are both drawn from the single `STYLE` dict, so they cannot drift apart.
+The bottom margin is grown in a measure-and-retry loop until the legend actually fits, since
+its height depends on font metrics rather than on anything known up front.
+
+**Layout — sized for the slide.** The figure is exactly **9.55 × 2.22 in** at 300 dpi
+(`FIG_W` / `FIG_H`, Bruno's slide box, 2026-11-02), so it is placed at ~1:1 and **a point
+here is a point on screen**. Every type size is therefore a real slide point and sits near
+the 7–8 pt floor: bar labels 8.5, the `N visits · ratio` labels 8.5, ticks and x label and
+legend 7.5, in-bar `%` labels 7.5. Line weights came down to match (axis 0.6, separators
+0.8, hatch 0.5). There is no title — the slide carries one, and in a frame this short every
+line of height counts. `BAR_H = 0.78` with y limits just beyond the outer bars, and the
+margins hold only what must live outside the axes.
+
+Because the type is pinned to the slide box, **changing `FIG_W`/`FIG_H` alone will not
+rescale the figure sensibly** — the point sizes would no longer match the placed size. If the
+slide box changes, change the `PT_*` constants with it.
 
 | | ideal | 6 Jul 2026 (good) | 8 Jul 2026 (bad) |
 |---|---|---|---|
@@ -204,7 +238,7 @@ night_budget/
 │   ├── rosp24_per_night.csv                              # copy of simonyi_time_loss output
 │   └── visits_slew_*.parquet                             # ConsDB + modelled slews (gitignored)
 ├── figures/
-│   └── good_bad_night_20260706_20260708[_white].png      # B12, 16:6
+│   └── good_bad_night_20260706_20260708[_white].png      # B12, 9.55 x 2.22 in
 └── python/
     ├── ideal_osf.py                    # step 0: fit the ideal-night OSF from an opsim
     ├── night_budget.py                 # step 1: the per-night budget + night selector

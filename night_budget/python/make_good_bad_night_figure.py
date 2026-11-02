@@ -6,9 +6,13 @@ Each bar is the same block form as slide 3, in ROSP-24 precedence order and in t
 deck's own ``SLIDE2_COLORS`` (as slide-4 B1; see ``PALETTE`` below and README §5),
 so the three read as the same accounting:
 
-* **Science**, subdivided: exposing (solid), expected gap + in-visit overhead
-  (a lighter tint), excess gap (hatched);
+* **Science**, subdivided: exposing in the Science colour, then expected gap +
+  in-visit overhead and excess gap, which share ``GAP_TEAL`` and differ only by
+  the hatch on the excess;
 * **Alignment**, **Engineering**, **Fault + idle**, **Weather** (hatched).
+
+Every fill is solid - no alpha anywhere - and blocks are parted by white rules and
+carry an in-bar ``%`` label where they are wide enough, as on slide-4 B1.
 
 The dashed tick on each real bar is the hour at which exposing would end if the
 night had met the RTN-093 survey-start criterion, survey speed > 0.7, i.e. at
@@ -17,10 +21,12 @@ night had met the RTN-093 survey-start criterion, survey speed > 0.7, i.e. at
 Inputs are this folder's own ``data/night_budget_<min>_<max>.csv``, written by
 ``night_budget.py``. No cross-folder imports.
 
-The legend sits in two rows under the x axis: ``Science:`` with the three
-subdivisions, then ``Lost:`` with the categories that are not Science.
+The legend sits in one centred row of seven under the x label, in stack order
+(see :data:`LEGEND_ENTRIES`).
 
-Outputs ``../figures/good_bad_night_<good>_<bad>.png`` and ``_white.png``, 16:6.
+Outputs ``../figures/good_bad_night_<good>_<bad>.png`` and ``_white.png`` at
+exactly 9.55 x 2.22 in (:data:`FIG_W`, :data:`FIG_H`), 300 dpi, with no title -
+the slide carries one, and in a frame this short every line of height counts.
 
 Run from a set-up kernel shell::
 
@@ -85,8 +91,16 @@ RUBIN_COLORS = {
 
 PALETTE = SLIDE2_COLORS
 
+#: The gap blocks need a fifth fill that is not one of the six deck colours. An alpha
+#: tint of Science washed out toward the weather grey, which is why the first draft
+#: read worse than slide-4 B1: there every block is a *solid* colour. This is the
+#: Rubin sequential-teal step (``rubin_palette.SEQUENTIAL_TEAL``) that clears all six
+#: deck colours - nearest is Weather at dE 18.3, then Alignment at 24.7.
+GAP_TEAL = "#7FC6C7"
+
 C = {
     "survey": PALETTE["Science"],
+    "gap": GAP_TEAL,
     "focus": PALETTE["Alignment"],
     "engineering": PALETTE["Engineering"],
     "fault_idle": PALETTE["Fault + idle"],
@@ -97,34 +111,43 @@ C = {
     "grid": rp.NEUTRALS["grid"],
 }
 
-#: Legend rows: the Science subdivisions, then the categories that are not Science.
-#: ``(style, label)``; drawn in two rows under the x axis, in stack order.
-LEGEND_ROWS = (
-    (
-        "Science",
-        [
-            ("survey", "exposing (shutter open)"),
-            ("survey_light", "expected gap + in-visit overhead"),
-            ("survey_hatch", "excess gap"),
-        ],
-    ),
-    (
-        "Lost",
-        [
-            ("focus", "Alignment"),
-            ("engineering", "Engineering"),
-            ("fault_idle", "Fault + idle"),
-            ("weather_hatch", "Weather"),
-        ],
-    ),
-)
+#: Legend entries, ``(style, label)``, in stack order: the three Science
+#: subdivisions first, then the categories that are not Science. One row of seven,
+#: not two rows of three and four: inside a 2.22 in frame the two ``Science:`` /
+#: ``Lost:`` row titles cost a line of height each and collided with the x label.
+#: The labels carry the grouping instead ("exposing" / "... gap" / plain nouns).
+LEGEND_ENTRIES = [
+    ("survey", "exposing"),
+    ("gap_expected", "expected gap"),
+    ("gap_excess", "excess gap"),
+    ("focus", "Alignment"),
+    ("engineering", "Engineering"),
+    ("fault_idle", "Fault + idle"),
+    ("weather", "Weather"),
+]
+
+#: Exact size of the box the figure occupies on the slide (Bruno, 2026-11-02).
+#: At this size the figure is placed at ~1:1, so a point here is a point on the
+#: slide and the type sizes below are the real on-screen sizes. The frame is wide
+#: and *short* - three bars, an axis and two legend rows inside 2.22 in - so every
+#: type size is near the 7-8 pt floor and there is no room for a title.
+FIG_W, FIG_H = 9.55, 2.22
+
+#: Type sizes, in real slide points. The bar labels are the largest thing here
+#: because they are what the audience reads first.
+PT_BAR_LABEL = 8.5  # the date on the left of each bar
+PT_BAR_NOTE = 7.0  # the one-word note under the date
+PT_RIGHT = 8.5  # "899 visits · 0.85"
+PT_TICK = 7.5  # x tick numbers
+PT_XLABEL = 7.5
+PT_LEGEND = 7.5
 
 RC = {
-    "figure.figsize": (16, 6),
-    "font.size": 15,
-    "axes.titlesize": 20,
-    "xtick.labelsize": 14,
-    "axes.linewidth": 1.0,
+    "figure.figsize": (FIG_W, FIG_H),
+    "font.size": PT_LEGEND,
+    "xtick.labelsize": PT_TICK,
+    "axes.linewidth": 0.6,
+    "hatch.linewidth": 0.5,
     "text.color": C["ink"],
     "axes.labelcolor": C["ink"],
     "axes.edgecolor": C["ink2"],
@@ -132,7 +155,7 @@ RC = {
     "ytick.color": C["ink2"],
 }
 
-BAR_H = 0.52  # bar thickness in y units
+BAR_H = 0.78  # bar thickness in y units; thick bars leave room for the % labels
 
 
 def load_budget(path: Path | None = None) -> pd.DataFrame:
@@ -155,7 +178,7 @@ def ideal_bar(night_h: float, osf: float) -> list[tuple[str, float, str]]:
     exposing = night_h * osf
     return [
         ("exposing", exposing, "survey"),
-        ("overhead", night_h - exposing, "survey_light"),
+        ("overhead", night_h - exposing, "gap_expected"),
     ]
 
 
@@ -170,12 +193,12 @@ def real_bar(row: pd.Series) -> list[tuple[str, float, str]]:
     """
     blocks = [
         ("exposing", row.exposing_h, "survey"),
-        ("expected", row.gap_expected_h + row.in_visit_h, "survey_light"),
-        ("excess", row.gap_excess_h, "survey_hatch"),
+        ("expected", row.gap_expected_h + row.in_visit_h, "gap_expected"),
+        ("excess", row.gap_excess_h, "gap_excess"),
         ("alignment", np.nan_to_num(row.focus_h) + row.nonsurvey_visit_h, "focus"),
         ("engineering", np.nan_to_num(row.engineering_h), "engineering"),
         ("fault_idle", np.nan_to_num(row.fault_idle_h), "fault_idle"),
-        ("weather", np.nan_to_num(row.weather_h), "weather_hatch"),
+        ("weather", np.nan_to_num(row.weather_h), "weather"),
     ]
     total = sum(h for _, h, _ in blocks)
     if total > 0:
@@ -184,58 +207,81 @@ def real_bar(row: pd.Series) -> list[tuple[str, float, str]]:
     return blocks
 
 
-#: One spec per block style: ``(colour, alpha, hatch)``. The blocks and the legend
-#: swatches are both drawn from this, so they cannot drift apart. The three Science
-#: styles are one hue at three strengths, as the slide-3 form asks; Weather keeps the
-#: slide-4 B1 hatch direction so the two figures read the same way.
+#: One spec per block style: ``(colour, hatch, text)``. The blocks and the legend
+#: swatches are both drawn from this, so they cannot drift apart. Every fill is
+#: **solid** - as in slide-4 B1, where the white separators and white in-bar labels
+#: do the separating, not transparency. ``text`` is the in-bar label colour.
+#: Expected and excess gap share ``GAP_TEAL`` and differ only by the hatch (Bruno,
+#: 2026-11-02); Weather keeps the slide-4 B1 hatch direction.
 STYLE = {
-    "survey": (C["survey"], 1.00, None),
-    "survey_light": (C["survey"], 0.45, None),
-    "survey_hatch": (C["survey"], 0.20, "///"),
-    "focus": (C["focus"], 1.00, None),
-    "engineering": (C["engineering"], 1.00, None),
-    "fault_idle": (C["fault_idle"], 1.00, None),
-    "weather_hatch": (C["weather"], 0.45, "\\\\\\"),
+    "survey": (C["survey"], None, "white"),
+    "gap_expected": (C["gap"], None, C["ink"]),
+    "gap_excess": (C["gap"], "///", C["ink"]),
+    "focus": (C["focus"], None, "white"),
+    "engineering": (C["engineering"], None, "white"),
+    "fault_idle": (C["fault_idle"], None, "white"),
+    "weather": (C["weather"], "\\\\\\", C["ink"]),
 }
 
 
+#: No in-bar % label below this share of the night - it would not fit. Same idea as
+#: ``LABEL_MIN_FRAC`` in slide-4 B1, tuned for a horizontal bar: a label needs about
+#: 3 characters ("63%") across the block.
+LABEL_MIN_FRAC = 0.055
+#: In-bar label size, in real slide points (see :data:`FIG_W`).
+LABEL_PT = 7.5
+
+
 def _draw_block(ax, x: float, y: float, w: float, style: str, zorder: float = 1.0) -> None:
-    """One block: a solid colour, a lighter tint, or a hatch over a tint."""
+    """One solid block, hatched if its style says so."""
     if w <= 0:
         return
-    base, alpha, hatch = STYLE[style]
+    base, hatch, _text = STYLE[style]
     ax.add_patch(
         mpl.patches.Rectangle(
-            (x, y - BAR_H / 2),
-            w,
-            BAR_H,
-            facecolor=base,
-            alpha=alpha,
-            edgecolor="none",
-            zorder=zorder,
+            (x, y - BAR_H / 2), w, BAR_H, facecolor=base, edgecolor="none", zorder=zorder
         )
     )
     if hatch:
+        # the hatch is drawn in white over the solid fill, as in slide-4 B1, so the
+        # hatched and unhatched blocks of one colour stay the same weight
         ax.add_patch(
             mpl.patches.Rectangle(
                 (x, y - BAR_H / 2),
                 w,
                 BAR_H,
                 facecolor="none",
-                edgecolor=base,
+                edgecolor="white",
                 hatch=hatch,
                 linewidth=0,
-                alpha=0.85,
                 zorder=zorder + 0.1,
             )
         )
 
 
+def _label_block(ax, x: float, y: float, w: float, style: str, night_h: float) -> None:
+    """The in-bar ``%`` label, where the block is wide enough to hold one."""
+    frac = w / night_h
+    if frac < LABEL_MIN_FRAC:
+        return
+    _base, _hatch, text = STYLE[style]
+    ax.text(
+        x + w / 2,
+        y,
+        f"{frac * 100:.0f}%",
+        ha="center",
+        va="center",
+        fontsize=LABEL_PT,
+        color=text,
+        zorder=3,
+    )
+
+
 def _legend_handles(style: str, label: str) -> mpl.patches.Patch:
     """A legend swatch drawn from the same :data:`STYLE` spec as the blocks."""
-    base, alpha, hatch = STYLE[style]
+    base, hatch, _text = STYLE[style]
     return mpl.patches.Patch(
-        facecolor=base, alpha=alpha, hatch=hatch, edgecolor=base if hatch else "none", label=label
+        facecolor=base, hatch=hatch, edgecolor="white" if hatch else "none", label=label
     )
 
 
@@ -248,7 +294,7 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
     ideal_exposing_h = night_h * ideal_osf
 
     bars = [
-        ("LSST ideal night", "v5.3 baseline", ideal_bar(night_h, ideal_osf), None),
+        ("LSST ideal night", f"{baseline} baseline", ideal_bar(night_h, ideal_osf), None),
         (f"{pd.Timestamp(str(good)):%d %b %Y}", BAR_NOTE.get(good, ""), real_bar(good_row), good_row),
         (f"{pd.Timestamp(str(bad)):%d %b %Y}", BAR_NOTE.get(bad, ""), real_bar(bad_row), bad_row),
     ]
@@ -265,7 +311,7 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
                     BAR_H,
                     facecolor="white",
                     edgecolor=C["grid"],
-                    linewidth=0.8,
+                    linewidth=0.5,
                     zorder=0,
                 )
             )
@@ -273,6 +319,7 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
             edges = []
             for _name, w, style in blocks:
                 _draw_block(ax, x, y, w, style)
+                _label_block(ax, x, y, w, style, night_h)
                 x += w
                 if w > 0:
                     edges.append(x)
@@ -285,16 +332,18 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
                     [edge, edge],
                     [y - BAR_H / 2, y + BAR_H / 2],
                     color="white",
-                    linewidth=1.1,
+                    linewidth=0.8,
                     solid_capstyle="butt",
                     zorder=2,
                 )
 
             # left-hand labels: date, then one word
-            ax.text(-0.25, y + 0.10, label, ha="right", va="center", fontsize=16, color=C["ink"])
+            ax.text(
+                -0.18, y + 0.14, label, ha="right", va="center", fontsize=PT_BAR_LABEL, color=C["ink"]
+            )
             if note:
                 ax.text(
-                    -0.25, y - 0.16, note, ha="right", va="center", fontsize=13, color=C["ink2"]
+                    -0.18, y - 0.20, note, ha="right", va="center", fontsize=PT_BAR_NOTE, color=C["ink2"]
                 )
 
             # right-hand label: visits and the ratio to the ideal night
@@ -304,7 +353,7 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
             else:
                 right = f"{int(row.n_survey)} visits  ·  {row.ratio:.2f}"
             ax.text(
-                night_h + 0.25, y, right, ha="left", va="center", fontsize=16, color=C["ink"]
+                night_h + 0.18, y, right, ha="left", va="center", fontsize=PT_RIGHT, color=C["ink"]
             )
 
             # RTN-093 tick: where exposing would end at survey speed 0.7
@@ -312,56 +361,60 @@ def make_figure(budget: pd.DataFrame, good: int, bad: int, baseline: str) -> Pat
                 ax.plot(
                     [ideal_exposing_h * SURVEY_SPEED_CRITERION] * 2,
                     [y - BAR_H / 2 - 0.06, y + BAR_H / 2 + 0.06],
-                    linestyle=(0, (4, 3)),
-                    linewidth=1.6,
+                    linestyle=(0, (3, 2)),
+                    linewidth=1.0,
                     color=C["ink"],
                     zorder=3,
                 )
 
         ax.set_xlim(0, night_h)
-        ax.set_ylim(-0.75, 2.75)
+        # tight y limits: half a bar of air above and below, no more. The figure
+        # goes on a slide, so empty space costs on-screen size.
+        ax.set_ylim(-0.60, 2.60)
         ax.set_yticks([])
         for side in ("left", "right", "top"):
             ax.spines[side].set_visible(False)
         ax.set_xticks(np.arange(0, np.floor(night_h) + 1, 1.0))
-        ax.set_xlabel("hours into the observable night (Sun at $-12°$ → $-12°$)")
-        ax.tick_params(axis="x", length=3, pad=3)
-        ax.set_title(
-            f"One night of LSST: expected, a good night, a bad night   ({baseline} ideal)",
-            loc="left",
+        ax.set_xlabel(
+            "hours into the observable night (Sun at $-12°$ → $-12°$)", fontsize=PT_XLABEL, labelpad=1.5
+        )
+        ax.tick_params(axis="x", length=2, pad=1.5)
+        # No title: the slide carries it, and a title here would only add empty
+        # space. The baseline is named in the ideal bar's sub-label instead.
+
+        # One legend row under the x label, centred: seven entries in stack order.
+        leg = ax.legend(
+            handles=[_legend_handles(style, label) for style, label in LEGEND_ENTRIES],
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.30),
+            ncol=len(LEGEND_ENTRIES),
+            frameon=False,
+            fontsize=PT_LEGEND,
+            handlelength=1.1,
+            handleheight=1.0,
+            columnspacing=1.0,
+            handletextpad=0.4,
+            borderpad=0.0,
+            borderaxespad=0.0,
         )
 
-        # wide side margins: the bar labels and the "N visits · ratio" labels
-        # are drawn in data coordinates outside the x limits
-        # Two legend rows under the x axis: the Science subdivisions, then the
-        # categories that are not Science. Separate legends so each row can carry
-        # its own "Science:" / "Lost:" title; the second is added as an artist
-        # because an Axes holds only one legend.
-        for i, (title, entries) in enumerate(LEGEND_ROWS):
-            leg = ax.legend(
-                handles=[_legend_handles(style, label) for style, label in entries],
-                title=f"{title}:",
-                loc="upper left",
-                bbox_to_anchor=(0.0, -0.17 - 0.175 * i),
-                ncol=len(entries),
-                frameon=False,
-                fontsize=13,
-                handlelength=1.3,
-                handleheight=1.1,
-                columnspacing=1.6,
-                borderpad=0.0,
-                borderaxespad=0.0,
-            )
-            leg.set_title(f"{title}:", prop={"size": 13})
-            leg._legend_box.align = "left"
-            if i < len(LEGEND_ROWS) - 1:
-                ax.add_artist(leg)
-
-        fig.subplots_adjust(left=0.17, right=0.845, bottom=0.30, top=0.90)
+        # Side margins hold the bar labels and the "N visits · ratio" labels, which
+        # are drawn in data coordinates outside the x limits.
+        fig.subplots_adjust(left=0.135, right=0.855, bottom=0.22, top=0.98)
+        # Grow the bottom margin until the legend row actually fits: its height
+        # depends on the font metrics, so measure rather than guess.
+        fig.canvas.draw()
+        for _ in range(16):
+            if leg.get_window_extent().y0 >= 4:
+                break
+            fig.subplots_adjust(bottom=ax.get_position().y0 + 0.02)
+            fig.canvas.draw()
         FIG.mkdir(exist_ok=True)
         stem = FIG / f"good_bad_night_{good}_{bad}"
-        fig.savefig(f"{stem}.png", dpi=200, transparent=True)
-        fig.savefig(f"{stem}_white.png", dpi=200, facecolor="white")
+        # 300 dpi: the figure is placed at 1:1 on the slide, so this is the real
+        # on-screen resolution rather than something that gets scaled down.
+        fig.savefig(f"{stem}.png", dpi=300, transparent=True)
+        fig.savefig(f"{stem}_white.png", dpi=300, facecolor="white")
         print("wrote", stem, "[_white].png")
 
     # the numbers behind the bars, for the README and the slide
