@@ -21,6 +21,13 @@ printed as a per-period table; they are assigned by Bruno's rule, not by the dat
 ``classify.storm_override``). The title reports the on-sky season shares (unchanged, the
 numbers quoted in the deck) on one line and the full range on a second.
 
+Since 2026-11-02 ``monthly_6bin`` adds a third figure,
+``time_loss_monthly_talk_<tag>_6bin[_white].png`` (slide 4 "Where the night goes"): the
+same months in six bins — Science, Engineering, Alignment, Fault + idle, Planned
+maintenance, Weather — at exactly 6 × 4 in / 300 dpi, in the slide-2 colours
+(``SLIDE2_CAT``, a deliberate palette violation, see README §3b.1). It is separate from
+``monthly()`` on purpose: B3 shares ``CAT``/``_stack``, which it does not touch.
+
 Run from anywhere: ``python simonyi_time_loss/python/make_latam_figures.py``.
 """
 
@@ -119,9 +126,9 @@ def outage_spans() -> pd.DataFrame:
     return sel
 
 
-def _save(fig, stem: str):
-    fig.savefig(FIG / f"{stem}.png", dpi=200, transparent=True)
-    fig.savefig(FIG / f"{stem}_white.png", dpi=200, facecolor="white")
+def _save(fig, stem: str, dpi: int = 200):
+    fig.savefig(FIG / f"{stem}.png", dpi=dpi, transparent=True)
+    fig.savefig(FIG / f"{stem}_white.png", dpi=dpi, facecolor="white")
     print("wrote", FIG / f"{stem}[_white].png")
 
 
@@ -429,6 +436,218 @@ def monthly(t: pd.DataFrame, min_label: float = 0.10):
         return fig, mo
 
 
+# --------------------------------------------------------------------------- #
+# B1, six-bin variant for slide 4 "Where the night goes" (handoff 2026-11-02)  #
+# --------------------------------------------------------------------------- #
+
+# TEMPORARY: slide-2 colours, palette violation, see handoff 2026-11-02.
+# These are read from the night-definition strip on slide 2 of the LSST@LATAM deck
+# so B1 matches it; they deliberately break the Rubin palette. Switching back is one
+# line: use CAT instead of SLIDE2_CAT in monthly_6bin(). Do not propagate these to
+# rubin_palette.CATEGORY_COLORS or to any other figure.
+SLIDE2_COLORS = {
+    "Science": "#024243",
+    "Engineering": "#045B5C",
+    "Alignment": "#058B8C",
+    "Fault + idle": "#F5A623",
+    # Planned maintenance has no slide-2 colour: it is a tone of the weather grey, so the
+    # two "closed" bins read as a pair (Bruno, 2026-11-02)
+    "Planned maintenance": "#546E7A",
+    "Weather": "#9BAEB8",  # lightened from #78909C (Bruno, 2026-11-02)
+}
+#: bottom → top of the stack; the legend is drawn in the reverse order so it reads
+#: like the bars. One constant, as the handoff asks. Hatches: the two "closed" bins are
+#: told apart by direction — weather leans one way, planned maintenance the other.
+SLIDE2_CAT = [
+    ("survey_plot", "Science", None),
+    ("engineering_hours", "Engineering", None),
+    ("focus_alignment_hours", "Alignment", None),
+    ("fault_plot", "Fault + idle", None),
+    ("planned_maintenance_hours", "Planned maintenance", "////"),
+    ("weather_hours", "Weather", "\\\\\\\\"),
+]
+#: in-bar value labels (Bruno, 2026-11-02); the one place below the 10 pt tick floor,
+#: because it only has to be legible next to its own bar, not from the back of the room
+LABEL_PT = 8
+#: no value label below this share of the night (Bruno, 2026-11-02)
+LABEL_MIN_FRAC = 0.05
+#: 6 × 4 in on a 10 × 5.625 in slide, so type must survive the scale-down.
+#: Floor is 10 pt everywhere, per the handoff.
+SLIDE_RC = {
+    "figure.figsize": (6, 4),
+    "font.size": 10,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 10,
+    "axes.linewidth": 0.8,
+    "hatch.linewidth": 0.6,
+    "text.color": COLORS["ink"],
+    "axes.labelcolor": COLORS["ink"],
+    "axes.edgecolor": COLORS["ink_secondary"],
+    "xtick.color": COLORS["ink_secondary"],
+    "ytick.color": COLORS["ink_secondary"],
+}
+
+
+def _check_split(t: pd.DataFrame, mo: pd.DataFrame) -> None:
+    """The split must not move the other bins. Checked against the bins as ``monthly()``
+    (the shared ``CAT``) groups them, not against this function's own columns, so the
+    comparison is a real one:
+
+    * Science + Engineering + Alignment == the three on-sky bins of ``CAT``;
+    * Weather and Fault + idle identical to ``CAT``'s;
+    * the six bins still partition the night.
+    """
+    ref = t.groupby("month")[["night_hours"] + [c for c, _, _ in CAT]].sum()
+    onsky_ref = ref.survey_plot + ref.engineering_hours + ref.focus_alignment_hours
+    onsky_new = mo.survey_plot + mo.engineering_hours + mo.focus_alignment_hours
+    total = sum(mo[c] for c, _, _ in SLIDE2_CAT)
+    d_onsky = (onsky_new - onsky_ref).abs()
+    d_weather = (mo.weather_hours - ref.weather_hours).abs()
+    d_fault = (mo.fault_plot - ref.fault_plot).abs()
+    d_night = (total - ref.night_hours).abs()
+    print("\n=== B1 six-bin split check (handoff 2026-11-02) ===")
+    print(
+        f"{'month':>7} {'on sky':>8} {'Δon sky':>8} {'weather':>8} {'Δwth':>6} "
+        f"{'fault':>8} {'Δflt':>6} {'night':>8} {'Σ6':>8} {'Δ':>6}"
+    )
+    for m in mo.index:
+        print(
+            f"{m:>7} {onsky_new[m]:8.1f} {d_onsky[m]:8.2f} "
+            f"{mo.weather_hours[m]:8.1f} {d_weather[m]:6.2f} "
+            f"{mo.fault_plot[m]:8.1f} {d_fault[m]:6.2f} "
+            f"{ref.night_hours[m]:8.1f} {total[m]:8.1f} {d_night[m]:6.2f}"
+        )
+    worst = {
+        "on sky": d_onsky.max(),
+        "weather": d_weather.max(),
+        "fault + idle": d_fault.max(),
+        "Σ six bins − night": d_night.max(),
+    }
+    print(
+        "worst |Δ| over all months: "
+        + ", ".join(f"{k} {v:.3f} h" for k, v in worst.items())
+    )
+    bad = {k: v for k, v in worst.items() if v >= 0.05}
+    assert not bad, f"the split moved bins it must not: {bad}"
+
+
+def monthly_6bin(t: pd.DataFrame):
+    """B1 for slide 4: the six bins at 6 × 4 in, in the slide-2 colours.
+
+    Separate from ``monthly()`` on purpose — B3 shares ``CAT``/``_stack`` and is out of
+    scope for this task, so nothing here touches them. The old file is kept; this one
+    saves under ``..._6bin[_white].png`` so the two can be compared.
+    """
+    cols = ["night_hours"] + [c for c, _, _ in SLIDE2_CAT]
+    mo = t.groupby("month")[cols].sum()
+    _check_split(t, mo)
+    with mpl.rc_context(SLIDE_RC):
+        # constrained layout + no bbox_inches="tight" keeps the PNG exactly 6 × 4 in;
+        # small pads so the axes fill the canvas (Bruno, 2026-11-02: minimise empty space)
+        fig, ax = plt.subplots(layout="constrained")
+        fig.get_layout_engine().set(w_pad=0.01, h_pad=0.01, wspace=0, hspace=0)
+        x = np.arange(len(mo))
+        bottom = np.zeros(len(mo))
+        denom = mo.night_hours.to_numpy()
+        labelled = []  # (xi, centre, text) per segment that gets a value label
+        for col, lab, hatch in SLIDE2_CAT:
+            c = SLIDE2_COLORS[lab]
+            y = (mo[col] / denom).to_numpy()
+            # thin white edge between segments: the mitigation for the low ΔE pairs
+            # (Engineering↔Science, Alignment↔Weather) the validator flags
+            ax.bar(
+                x,
+                y,
+                bottom=bottom,
+                width=0.94,  # wide bars: the gaps were dead space (Bruno, 2026-11-02)
+                color=c,
+                label=lab,
+                linewidth=0.6,
+                edgecolor="white",
+                hatch=hatch,
+            )
+            # value labels on the four coloured bins only: white type is unreadable on
+            # the two light greys, and those bins are the ones the talk does not discuss
+            # (Bruno, 2026-11-02). ``b`` is the bottom *before* the increment below, so
+            # ``b + f / 2`` is the segment midpoint — with va="center" the label sits in
+            # the middle of its own segment, not of the bar.
+            if col not in ("weather_hours", "planned_maintenance_hours"):
+                for xi, f, b in zip(x, y, bottom):
+                    labelled.append((xi, b + f / 2, f"{f:.0%}", f))
+            bottom += y
+        ax.set_xticks(x)
+        # one line per label, year only where it changes: a second line of tick text
+        # was costing ~0.3 in of plot height for nothing
+        ax.set_xticklabels(
+            [
+                pd.Timestamp(f"{m // 100}-{m % 100:02d}-01").strftime(
+                    "%b\n%Y" if i == 0 or m % 100 == 1 else "%b"
+                )
+                for i, m in enumerate(mo.index)
+            ]
+        )
+        ax.set_ylim(0, 1)
+        # bars run edge to edge; no empty margin either side
+        ax.set_xlim(-0.5 - 0.03, len(mo) - 0.5 + 0.03)
+        ax.set_ylabel(f"fraction of {NIGHT} night")
+        ax.yaxis.set_major_formatter(mpl.ticker.PercentFormatter(1.0, decimals=0))
+        # Value labels, white, centred on their own segment. Two gates (Bruno,
+        # 2026-11-02): a hard editorial floor of 5 % — below that the number is not worth
+        # reading off the slide — and a measured fit test, LABEL_PT + 2 pt converted to an
+        # axis fraction through the drawn axes height, so a segment never gets a label
+        # taller than itself even if the figure or font size changes. At 6 × 4 in the 5 %
+        # floor is the binding one.
+        fig.canvas.draw()  # axes geometry must be final before measuring
+        ax_h_pt = ax.get_window_extent().height / fig.dpi * 72.0
+        min_frac = max(LABEL_MIN_FRAC, (LABEL_PT + 2.0) / ax_h_pt)
+        for xi, centre, text, frac in labelled:
+            if frac >= min_frac:
+                ax.text(
+                    xi,
+                    centre,
+                    text,
+                    ha="center",
+                    va="center",
+                    color="white",
+                    fontsize=LABEL_PT,
+                )
+        # Legend in stack order (top of the stack first), three columns so it is two
+        # rows and steals less height than the 2 × 3 version. matplotlib fills a legend
+        # column-first, so transpose the order to make it read left → right, top →
+        # bottom: Weather, Planned maintenance, Fault + idle / Alignment, Engineering,
+        # Science.
+        handles_, labels_ = ax.get_legend_handles_labels()
+        hl = dict(zip(labels_, handles_))
+        stack_order = [lab for _, lab, _ in SLIDE2_CAT][::-1]
+        ncol, nrow = 3, 2
+        order = [
+            stack_order[r * ncol + c]
+            for c in range(ncol)
+            for r in range(nrow)
+            if r * ncol + c < len(stack_order)
+        ]
+        ax.legend(
+            [hl[k] for k in order],
+            order,
+            frameon=False,
+            ncol=3,
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.11),
+            handlelength=1.3,
+            handletextpad=0.5,
+            columnspacing=1.0,
+            labelspacing=0.25,
+            borderpad=0.0,
+        )
+        ax.spines[["top", "right"]].set_visible(False)
+        # no title and no in-bar labels: the numbers go on the slide, not in the figure
+        # (Bruno, 2026-11-02)
+        _save(fig, f"time_loss_monthly_talk_{TAG}_6bin", dpi=300)
+        return fig, mo
+
+
 def main():
     t = load_per_night()
     tot = t[["night_hours", "dynalene_hours"] + [c for c, _, _ in CAT]].sum()
@@ -474,6 +693,18 @@ def main():
         .astype(int)
         .to_string()
     )
+    # slide 4: the same months in six bins at 6 × 4 in (handoff 2026-11-02)
+    _, mo6 = monthly_6bin(t)
+    cols6 = [c for c, _, _ in SLIDE2_CAT]
+    print("\n=== B1 six-bin: hours per bin per month ===")
+    print(mo6[["night_hours"] + cols6].round(1).to_string())
+    print("\n=== B1 six-bin: % of night per bin per month ===")
+    print((mo6[cols6].div(mo6.night_hours, axis=0) * 100).round(1).to_string())
+    tot6 = mo6[["night_hours"] + cols6].sum()
+    print("\n=== B1 six-bin: full-range totals ===")
+    for c, lab, _ in SLIDE2_CAT:
+        print(f"  {lab:<22} {tot6[c]:7.1f} h  {tot6[c] / tot6.night_hours:5.1%}")
+    print(f"  {'−12° night':<22} {tot6.night_hours:7.1f} h")
 
 
 if __name__ == "__main__":
