@@ -303,6 +303,19 @@ def fetch_weather(
     out["narrative_log_available"] = len(logs) > 0
     if len(logs) > 0:
         logs = logs.query("not component.str.contains('AuxTel')", engine="python")
+        if "day_obs" not in logs:
+            # The narrative log API stopped returning day_obs (seen 2026-11-04;
+            # it now gives date_begin / date_end). Derive it: day_obs is the
+            # calendar date of the timestamp minus 12 h, which is what
+            # rubin_nights.dayobs_utils.time_to_day_obs_int does per scalar --
+            # checked to agree with it row by row.
+            begin = pd.to_datetime(logs["date_begin"], format="mixed", utc=True)
+            logs = logs.assign(
+                day_obs=(begin - pd.Timedelta(hours=12))
+                .dt.strftime("%Y%m%d")
+                .astype(int)
+                .to_numpy()
+            )
         for kind, col in [
             ("weather", "weather_hours_log"),
             ("fault", "fault_hours_log"),
