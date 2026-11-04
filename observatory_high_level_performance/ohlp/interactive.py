@@ -47,7 +47,8 @@ from .style import COLORS, time_colors
 __all__ = ["build_figure", "save_html"]
 
 #: Fill alpha of each requirement box; the overlap of n boxes shows as 1-(1-a)^n.
-BOX_ALPHA = 0.10
+#: Kept equal to ``ohlp.static.BOX_ALPHA`` so the two versions match.
+BOX_ALPHA = 0.18
 
 MARKER_EARLY = "circle"
 MARKER_LSST = "square"

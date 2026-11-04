@@ -25,7 +25,7 @@ are counted, never removed (§5):
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
-| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, optional star (`show_star`; `_nostar` file suffix, kept for the Early Ops and three-period figures), cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary for the RASAB slide; titled, window described in the legend at 8 pt with "w/ on sky data"; `_white` variant too), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in teal + LSST on-sky stretch in purple, default; talk version; `_white` suffix = opaque background), `figures/speed_vs_iq_static_three_periods_20251024-20261022.png` (three points: Early Ops first three months in teal, LSST on sky and LSST to date in purple, the latter hollow; legend at 8 pt with "w/ on sky data"; `_white` variant too; §5 "Three periods") or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, optional star (`show_star`; `_nostar` file suffix, kept for the Early Ops and three-period figures), cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary for the RASAB slide; titled, window described in the legend at 8 pt with "w/ on sky data"; `_white` variant too), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in brand teal + LSST on-sky stretch in dark teal, default; talk version; `_white` suffix = opaque background), `figures/speed_vs_iq_static_three_periods_20251024-20261022.png` (three points: Early Ops first three months in teal, LSST on sky and LSST to date in dark teal, the latter hollow; legend at 8 pt with "w/ on sky data"; `_white` variant too; §5 "Three periods") or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
@@ -147,7 +147,7 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   Lynne's figure 2026-10-17: the ten nightly points coincide; her near-zero points are the closed
   nights, which her notebook draws at the period-median iDIQ plus jitter and ours omits (no IQ
   exists for them); both include them in the speed. Her aggregate is the mean of nightly ratios,
-  ours the ratio of sums; for this window they agree to 0.001. Early Ops keeps the brand teal, LSST is `CATEGORICAL[2]` purple (nights and
+  ours the ratio of sums; for this window they agree to 0.001. Early Ops keeps the brand teal, LSST is `DECK["science"]` dark teal (nights and
   whiskers in the same hue), passed to `build_static_figure(colors=...)`. Each window is described in
   the legend (`labels_in_legend=True`), so no direct labels are drawn. Saved to
   `data/windows_early_ops_vs_lsst_20251024_20260714.{parquet,csv}`.
@@ -160,8 +160,8 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   | Window | Colour, marker | Nights with visits / calendar | Visits / expected | Speed (nightly IQR) | iDIQ median [IQR] | Weather nights |
   |---|---|---|---|---|---|---|
   | Early Ops, 20251024–20260123 (first three months) | teal circle, `rp.TEAL` | 63 / 92 | 13 312 / 65 548 | 0.20 (0.00–0.38) | 0.494″ [0.452–0.539] | 0 (no state yet) |
-  | LSST on sky, 20260629–20260713 (`ref.DAY_OBS_LAST_SURVEY_VISIT`) | purple square, `rp.CATEGORICAL[2]` | 10 / 15 | 7267 / 16 201 | 0.45 (0.00–0.74) | 0.414″ [0.385–0.449] | 2 |
-  | LSST to date, 20260629–20261022 | hollow purple square (`hollow=[False, False, True]`) | 10 / 116 | 7267 / 112 384 | 0.07 (0.00–0.00) | 0.414″ [0.385–0.449] | 8 |
+  | LSST on sky, 20260629–20260713 (`ref.DAY_OBS_LAST_SURVEY_VISIT`) | dark teal square, `rp.DECK["science"]` | 10 / 15 | 7267 / 16 201 | 0.45 (0.00–0.74) | 0.414″ [0.385–0.449] | 2 |
+  | LSST to date, 20260629–20261022 | hollow dark teal square (`hollow=[False, False, True]`) | 10 / 116 | 7267 / 112 384 | 0.07 (0.00–0.00) | 0.414″ [0.385–0.449] | 8 |
 
   The on-sky window ends on 20260713 and so differs from the LSST window of the Early Ops vs. LSST
   figure (ends 20260714 to match Lynne's range): speed 0.45 instead of 0.42. Early Ops keeps the brand
@@ -231,8 +231,8 @@ to (0.63, 0.34″).
 | Role | Palette name |
 |---|---|
 | time (month order) | `teal_cmap()` from `SEQUENTIAL_TEAL`, light = Oct 2025, dark = latest; lightness carries order in grayscale |
-| Early Ops vs. LSST (two-point static) | `TEAL` for Early Ops, `CATEGORICAL[2]` purple for LSST (`colors=` override in `ohlp.static`) |
-| requirement regions | `CATEGORICAL[4]` green, each box at alpha 0.10 (`BOX_ALPHA`); overlap gives 0.10 / 0.19 / 0.27 for start / minimum / design |
+| Early Ops vs. LSST (two- and three-point static) | `TEAL` brand teal for Early Ops, `DECK["science"]` `#024243` dark teal for LSST (`colors=` override in `ohlp.static`). Purple `CATEGORICAL[2]` until 2026-11-04: Bruno moved the LSST points onto the LSST@LATAM deck's science colour so the figure matches the slides it appears on |
+| requirement regions | `DECK["requirement"]` blue-grey `#6596AF`, each box at alpha 0.18 (`BOX_ALPHA`); overlap gives 0.18 / 0.33 / 0.45 for start / minimum / design, i.e. `#e0eaef` / `#cbdbe4` / `#bacfdd` on white. Green `CATEGORICAL[4]` at alpha 0.10 until 2026-11-04: Bruno moved the regions off the categorical palette so they read as background rather than a sixth category, and raised the alpha because at 0.10 the three levels were indistinguishable on a projector |
 | LSST = 1 star (static PNGs label it "LSST 10 year Average", Bruno 2026-10-22, and can omit it with `build_static_figure(show_star=False)`; the interactive version keeps "LSST = 1") | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
 | ROST band | `CATEGORICAL[2]` purple, alpha 0.10, dotted edge |
 | path, text, gap note | `NEUTRALS` |

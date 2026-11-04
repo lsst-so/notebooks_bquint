@@ -22,7 +22,7 @@ __all__ = ["rp", "COLORS", "time_colors", "paper_rc", "talk_rc"]
 
 #: Roles -> palette names. Change the role mapping here, never the hex.
 COLORS = {
-    "goal_region": rp.CATEGORICAL[4],  # green slot
+    "goal_region": rp.DECK["requirement"],  # blue-grey, three stacked shades
     "star": rp.CATEGORICAL[1],  # orange slot
     "star_edge": rp.NEUTRALS["ink_secondary"],
     "rost_band": rp.CATEGORICAL[2],  # purple slot

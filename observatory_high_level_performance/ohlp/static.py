@@ -34,7 +34,8 @@ Y_LABELS_SHORT = {
 }
 
 #: Fill alpha of each requirement box; the overlap of n boxes shows as 1-(1-a)^n.
-BOX_ALPHA = 0.10
+#: 0.18 (was 0.10 until 2026-11-04) so the three levels separate on a slide.
+BOX_ALPHA = 0.18
 
 MARKER_EARLY = "o"
 MARKER_LSST = "s"

@@ -133,13 +133,23 @@ SEQUENTIAL_TEAL = ["#E6F4F4", "#9FDADB", "#3DAEB0", "#058B8C", "#256060", "#0C4A
 # hexes: ``simonyi_time_loss`` (B1) and ``night_budget`` (B12/B13) still carry
 # their own copies, made before this dict existed. Use ``CATEGORICAL`` for
 # anything that is not a figure for that deck.
+#
+# The three on-sky categories are one teal family, dark -> mid -> light, so they
+# read as a group against the accent and the two greys (Bruno, 2026-11-04):
+# science keeps the darkest teal, engineering takes the brand teal that was
+# alignment's, alignment moves to a light teal. This is the mapping every talk
+# figure must use (B1 six-bin, B10b, B12) so they cannot drift apart.
 DECK = {
     "science": "#024243",  # science / survey visits (slide 5 legend)
-    "engineering": "#045B5C",
-    "alignment": "#058B8C",
+    "engineering": "#058B8C",  # brand teal; was #045B5C before 2026-11-04
+    "alignment": "#7FCAC3",  # light teal; was #058B8C before 2026-11-04
     "accent": "#F5A623",  # "Fault + idle" on slide 2; the deck's only accent
     "maintenance": "#546E7A",
     "weather": "#9BAEB8",
+    # Requirement / goal regions, drawn as nested translucent bands. Blue-grey
+    # at hue 200 deg: neutral enough to stay background, saturated enough not to
+    # read as dirty grey once the alpha washes the hue out (Bruno, 2026-11-04).
+    "requirement": "#6596AF",
     "band": "#D9F7F7",  # pale teal fill for an interquartile band
     "median": "#595959",  # median rules and their labels
     "reference": "#BFBFBF",  # grid, date markers and other reference lines
