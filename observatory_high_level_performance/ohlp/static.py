@@ -104,7 +104,7 @@ def build_static_figure(
     legend_size: float | None = None,
     nights_suffix: str = "",
     hollow: bool | list[bool] = False,
-    show_star: bool = True,
+    show_star: bool = False,
     markers: list[str] | None = None,
 ):
     """Return ``(fig, ax)``. Background is transparent unless ``transparent=False``.
@@ -141,8 +141,11 @@ def build_static_figure(
     bool applies to every period; a list gives one flag per period in
     ``t_index`` order.
 
-    ``show_star=False`` omits the "LSST 10 year Average" star and its label;
-    the requirement boxes, whose left edges derive from the star x, stay.
+    ``show_star`` draws the "LSST 10 year Average" star and its label. Off since
+    2026-11-04 (Bruno): the requirement regions already carry the reference, and
+    the star invited reading the figure as a race against a single number. The
+    boxes are unaffected -- their left edges derive from ``star_x``, which is a
+    reference value, not the marker. Pass ``show_star=True`` to put it back.
 
     ``markers`` overrides the per-period marker (one matplotlib marker code per
     period, in ``t_index`` order). By default a period takes the circle or the

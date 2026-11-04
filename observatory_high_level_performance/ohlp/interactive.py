@@ -232,12 +232,18 @@ def build_figure(
     height: int = 620,
     title: str | None = None,
     show_nightly: bool = False,
+    show_star: bool = False,
 ):
     """Return a Bokeh layout (plot + controls).
 
     ``periods`` is the table from :func:`ohlp.binning.period_table` (monthly or
     quarterly) or :func:`ohlp.binning.window_table`; the kind is read from its
     ``period_kind`` column. For windows the nightly points are always shown.
+
+    ``show_star`` draws the "LSST = 1" star and its label, matching
+    :func:`ohlp.static.build_static_figure`. Off since 2026-11-04 (Bruno); the
+    requirement regions already carry the reference. The glyph is still built
+    when hidden, so the y-statistic dropdown keeps driving it.
     """
     kind = str(periods["period_kind"].iloc[0])
     kind_word = PERIODS[kind]
@@ -320,6 +326,7 @@ def build_figure(
         fill_color=COLORS["star"],
         line_color=COLORS["star_edge"],
         line_width=1,
+        visible=show_star,
     )
     star_label = Label(
         x=ref.VISIT_RATE.star_x,
@@ -329,6 +336,7 @@ def build_figure(
         text_color=COLORS["ink"],
         x_offset=14,
         y_offset=-6,
+        visible=show_star,
     )
     p.add_layout(star_label)
 
@@ -571,7 +579,9 @@ def build_figure(
         items=[
             LegendItem(label=f"Early Ops {kind_word}", renderers=[l_early]),
             LegendItem(label=f"LSST {kind_word}", renderers=[l_lsst]),
-            LegendItem(label="LSST = 1", renderers=[r_star]),
+            # The star entry only when the star is drawn; a hidden renderer
+            # would otherwise leave a legend row that toggles nothing.
+            *([LegendItem(label="LSST = 1", renderers=[r_star])] if show_star else []),
             LegendItem(label="nightly values", renderers=[r_night]),
         ],
         orientation="horizontal",

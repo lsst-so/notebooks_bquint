@@ -9,7 +9,7 @@ Prepared for the RASAB 2026 talk (Natal, 25 Oct 2026) and as the base of a paper
 One figure answers "is the observatory delivering the visits and the image quality that LSST
 needs, and how has that changed since Early Operations began?" It places binned periods on a
 **survey speed vs. image quality** plane, with three nested requirement regions (survey start,
-SRD minimum, SRD design; one hue, overlap stacks into darker shades) and an "LSST = 1" star, and
+SRD minimum, SRD design; one hue, overlap stacks into darker shades), and
 connects them in time order. Two binnings are kept, from the same cache:
 
 - **Two windows** (the presentation version): the *best two weeks of Early Ops* (16–29 Nov 2025,
@@ -25,7 +25,7 @@ are counted, never removed (§5):
 | Version | File | Status |
 |---|---|---|
 | Interactive (Bokeh) | `04_interactive.ipynb` → `figures/speed_vs_iq_interactive_<windows|quarterly|monthly>_<min>-<max>.html` | done |
-| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, optional star (`show_star`; `_nostar` file suffix, kept for the Early Ops and three-period figures), cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary for the RASAB slide; titled, window described in the legend at 8 pt with "w/ on sky data"; `_white` variant too), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in brand teal + LSST on-sky stretch in dark teal, default; talk version; `_white` suffix = opaque background), `figures/speed_vs_iq_static_three_periods_20251024-20261022.png` (three points: Early Ops first three months in teal, LSST on sky and LSST to date in dark teal, the latter hollow; legend at 8 pt with "w/ on sky data"; `_white` variant too; §5 "Three periods") or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
+| Static PNG (6×4 in, 12 pt labels, `TRANSPARENT` flag, optional `TITLE`, no "LSST 10 year Average" star since 2026-11-04 (`show_star=False` is the default; `show_star=True` restores it with a `_star` file suffix), cropped to contents; requirement-box legend lower left at 7 pt, `box_legend_loc`; x label names the baseline, `ref.BASELINE_LABEL`) | `03_static_png.ipynb` → `figures/speed_vs_iq_static_early_ops_octnov_20251024-20251130.png` (single Early Ops summary for the RASAB slide; titled, window described in the legend at 8 pt with "w/ on sky data"; `_white` variant too), `figures/speed_vs_iq_static_early_ops_vs_lsst_20251024-20260714.png` (Early Ops in brand teal + LSST on-sky stretch in dark teal, default; talk version; `_white` suffix = opaque background), `figures/speed_vs_iq_static_three_periods_20251024-20261103.png` (Early Ops first three months in teal plus the LSST stretch twice in dark teal, filled = nights on sky and hollow = all nights; legend at 8 pt; `_white` variant too; §5 "Three periods") or `..._<windows|quarterly|monthly>_<min>-<max>.png` (direct labels per period) | done (2026-10-17) |
 | Static, talk (16:9, build frames) | `03_static_talk.ipynb` | pending |
 | Static, paper (AAS column, PDF + PNG) | `02_static_paper.ipynb` | pending |
 
@@ -152,31 +152,29 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   the legend (`labels_in_legend=True`), so no direct labels are drawn. Saved to
   `data/windows_early_ops_vs_lsst_20251024_20260714.{parquet,csv}`.
 - **Three periods** (`03_static_png.ipynb`, `PERIOD = "three_periods"`, added 2026-10-22 for Bruno's
-  RASAB slide): three windows on one figure, every calendar night counted, all nights drawn once as
-  context, legend line "n of m nights w/ on sky data" (`build_static_figure(nights_suffix=...)`) at
-  8 pt (`legend_size`). The two LSST windows overlap, so no arrow joins them (`static.py` skips
-  overlapping windows). Saved to `data/windows_three_periods_20251024_20261022.{parquet,csv}`.
+  RASAB slide; reworked 2026-11-04): Early Ops plus **the LSST stretch measured two ways**. All three
+  rows hold every calendar night of their span except where noted, all nights are drawn once as
+  context, legend at 8 pt (`legend_size`). The two LSST windows are identical in span, so no arrow
+  joins them (`static.py` skips overlapping windows). Saved to
+  `data/windows_three_periods_20251024_20261103.{parquet,csv}`.
 
-  | Window | Colour, marker | Nights with visits / calendar | Visits / expected | Speed (nightly IQR) | iDIQ median [IQR] | Weather nights |
-  |---|---|---|---|---|---|---|
-  | Early Ops, 20251024–20260123 (first three months) | teal circle, `rp.TEAL` | 63 / 92 | 13 312 / 65 548 | 0.20 (0.00–0.38) | 0.494″ [0.452–0.539] | 0 (no state yet) |
-  | LSST on sky, 20260629–20260713 (`ref.DAY_OBS_LAST_SURVEY_VISIT`) | dark teal square, `rp.DECK["science"]` | 10 / 15 | 7267 / 16 201 | 0.45 (0.00–0.74) | 0.414″ [0.385–0.449] | 2 |
-  | LSST to date, 20260629–20261022 | hollow dark teal square (`hollow=[False, False, True]`) | 10 / 116 | 7267 / 112 384 | 0.07 (0.00–0.00) | 0.414″ [0.385–0.449] | 8 |
+  | Window | Colour, marker | Nights with visits / calendar | Visits / expected | Speed | iDIQ median |
+  |---|---|---|---|---|---|
+  | Early Ops, 20251024–20260123 (first three months) | teal circle, `rp.TEAL` | 63 / 92 | 13 312 / 65 548 | 0.203 | 0.494″ |
+  | LSST, nights on sky, 20260629–20261103 | dark teal square, `rp.DECK["science"]` | 13 / 19 | 9060 / 19 026 | 0.476 | 0.423″ |
+  | LSST, all nights, 20260629–20261103 | hollow dark teal square (`hollow=[False, False, True]`) | 13 / 128 | 9060 / 121 759 | 0.074 | 0.423″ |
 
-  The on-sky window ends on 20260713 and so differs from the LSST window of the Early Ops vs. LSST
-  figure (ends 20260714 to match Lynne's range): speed 0.45 instead of 0.42. Early Ops keeps the brand
-  teal as in that figure (a brand "bright teal" cyan was tried on 2026-10-22 and rejected).
-- **Three periods, diamond** (`PERIOD = "three_periods_diamond"`, added 2026-11-04 for Bruno): the
-  same three windows and the same numbers, but the "LSST, to date" point is drawn as a **filled
-  purple diamond** (`rp.CATEGORICAL[2]`, `markers=["o", "s", "D"]`) instead of a hollow dark teal
-  square. Its own shape and hue carry the message the figure is for: of the 116 calendar nights since
-  the LSST start only 10 took visits, so the speed falls to 0.065 from 0.45 on sky while the iDIQ is
-  unchanged at 0.414″ (the same 7267 visits) — the gap is time lost to weather, planned downtime and
-  technical issues, not degraded image quality. Separate files
-  (`figures/speed_vs_iq_static_three_periods_diamond_20251024-20261022{,_white}.png`); the hollow
-  square version is kept. The window ends at `DAY_OBS_MAX = 20261022`, the end of the ConsDB cache,
-  not at the actual today; no survey visits exist after 20260713, so extending it only adds zero
-  nights (speed would drift ~0.065 → ~0.058 by early Nov 2026).
+  The two squares hold the **same visits and the same image quality** and differ only in the
+  denominator (`window_table(operational_only=...)`): "nights on sky" counts only the nights the
+  observatory was operational (`operational_hours_efd > 0`), so it is the speed the survey achieved
+  on the nights it had; "all nights" counts every calendar night, so the storm, planned downtime and
+  fault nights enter as zeros. **The horizontal gap between them is the time lost** — over the LSST
+  era 127 h weather, 117 h fault and 253 h planned downtime against 164 h operational, of 1360 h of
+  night. Same hue and shape, so the pair reads as one window measured twice rather than two periods.
+  Early Ops keeps the brand teal (a brand "bright teal" cyan was tried on 2026-10-22 and rejected).
+
+  A purple diamond was tried for the second LSST point on 2026-11-04 and rolled back the same day in
+  favour of the two squares.
 - **Windows** (`ohlp.binning.window_table`, `period_kind = "window"`, `period` = window index) are
   named inclusive `day_obs` ranges with the same columns as a quarter. The two windows used:
   - *Best 2 weeks, Early Ops*, 20251116–20251129: the 14-night contiguous window of Oct–Dec 2025
@@ -205,7 +203,7 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
 - **Weather nights are counted, not removed** (decision 2026-10-17). An earlier version carried a
   second, "weather-excluded" series (hollow markers) that dropped the flagged nights from numerator,
   denominator and IQ distribution. It was removed because the reference it would be compared with
-  already pays for weather: the "LSST = 1" star is calibrated on the v5.1 baseline simulation, which
+  already pays for weather: the "LSST = 1" reference (`VISIT_RATE.star_x`, still the origin of the box edges even though the star is no longer drawn) is calibrated on the v5.1 baseline simulation, which
   runs with the cloud and downtime models on (§4), so excluding weather from the measured speed would
   count the loss once on one side and not on the other. The star, the goal edge and the filled points
   are therefore on the same footing. `n_nights_weather` stays in the tables and in the hover.
@@ -251,9 +249,8 @@ to (0.63, 0.34″).
 |---|---|
 | time (month order) | `teal_cmap()` from `SEQUENTIAL_TEAL`, light = Oct 2025, dark = latest; lightness carries order in grayscale |
 | Early Ops vs. LSST (two- and three-point static) | `TEAL` brand teal for Early Ops, `DECK["science"]` `#024243` dark teal for LSST (`colors=` override in `ohlp.static`). Purple `CATEGORICAL[2]` until 2026-11-04: Bruno moved the LSST points onto the LSST@LATAM deck's science colour so the figure matches the slides it appears on |
-| "LSST, to date" callout (`three_periods_diamond` only) | `CATEGORICAL[2]` purple, filled, diamond marker — the one place purple is still used for data, to set the time-lost point apart from the two teal on-sky points |
 | requirement regions | `DECK["requirement"]` blue-grey `#6596AF`, each box at alpha 0.18 (`BOX_ALPHA`); overlap gives 0.18 / 0.33 / 0.45 for start / minimum / design, i.e. `#e0eaef` / `#cbdbe4` / `#bacfdd` on white. Green `CATEGORICAL[4]` at alpha 0.10 until 2026-11-04: Bruno moved the regions off the categorical palette so they read as background rather than a sixth category, and raised the alpha because at 0.10 the three levels were indistinguishable on a projector |
-| LSST = 1 star (static PNGs label it "LSST 10 year Average", Bruno 2026-10-22, and can omit it with `build_static_figure(show_star=False)`; the interactive version keeps "LSST = 1") | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
+| LSST = 1 star — **retired 2026-11-04** (Bruno): the requirement regions already carry the reference, and the star invited reading the figure as a race against one number. `show_star=True` restores it in both `ohlp.static` and `ohlp.interactive`; the interactive one keeps the glyph built but hidden so the y-statistic dropdown still drives it | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
 | ROST band | `CATEGORICAL[2]` purple, alpha 0.10, dotted edge |
 | path, text, gap note | `NEUTRALS` |
 
