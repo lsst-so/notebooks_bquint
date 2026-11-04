@@ -166,6 +166,17 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   The on-sky window ends on 20260713 and so differs from the LSST window of the Early Ops vs. LSST
   figure (ends 20260714 to match Lynne's range): speed 0.45 instead of 0.42. Early Ops keeps the brand
   teal as in that figure (a brand "bright teal" cyan was tried on 2026-10-22 and rejected).
+- **Three periods, diamond** (`PERIOD = "three_periods_diamond"`, added 2026-11-04 for Bruno): the
+  same three windows and the same numbers, but the "LSST, to date" point is drawn as a **filled
+  purple diamond** (`rp.CATEGORICAL[2]`, `markers=["o", "s", "D"]`) instead of a hollow dark teal
+  square. Its own shape and hue carry the message the figure is for: of the 116 calendar nights since
+  the LSST start only 10 took visits, so the speed falls to 0.065 from 0.45 on sky while the iDIQ is
+  unchanged at 0.414″ (the same 7267 visits) — the gap is time lost to weather, planned downtime and
+  technical issues, not degraded image quality. Separate files
+  (`figures/speed_vs_iq_static_three_periods_diamond_20251024-20261022{,_white}.png`); the hollow
+  square version is kept. The window ends at `DAY_OBS_MAX = 20261022`, the end of the ConsDB cache,
+  not at the actual today; no survey visits exist after 20260713, so extending it only adds zero
+  nights (speed would drift ~0.065 → ~0.058 by early Nov 2026).
 - **Windows** (`ohlp.binning.window_table`, `period_kind = "window"`, `period` = window index) are
   named inclusive `day_obs` ranges with the same columns as a quarter. The two windows used:
   - *Best 2 weeks, Early Ops*, 20251116–20251129: the 14-night contiguous window of Oct–Dec 2025
@@ -240,6 +251,7 @@ to (0.63, 0.34″).
 |---|---|
 | time (month order) | `teal_cmap()` from `SEQUENTIAL_TEAL`, light = Oct 2025, dark = latest; lightness carries order in grayscale |
 | Early Ops vs. LSST (two- and three-point static) | `TEAL` brand teal for Early Ops, `DECK["science"]` `#024243` dark teal for LSST (`colors=` override in `ohlp.static`). Purple `CATEGORICAL[2]` until 2026-11-04: Bruno moved the LSST points onto the LSST@LATAM deck's science colour so the figure matches the slides it appears on |
+| "LSST, to date" callout (`three_periods_diamond` only) | `CATEGORICAL[2]` purple, filled, diamond marker — the one place purple is still used for data, to set the time-lost point apart from the two teal on-sky points |
 | requirement regions | `DECK["requirement"]` blue-grey `#6596AF`, each box at alpha 0.18 (`BOX_ALPHA`); overlap gives 0.18 / 0.33 / 0.45 for start / minimum / design, i.e. `#e0eaef` / `#cbdbe4` / `#bacfdd` on white. Green `CATEGORICAL[4]` at alpha 0.10 until 2026-11-04: Bruno moved the regions off the categorical palette so they read as background rather than a sixth category, and raised the alpha because at 0.10 the three levels were indistinguishable on a projector |
 | LSST = 1 star (static PNGs label it "LSST 10 year Average", Bruno 2026-10-22, and can omit it with `build_static_figure(show_star=False)`; the interactive version keeps "LSST = 1") | `CATEGORICAL[1]` orange, edge `NEUTRALS["ink_secondary"]` |
 | ROST band | `CATEGORICAL[2]` purple, alpha 0.10, dotted edge |

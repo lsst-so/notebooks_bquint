@@ -105,6 +105,7 @@ def build_static_figure(
     nights_suffix: str = "",
     hollow: bool | list[bool] = False,
     show_star: bool = True,
+    markers: list[str] | None = None,
 ):
     """Return ``(fig, ax)``. Background is transparent unless ``transparent=False``.
 
@@ -142,6 +143,12 @@ def build_static_figure(
 
     ``show_star=False`` omits the "LSST 10 year Average" star and its label;
     the requirement boxes, whose left edges derive from the star x, stay.
+
+    ``markers`` overrides the per-period marker (one matplotlib marker code per
+    period, in ``t_index`` order). By default a period takes the circle or the
+    square of its era (``MARKER_EARLY`` / ``MARKER_LSST``, from ``is_lsst``);
+    pass e.g. ``["o", "s", "D"]`` to single out one window with a third shape.
+    The nightly cloud keeps its era marker either way.
     """
     kind = str(periods["period_kind"].iloc[0])
     if show_nightly is None:
@@ -160,6 +167,12 @@ def build_static_figure(
         hollow = [hollow] * len(p_all)
     elif len(hollow) < len(p_all):
         raise ValueError(f"hollow has {len(hollow)} entries for {len(p_all)} periods")
+    if markers is None:
+        markers = [
+            MARKER_LSST if r["is_lsst"] else MARKER_EARLY for _, r in p_all.iterrows()
+        ]
+    elif len(markers) < len(p_all):
+        raise ValueError(f"markers has {len(markers)} entries for {len(p_all)} periods")
     if labels_in_legend:
         show_labels = False
     elif show_labels is None:
@@ -283,7 +296,7 @@ def build_static_figure(
         for i, r in p_all.iterrows():
             c = colors[int(r["t_index"])]
             h = hollow[int(r["t_index"])]
-            m = MARKER_LSST if r["is_lsst"] else MARKER_EARLY
+            m = markers[int(r["t_index"])]
             a = 0.45 if r["low_n"] else 1.0
             ax.errorbar(
                 r["ratio"],
@@ -396,7 +409,7 @@ def build_static_figure(
                     Line2D(
                         [],
                         [],
-                        marker=MARKER_LSST if r["is_lsst"] else MARKER_EARLY,
+                        marker=markers[t],
                         color=colors[t],
                         markerfacecolor="none" if hollow[t] else None,
                         markeredgewidth=1.6 if hollow[t] else 1.0,
