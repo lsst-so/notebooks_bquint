@@ -37,8 +37,18 @@ Y_LABELS_SHORT = {
 #: 0.18 (was 0.10 until 2026-11-04) so the three levels separate on a slide.
 BOX_ALPHA = 0.18
 
+#: Alpha of the 25-75 % whiskers (0.5 until 2026-11-04). Scaled by the period's
+#: own alpha, so a low-n period keeps fainter whiskers than a full one.
+WHISKER_ALPHA = 0.75
+
+#: Period markers, and the nightly cloud of that era: circle for Early Ops,
+#: square from the LSST start, so a night has the shape of its summary point.
 MARKER_EARLY = "o"
 MARKER_LSST = "s"
+
+#: Size and alpha of a nightly point, both eras.
+NIGHT_SIZE = 22
+NIGHT_ALPHA = 0.35
 
 
 def _nights_in_periods(nightly, periods, kind):
@@ -244,22 +254,28 @@ def build_static_figure(
             )
 
         # Nightly cloud ------------------------------------------------------ #
+        # One scatter per era: a marker is per-call, and an LSST night takes the
+        # square of its summary point (same size and alpha as an Early Ops dot).
         if show_nightly:
             n = _nights_in_periods(nightly, periods, kind)
-            ax.scatter(
-                n["ratio"],
-                n[f"{iq_col}_med"],
-                s=22,
-                marker="o",
-                facecolor=[colors[i] for i in n["t_index"]],
-                alpha=0.35,
-                edgecolor=[
-                    COLORS["ink_secondary"] if w else "none"
-                    for w in n["is_weather_night"]
-                ],
-                lw=0.7,
-                zorder=2,
-            )
+            for is_lsst, marker in ((False, MARKER_EARLY), (True, MARKER_LSST)):
+                era = n[n["is_lsst"] == is_lsst]
+                if era.empty:
+                    continue
+                ax.scatter(
+                    era["ratio"],
+                    era[f"{iq_col}_med"],
+                    s=NIGHT_SIZE,
+                    marker=marker,
+                    facecolor=[colors[i] for i in era["t_index"]],
+                    alpha=NIGHT_ALPHA,
+                    edgecolor=[
+                        COLORS["ink_secondary"] if w else "none"
+                        for w in era["is_weather_night"]
+                    ],
+                    lw=0.7,
+                    zorder=2,
+                )
 
         # Period points, whiskers, path -------------------------------------- #
         x = p_all["ratio"].to_numpy()
@@ -285,7 +301,7 @@ def build_static_figure(
                 fmt="none",
                 ecolor=c,
                 elinewidth=1,
-                alpha=0.5 * a,
+                alpha=WHISKER_ALPHA * a,
                 zorder=3,
             )
             ax.scatter(

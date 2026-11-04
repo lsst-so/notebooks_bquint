@@ -183,6 +183,14 @@ nights, 152 with survey visits, 64 145 survey visits, 21 weather nights (all aft
   point is instead the **mean of nightly ratios**; `ratio_median_nightly` is kept in the table.
 - **y, image quality** = median of the statistic over all visits of the period; whisker = 25–75 %
   range over visits. Not a median of nightly medians.
+- **Whiskers** are drawn at alpha 0.75 (`static.WHISKER_ALPHA`; 0.5 until 2026-11-04, raised by Bruno
+  because they were too faint to follow on a slide), scaled by the period's own alpha, so a low-n
+  period keeps fainter whiskers than a full one.
+- **Nightly markers follow their era**: a circle before the LSST start, a square from it
+  (`MARKER_EARLY` / `MARKER_LSST`, as for the period points, so a night has the shape of its summary
+  point; Bruno, 2026-11-04). Size and alpha are the same for both (`NIGHT_SIZE` 22, `NIGHT_ALPHA`
+  0.35), and the cloud is drawn as one scatter per era because matplotlib takes one marker per call.
+  The "nights" legend handle stays a circle for both.
 - **Weather nights are counted, not removed** (decision 2026-10-17). An earlier version carried a
   second, "weather-excluded" series (hollow markers) that dropped the flagged nights from numerator,
   denominator and IQ distribution. It was removed because the reference it would be compared with
