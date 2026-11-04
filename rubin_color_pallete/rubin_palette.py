@@ -42,6 +42,7 @@ __all__ = [
     "NAMES",
     "NEUTRALS",
     "CATEGORY_COLORS",
+    "DECK",
     "SEQUENTIAL_TEAL",
     "cycle",
     "use",
@@ -122,6 +123,28 @@ CATEGORY_COLORS = {
 
 # Sequential ramp on the teal hue (light -> dark), for heatmaps / magnitudes.
 SEQUENTIAL_TEAL = ["#E6F4F4", "#9FDADB", "#3DAEB0", "#058B8C", "#256060", "#0C4A47"]
+
+# --------------------------------------------------------------------------- #
+# LSST@LATAM 2026 deck colours - NOT the Rubin palette                        #
+# --------------------------------------------------------------------------- #
+# Read off the slide-2 night-definition strip and the slide-5 legend of the
+# LSST@LATAM 2026 deck. They deliberately break the palette above (the deck
+# predates it) and are collected here only so talk figures stop hard-coding
+# hexes: ``simonyi_time_loss`` (B1) and ``night_budget`` (B12/B13) still carry
+# their own copies, made before this dict existed. Use ``CATEGORICAL`` for
+# anything that is not a figure for that deck.
+DECK = {
+    "science": "#024243",  # science / survey visits (slide 5 legend)
+    "engineering": "#045B5C",
+    "alignment": "#058B8C",
+    "accent": "#F5A623",  # "Fault + idle" on slide 2; the deck's only accent
+    "maintenance": "#546E7A",
+    "weather": "#9BAEB8",
+    "band": "#D9F7F7",  # pale teal fill for an interquartile band
+    "median": "#595959",  # median rules and their labels
+    "reference": "#BFBFBF",  # grid, date markers and other reference lines
+    "ink": "#1F2937",  # axis labels and ticks
+}
 
 
 # --------------------------------------------------------------------------- #
