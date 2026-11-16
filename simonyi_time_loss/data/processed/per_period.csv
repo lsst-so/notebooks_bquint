@@ -1,0 +1,7 @@
+period,from,to,nights,night_h,survey (on sky),fault + idle,engineering,Focus and Alignment,planned maintenance,weather
+On sky season,20251025,20260714,263,2590.2,857.6,909.7,415.3,102.4,0.0,305.2
+Storm (weather),20260715,20260915,63,702.3,0.0,0.0,0.0,0.0,0.0,702.3
+Planned maintenance,20260916,20261005,20,200.5,0.0,0.0,0.0,0.0,200.5,0.0
+Recovery (weather),20261006,20261026,21,196.5,0.0,0.0,0.0,0.0,0.0,196.5
+Back on sky,20261027,20261031,5,44.7,22.5,9.5,1.1,0.7,0.0,11.0
+FULL RANGE,20251025,20261031,372,3734.2,880.0,919.2,416.4,103.0,200.5,1215.0

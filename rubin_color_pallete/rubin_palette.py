@@ -22,6 +22,7 @@ Usage
     rp.use(mode="dark")              # for dark slides
     ax.plot(x, y, color=rp.TEAL)
     ax.bar(x, y, color=rp.CATEGORICAL)          # list of 6 hex strings
+    ax.bar(x, y, color=rp.CATEGORY_COLORS["survey"])  # colour by meaning
     im = ax.imshow(z, cmap=rp.teal_cmap())      # sequential teal ramp
     rp.preview("rubin_palette_preview.png")     # swatches + CVD simulation
 """
@@ -40,6 +41,8 @@ __all__ = [
     "CATEGORICAL_DARK",
     "NAMES",
     "NEUTRALS",
+    "CATEGORY_COLORS",
+    "DECK",
     "SEQUENTIAL_TEAL",
     "cycle",
     "use",
@@ -101,8 +104,57 @@ NEUTRALS = {
     "grid": "#DCE0E3",  # grid lines, downtime hatch fill
 }
 
+# --------------------------------------------------------------------------- #
+# Semantic category colours - one colour per meaning, shared by every plot    #
+# --------------------------------------------------------------------------- #
+# Survey, engineering and focus are the exact colours of the nightly survey
+# speed plot (seaborn colorblind, the lsst.utils rubin.mplstyle cycle), so that
+# plot stays identical. Losses are greys: colour = time used, grey = time lost.
+# Keys are listed in the time-loss precedence order (weather -> focus ->
+# engineering -> fault + idle -> survey). Light surfaces only. Change a colour
+# here and it propagates to every figure.
+CATEGORY_COLORS = {
+    "weather": "#B4B8B8",  # light grey, always hatched and labelled
+    "focus": "#029E73",  # Focus and Alignment (BLOCK-T539), green
+    "engineering": "#DE8F05",  # orange
+    "fault_idle": "#4A4D4E",  # fault + idle, charcoal
+    "survey": "#0173B2",  # Survey Programs, blue
+}
+
 # Sequential ramp on the teal hue (light -> dark), for heatmaps / magnitudes.
 SEQUENTIAL_TEAL = ["#E6F4F4", "#9FDADB", "#3DAEB0", "#058B8C", "#256060", "#0C4A47"]
+
+# --------------------------------------------------------------------------- #
+# LSST@LATAM 2026 deck colours - NOT the Rubin palette                        #
+# --------------------------------------------------------------------------- #
+# Read off the slide-2 night-definition strip and the slide-5 legend of the
+# LSST@LATAM 2026 deck. They deliberately break the palette above (the deck
+# predates it) and are collected here only so talk figures stop hard-coding
+# hexes: ``simonyi_time_loss`` (B1) and ``night_budget`` (B12/B13) still carry
+# their own copies, made before this dict existed. Use ``CATEGORICAL`` for
+# anything that is not a figure for that deck.
+#
+# The three on-sky categories are one teal family, dark -> mid -> light, so they
+# read as a group against the accent and the two greys (Bruno, 2026-11-04):
+# science keeps the darkest teal, engineering takes the brand teal that was
+# alignment's, alignment moves to a light teal. This is the mapping every talk
+# figure must use (B1 six-bin, B10b, B12) so they cannot drift apart.
+DECK = {
+    "science": "#024243",  # science / survey visits (slide 5 legend)
+    "engineering": "#058B8C",  # brand teal; was #045B5C before 2026-11-04
+    "alignment": "#7FCAC3",  # light teal; was #058B8C before 2026-11-04
+    "accent": "#F5A623",  # "Fault + idle" on slide 2; the deck's only accent
+    "maintenance": "#546E7A",
+    "weather": "#9BAEB8",
+    # Requirement / goal regions, drawn as nested translucent bands. Blue-grey
+    # at hue 200 deg: neutral enough to stay background, saturated enough not to
+    # read as dirty grey once the alpha washes the hue out (Bruno, 2026-11-04).
+    "requirement": "#6596AF",
+    "band": "#D9F7F7",  # pale teal fill for an interquartile band
+    "median": "#595959",  # median rules and their labels
+    "reference": "#BFBFBF",  # grid, date markers and other reference lines
+    "ink": "#1F2937",  # axis labels and ticks
+}
 
 
 # --------------------------------------------------------------------------- #

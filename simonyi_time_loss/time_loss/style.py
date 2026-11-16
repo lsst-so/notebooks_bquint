@@ -2,6 +2,13 @@
 
 Path resolved relative to this file (``../../rubin_color_pallete``); copy the
 palette module into this folder before extracting the investigation.
+
+One palette across the LSST@LATAM talk figures (B1, B3, B11). Category colours
+come from ``rp.CATEGORY_COLORS`` (2026-10-31), the table every figure in the repo
+shares, with the nightly survey speed colours: survey = blue, Focus and
+Alignment = green, engineering = orange; the losses are greys, weather = light
+grey, fault + idle = charcoal. Validation is in the palette README. The Dynalene
+closure is drawn in the fault colour, hatched.
 """
 
 from __future__ import annotations
@@ -16,12 +23,12 @@ import rubin_palette as rp  # noqa: E402
 
 __all__ = ["rp", "COLORS"]
 
-#: Roles -> palette slots. Weather = teal (primary), non-weather loss = orange,
-#: on-sky = green, downtime = muted grey. Change the role mapping here only.
 COLORS = {
-    "weather": rp.CATEGORICAL[0],
-    "nonweather_loss": rp.CATEGORICAL[1],
-    "on_sky": rp.CATEGORICAL[4],
+    "on_sky": rp.CATEGORY_COLORS["survey"],  # survey (A)
+    "focus": rp.CATEGORY_COLORS["focus"],  # Focus and Alignment
+    "engineering": rp.CATEGORY_COLORS["engineering"],  # B2
+    "weather": rp.CATEGORY_COLORS["weather"],  # C
+    "nonweather_loss": rp.CATEGORY_COLORS["fault_idle"],  # D + E fault + idle
     "downtime": rp.NEUTRALS["muted"],
     "ink": rp.NEUTRALS["ink"],
     "ink_secondary": rp.NEUTRALS["ink_secondary"],

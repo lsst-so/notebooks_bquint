@@ -22,7 +22,6 @@ style (the slide style is transparent by default); white writes ``*_white.*``.
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 from pathlib import Path
 
 import matplotlib
@@ -39,7 +38,10 @@ PLOTS = HERE / "plots"
 CACHE = HERE / "cache"
 
 DAY_OBS_MIN = 20251026
-DAY_OBS_MAX = 20260713  # last night before the July storm
+DAY_OBS_MAX = 20261101  # latest complete night (was 20260713, before the July storm)
+#: Last night on sky before the July 2026 storm. 20260713 is the last full night;
+#: 20260714 has 3 on-sky visits only, and nothing is on sky again until 20261027.
+DAY_OBS_LAST_BEFORE_STORM = 20260713
 #: Figure styles. "backup" is the full 16:9 slide; "slide" is the talk figure that
 #: drops into a 9.5 x 4.25 inch box on the RASAB slide (transparent background, all
 #: legends in four columns under the x axis, margins trimmed to the ink).
@@ -63,11 +65,12 @@ STYLES = {
         ylabel_pad=2.0,  # points between the y tick labels and the y label
         transparent=True,
         pad={"left": 0.03, "right": 0.01, "top": 0.01, "bottom": 0.02},
-        legend_loc="bottom",  # four columns under the x axis: visits, downtime, 1-3, 4-5
-        # Left edge of each column (axes fraction); the last two are wider so the
-        # event labels fit on one line (legend_wrap disables wrapping).
-        legend_columns=(0.0, 0.2, 0.4, 0.64),
-        legend_wrap=80,
+        legend_loc="bottom",  # columns under the x axis: visits, downtime, then numbers
+        # Left edge of each column (axes fraction). Since the range was extended past
+        # the July storm there are 9 numbered events, not 6: they go in three columns
+        # (1-3, 4-6, 7-9) and the long labels wrap, or they run into each other.
+        legend_columns=(0.0, 0.17, 0.30, 0.56, 0.80),
+        legend_wrap=30,
         label_mode="numbers",
         short_ylabel=True,  # the axes are short; the long label would overflow
     ),
@@ -79,7 +82,9 @@ BLANK_THRESHOLD = 50  # plotted visits; below this a night counts as lost
 
 
 def load_data():
-    visits = pd.read_parquet(CACHE / "lsstcam_visits_ql_20251026_20260714.parquet")
+    visits = pd.read_parquet(
+        CACHE / f"lsstcam_visits_ql_{DAY_OBS_MIN}_{DAY_OBS_MAX}.parquet"
+    )
     visits = visits[
         (visits["day_obs"] >= DAY_OBS_MIN) & (visits["day_obs"] <= DAY_OBS_MAX)
     ]
@@ -195,7 +200,9 @@ def base_timeline(visits, twilight, colors, y_ref="utc", style=None):
     ax.set_ylabel(
         ylabel, fontsize=style["axis_label_fs"], labelpad=style.get("ylabel_pad")
     )
-    ax.set_xlabel("Night (day_obs)", fontsize=style["axis_label_fs"])
+    # Left-aligned: with the range extended past the July storm the "Start of the
+    # LSST" caption sits mid-axis, where a centred x label would collide with it.
+    ax.set_xlabel("Night (day_obs)", fontsize=style["axis_label_fs"], loc="left")
     if style["legend_loc"] == "right":
         ax.legend(
             loc="upper left",
@@ -243,8 +250,8 @@ def base_timeline(visits, twilight, colors, y_ref="utc", style=None):
 def nights_lost_table(csv_path, nights):
     """One row per CSV span with the count of blank nights inside the plot range."""
     df = downtime.load_downtime(csv_path)
-    d0 = dt.date(2025, 10, 26)
-    d1 = dt.date(2026, 7, 13)
+    d0 = pd.Timestamp(str(DAY_OBS_MIN)).date()
+    d1 = pd.Timestamp(str(DAY_OBS_MAX)).date()
     lost, in_range = [], []
     for s, e in zip(df["start"], df["end"]):
         if e < d0 or s > d1:
@@ -264,7 +271,8 @@ def nights_lost_table(csv_path, nights):
 def write_summary(df, path, drawn_rows, nights):
     drawn = {(r.start_date, r.end_date) for r in drawn_rows.itertuples()}
     lines = [
-        "# Downtime summary, 2025-10-26 to 2026-07-13",
+        f"# Downtime summary, {pd.Timestamp(str(DAY_OBS_MIN)):%Y-%m-%d} to "
+        f"{pd.Timestamp(str(DAY_OBS_MAX)):%Y-%m-%d}",
         "",
         "Nights lost = nights inside the span with fewer than "
         f"{BLANK_THRESHOLD} plotted visits in ConsDB (`cdb_lsstcam.visit1`, "
@@ -339,8 +347,12 @@ def main():
     if args.talk:
         kw = dict(
             min_duration_days=3,
-            categories=["fault", "weather", "mixed"],
-            label_categories=["fault"],
+            # "planned" is drawn since 2026-11-02: the Sep/Oct maintenance downtime
+            # would otherwise be a white gap between the storm and the recovery
+            categories=["fault", "weather", "mixed", "planned"],
+            # weather and planned can carry labels too, so the storm, the downtime and
+            # the recovery are named; which rows get one is still the talk=1 flag
+            label_categories=["fault", "weather", "planned"],
             label_flag="talk",
         )
         stem = "utilization_annotated_talk"
@@ -388,7 +400,7 @@ def main():
 
     if not args.talk and args.y_ref == "utc":
         nights = pd.read_csv(
-            CACHE / "nights_20251026_20260713.csv", index_col="day_obs"
+            CACHE / f"nights_{DAY_OBS_MIN}_{DAY_OBS_MAX}.csv", index_col="day_obs"
         )
         df = nights_lost_table(csv_path, nights)
         per_cat = write_summary(

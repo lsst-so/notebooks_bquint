@@ -34,10 +34,21 @@ Y_LABELS_SHORT = {
 }
 
 #: Fill alpha of each requirement box; the overlap of n boxes shows as 1-(1-a)^n.
-BOX_ALPHA = 0.10
+#: 0.18 (was 0.10 until 2026-11-04) so the three levels separate on a slide.
+BOX_ALPHA = 0.18
 
+#: Alpha of the 25-75 % whiskers (0.5 until 2026-11-04). Scaled by the period's
+#: own alpha, so a low-n period keeps fainter whiskers than a full one.
+WHISKER_ALPHA = 0.75
+
+#: Period markers, and the nightly cloud of that era: circle for Early Ops,
+#: square from the LSST start, so a night has the shape of its summary point.
 MARKER_EARLY = "o"
 MARKER_LSST = "s"
+
+#: Size and alpha of a nightly point, both eras.
+NIGHT_SIZE = 22
+NIGHT_ALPHA = 0.35
 
 
 def _nights_in_periods(nightly, periods, kind):
@@ -93,7 +104,8 @@ def build_static_figure(
     legend_size: float | None = None,
     nights_suffix: str = "",
     hollow: bool | list[bool] = False,
-    show_star: bool = True,
+    show_star: bool = False,
+    markers: list[str] | None = None,
 ):
     """Return ``(fig, ax)``. Background is transparent unless ``transparent=False``.
 
@@ -129,8 +141,17 @@ def build_static_figure(
     bool applies to every period; a list gives one flag per period in
     ``t_index`` order.
 
-    ``show_star=False`` omits the "LSST 10 year Average" star and its label;
-    the requirement boxes, whose left edges derive from the star x, stay.
+    ``show_star`` draws the "LSST 10 year Average" star and its label. Off since
+    2026-11-04 (Bruno): the requirement regions already carry the reference, and
+    the star invited reading the figure as a race against a single number. The
+    boxes are unaffected -- their left edges derive from ``star_x``, which is a
+    reference value, not the marker. Pass ``show_star=True`` to put it back.
+
+    ``markers`` overrides the per-period marker (one matplotlib marker code per
+    period, in ``t_index`` order). By default a period takes the circle or the
+    square of its era (``MARKER_EARLY`` / ``MARKER_LSST``, from ``is_lsst``);
+    pass e.g. ``["o", "s", "D"]`` to single out one window with a third shape.
+    The nightly cloud keeps its era marker either way.
     """
     kind = str(periods["period_kind"].iloc[0])
     if show_nightly is None:
@@ -149,6 +170,12 @@ def build_static_figure(
         hollow = [hollow] * len(p_all)
     elif len(hollow) < len(p_all):
         raise ValueError(f"hollow has {len(hollow)} entries for {len(p_all)} periods")
+    if markers is None:
+        markers = [
+            MARKER_LSST if r["is_lsst"] else MARKER_EARLY for _, r in p_all.iterrows()
+        ]
+    elif len(markers) < len(p_all):
+        raise ValueError(f"markers has {len(markers)} entries for {len(p_all)} periods")
     if labels_in_legend:
         show_labels = False
     elif show_labels is None:
@@ -243,22 +270,28 @@ def build_static_figure(
             )
 
         # Nightly cloud ------------------------------------------------------ #
+        # One scatter per era: a marker is per-call, and an LSST night takes the
+        # square of its summary point (same size and alpha as an Early Ops dot).
         if show_nightly:
             n = _nights_in_periods(nightly, periods, kind)
-            ax.scatter(
-                n["ratio"],
-                n[f"{iq_col}_med"],
-                s=22,
-                marker="o",
-                facecolor=[colors[i] for i in n["t_index"]],
-                alpha=0.35,
-                edgecolor=[
-                    COLORS["ink_secondary"] if w else "none"
-                    for w in n["is_weather_night"]
-                ],
-                lw=0.7,
-                zorder=2,
-            )
+            for is_lsst, marker in ((False, MARKER_EARLY), (True, MARKER_LSST)):
+                era = n[n["is_lsst"] == is_lsst]
+                if era.empty:
+                    continue
+                ax.scatter(
+                    era["ratio"],
+                    era[f"{iq_col}_med"],
+                    s=NIGHT_SIZE,
+                    marker=marker,
+                    facecolor=[colors[i] for i in era["t_index"]],
+                    alpha=NIGHT_ALPHA,
+                    edgecolor=[
+                        COLORS["ink_secondary"] if w else "none"
+                        for w in era["is_weather_night"]
+                    ],
+                    lw=0.7,
+                    zorder=2,
+                )
 
         # Period points, whiskers, path -------------------------------------- #
         x = p_all["ratio"].to_numpy()
@@ -266,7 +299,7 @@ def build_static_figure(
         for i, r in p_all.iterrows():
             c = colors[int(r["t_index"])]
             h = hollow[int(r["t_index"])]
-            m = MARKER_LSST if r["is_lsst"] else MARKER_EARLY
+            m = markers[int(r["t_index"])]
             a = 0.45 if r["low_n"] else 1.0
             ax.errorbar(
                 r["ratio"],
@@ -284,7 +317,7 @@ def build_static_figure(
                 fmt="none",
                 ecolor=c,
                 elinewidth=1,
-                alpha=0.5 * a,
+                alpha=WHISKER_ALPHA * a,
                 zorder=3,
             )
             ax.scatter(
@@ -379,7 +412,7 @@ def build_static_figure(
                     Line2D(
                         [],
                         [],
-                        marker=MARKER_LSST if r["is_lsst"] else MARKER_EARLY,
+                        marker=markers[t],
                         color=colors[t],
                         markerfacecolor="none" if hollow[t] else None,
                         markeredgewidth=1.6 if hollow[t] else 1.0,

@@ -309,16 +309,27 @@ def window_table(
     windows: dict[str, tuple[int, int]],
     iq_cols: tuple[str, ...] = tuple(IQ_COLUMNS),
     min_nights: int = ref.MIN_NIGHTS_PER_MONTH,
+    operational_only: dict[str, bool] | None = None,
 ) -> pd.DataFrame:
     """Same schema as :func:`period_table` for named ``day_obs`` windows.
 
     ``windows`` maps a short label to an inclusive ``(day_obs_min, day_obs_max)``
     pair, in time order. ``period`` is the window index, ``period_kind`` is
     ``"window"``.
+
+    ``operational_only`` flags windows (by label) whose denominator should count
+    only the nights the observatory was actually operational
+    (``operational_hours_efd > 0``), i.e. the speed the survey achieved on the
+    nights it had, with the storm, planned downtime and fault nights taken out.
+    A window not listed keeps every calendar night, so those nights count as
+    zero visits. Pairing the same span both ways shows the time lost.
     """
+    operational_only = operational_only or {}
     rows = []
     for i, (label, (lo, hi)) in enumerate(windows.items()):
         nights = nightly[(nightly["day_obs"] >= lo) & (nightly["day_obs"] <= hi)]
+        if operational_only.get(label):
+            nights = nights[nights["operational_hours_efd"].fillna(0) > 0]
         vis_w = visits[visits["day_obs"].isin(nights["day_obs"])]
         row = {"period": i, "period_kind": "window", "window_label": label}
         row.update(_aggregate(nights, vis_w, iq_cols))
